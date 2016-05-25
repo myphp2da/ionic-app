@@ -31,7 +31,7 @@
 
     if(isset($_POST['action']) && !empty($_POST['action'])){
 
-		if(isset($_POST['action']) && $_POST['action'] == 'add'){
+		if($_POST['action'] == 'add'){
 
 			$product_name=$_POST['product_name'];
 			$where_cond = "tinStatus != '2' and strProduct='$product_name'";
@@ -51,16 +51,27 @@
                     'decCurrentPrice' => $_POST['current_price'],
                     'strImageName' => $imgurl
                 );
-				$rsData = $product_obj->insertData($insert_data);
+				$product_id = $product_obj->insertData($insert_data);
 
-				if ($rsData) {
+				if(isset($_POST['quantity'])) {
+					foreach($_POST['quantity'] as $quantity) {
+						$quantity_array = array(
+							'quantity' => $quantity,
+							'amount' => $_POST['quantity_amount'][$quantity],
+							'product' => $product_id
+						);
+						$product_obj->insertProductQuantity($quantity_array);
+					}
+				}
+
+				if ($product_id) {
 					$_SESSION[PF . 'MSG'] = "<strong>" . $_POST['product_name'] . "</strong> has been successfully Added";
 				} else {
 					$_SESSION[PF . 'ERROR'] = "Error while inserting data";
 				}
 			}
 		}
-		else if(isset($_POST['action']) && $_POST['action'] == 'edit')
+		else if($_POST['action'] == 'edit')
 		{
 			$id = isset($_POST['id']) ? $_POST['id'] : 0;
 

@@ -160,7 +160,6 @@ if (in_array($type, $master_obj::$_have_parents) && $childs == 0) {
                 <?php } ?>
 
 				<div class="form-group"><label for="desc" class="control-label col-lg-2">Description:</label>
-
 					<div class="col-lg-10"><textarea name="description" id="description" type="text" class="form-control ckeditor required"><?php _e(@$master_details['txtDescription']); ?></textarea>
 					</div>
 				</div>

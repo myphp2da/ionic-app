@@ -11,6 +11,22 @@ class product extends db_class {
      */
     protected $_category_table = 'mst_categories';
 
+	protected $_product_quantity_table = 'rel_product_quantities';
+
+	/** Insert product quantity for provided data
+	 * @param array $posted_data : Data to be added
+	 * @return int | false : Returns last inserted ID on success,
+	 *                      otherwise returns false
+	 */
+	public function insertProductQuantity($posted_data) {
+		$insert_array = array(
+			'idProduct' => $posted_data['product'],
+			'idQuantity' => $posted_data['quantity'],
+			'strRemarks' => $posted_data['amount']
+		);
+		return $this->insertByArray($this->_product_quantity_table, $insert_array);
+	}
+
 	/** getting Total Product Count rows related to productid
 	 ** @param  $where :$where is pass particular productid
 	 *  @return int :Send particular count

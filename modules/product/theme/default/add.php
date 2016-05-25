@@ -7,6 +7,8 @@
     $master_obj = new master();
 
     $categories = $master_obj->getMasters("idParent != 0", 'category');
+
+    $quantities = $master_obj->getMasters(1, 'quantity');
 ?>
 <link rel="stylesheet" type="text/css" href="<?php _e($theme_url);?>assets/bootstrap-fileupload/bootstrap-fileupload.css" />
 <style type="text/css">
@@ -93,6 +95,27 @@
                                             <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload"><i class="fa fa-trash"></i> Remove</a>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="state" class="control-label col-lg-2">Select Quantity</label>
+                                <div class="col-lg-8">
+                                    <?php
+                                    if($quantities != 404){
+                                        foreach($quantities as $quantity) {
+                                            ?>
+                                            <div class="col-lg-4">
+                                                <input type="checkbox" name="quantity[]" id="quantity_<?php _e($quantity['id']);?>" value="<?php _e($quantity['id']);?>"/>
+                                                <?php _e($quantity['strQuantity']); ?>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" placeholder="Write Approx quantity" class="form-control" name="quantity_amount[<?php _e($quantity['id']);?>]" id="quantity_amount_<?php _e($quantity['id']);?>" value=""/>
+                                            </div>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
                                 </div>
                             </div>
 
