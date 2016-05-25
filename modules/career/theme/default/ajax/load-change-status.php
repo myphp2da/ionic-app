@@ -8,7 +8,7 @@ if(!empty($id))
 	else if($status =='1')
 		$status = 0;
 		
-	$data = array('tinStatus' => $status);
+	$data = array('enmStatus' => $status);
 	$career_obj->updateData($data);
 ?> 
 	<a href='javascript:void(0);' data-url="career/load/change-status?status=<?php echo $status;?>&id=<?php echo $id;?>" data-action="add" data-container="#activate_<?php echo $id;?>"

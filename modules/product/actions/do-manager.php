@@ -45,7 +45,7 @@
 				$insert_data = array(
                     'strProduct' => $_POST['product_name'],
 					'txtDescription' => $_POST['content'],
-					'txtShortDescription' => $_POST['shortcontent'],
+					'strShortDescription' => $_POST['shortcontent'],
 					'idCategory' => $_POST['category'],
                     'decPrice' => $_POST['price'],
                     'decCurrentPrice' => $_POST['current_price'],
@@ -78,7 +78,7 @@
                     'id' => $id,
 					'strProduct' => $_POST['product_name'],
 					'txtDescription' => $_POST['content'],
-					'txtShortDescription' => $_POST['shortcontent'],
+					'strShortDescription' => $_POST['shortcontent'],
 					'idCategory' => $_POST['category'],
                     'decPrice' => $_POST['price'],
                     'decCurrentPrice' => $_POST['current_price'],

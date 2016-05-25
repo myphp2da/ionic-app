@@ -21,8 +21,8 @@
 	<div class="an"></div>
 	<ul class="teamActivity cf" id="teamActivity">
 	    <?php if(isset($_GET['cid'])){?>
-	    <li class="loadMore"><a href="javascript:void(0);" class="ajaxButton loadMore firstLoad" data-lib="dataTable" data-url="account/load/all?sort=latest&cid=<?php echo $_GET['cid'];?>" data-container="#teamActivity" data-action="add">Load More</a></li>
+	    <li class="loadMore"><a href="javascript:void(0);" class="ajaxButton loadMore firstLoad" data-lib="dataTable" data-url="account/load/all&cid=<?php echo $_GET['cid'];?>" data-container="#teamActivity" data-action="add">Load More</a></li>
 	    <?php }else{?>
-    	<li class="loadMore"><a href="javascript:void(0);" class="ajaxButton loadMore firstLoad" data-lib="dataTable" data-url="account/load/all?sort=latest" data-container="#teamActivity" data-action="add">Load More</a></li>
+    	<li class="loadMore"><a href="javascript:void(0);" class="ajaxButton loadMore firstLoad" data-lib="dataTable" data-url="account/load/all" data-container="#teamActivity" data-action="add">Load More</a></li>
       	<?php }?>
     </ul>

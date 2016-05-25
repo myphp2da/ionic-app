@@ -1,9 +1,9 @@
 <?php 
 	_module('master');
-	$master_obj = new master();
+	$mstObj = new master();
 	
 	$stateid = $_GET['id'];
-	$districts = $master_obj->getMasters('state_id = '.$stateid, 'district');
+	$districts = $mstObj->getMasters('state_id = '.$stateid, 'district');
 	
 	if($districts != 404) {
 ?>

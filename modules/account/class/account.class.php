@@ -275,7 +275,7 @@ class account extends db_class
 	 */
 	function checkAccount($id)
 	{
-		$query = "SELECT * from " . $this->_table . " where tinStatus = '1' and id = " . $id;
+		$query = "SELECT * from " . $this->_table . " where enmStatus = '1' and id = " . $id;
 		return $this->getResult($query);
 	}
 
@@ -370,7 +370,6 @@ class account extends db_class
 
 	/** This function check Login as well as duplication of Mobile or Email id at the time of registation
 	 * @param string $username : email as checking
-     * @param string $password : Password to check account
 	 * @return it returns single result otherwise 404
 	 */
 	function checkLogin($username, $password = '')

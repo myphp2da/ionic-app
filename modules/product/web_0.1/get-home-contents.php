@@ -16,36 +16,54 @@
 
     if(isset($post_data['key']) && $post_data['key'] == KEY) {
 
+        $output = array();
+
+        $category_url = UPLOAD_URL.'category/thumbs/';
+
+        _module('master');
+        $master_obj = new master();
+
+        $categories = $master_obj->getMasters(1, 'category');
+
+        if($categories != 404){
+
+            foreach($categories as $category) {
+
+                $category_array = array(
+                    'id' => $category['id'],
+                    'title' => $category['strCategory'],
+                    'photo' => $category['strImageName']
+                );
+
+                $output['categories'][] = $category_array;
+            }
+        }
+
         $product_url = UPLOAD_URL.'product/thumbs/';
 
         $products = $product_obj->getProducts(1);
 
-        if($products == '404'){
-            $data['status'] = 'False'; //False
-            $data['msg'] = 'No product available';
-        } else {
+        if($products != 404){
 
-            $output = array();
             foreach($products as $product) {
 
                 $product_array = array(
                     'id' => $product['id'],
                     'title' => $product['strProduct'],
                     'price' => $product['decPrice'],
-                    'photo' => $product['strImageProduct']
+                    'photo' => $product['strImageName']
                 );
 
-                $output[] = $product_array;
+                $output['products'][] = $product_array;
             }
-
-            $data['status'] = 'True'; //True
-            $data['msg'] = 'Products have been successfully loaded';
-            $data['data'] = $output;
         }
+
+        $data['status'] = 'True'; //True
+        $data['msg'] = 'Products have been successfully loaded';
+        $data['data'] = $output;
     } else {
         $data['status'] = 'False'; //False
         $data['msg'] = 'ERROR! Unauthorized access';
-
     }
 
     //Always Return JSON string to handle it in devices.

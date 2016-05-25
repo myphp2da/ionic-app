@@ -4,7 +4,7 @@ if (isset($req['parent']) && $req['parent'] == 'edit') {
 }
 
 _module('master');
-$master_obj = new master();
+$mstObj = new master();
 
     _class('file');
 
@@ -58,7 +58,7 @@ $master_obj = new master();
                             <div class="form-group">
                                 <label for="content" class="control-label col-lg-2">Short Description:</label>
 
-                                <div class="col-lg-10"><textarea name="shortcontent" id="shortcontent" class="form-control" rows="10"><?php echo @$pageDetail['txtShortDescription'];?></textarea>
+                                <div class="col-lg-10"><textarea name="shortcontent" id="shortcontent" class="form-control" rows="10"><?php echo @$pageDetail['strShortDescription'];?></textarea>
                                 </div>
                             </div>
 

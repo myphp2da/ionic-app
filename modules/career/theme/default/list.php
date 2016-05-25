@@ -23,6 +23,6 @@
     <div class="panel-body">
   	<div class="an"></div>
 	<ul class="teamActivity cf" id="teamActivity">
-    	<li class="loadMore"><a href="javascript:void(0);" class="ajaxButton loadMore firstLoad" data-lib="dataTable" data-url="career/load/all?sort=latest" data-container="#teamActivity" data-action="add">Load More</a></li>
+    	<li class="loadMore"><a href="javascript:void(0);" class="ajaxButton loadMore firstLoad" data-lib="dataTable" data-url="career/load/all" data-container="#teamActivity" data-action="add">Load More</a></li>
   	</ul></div>
 </section> 		  

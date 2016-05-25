@@ -5,6 +5,8 @@ class master extends db_class
 	    'access-type' => array('table' => 'mst_access_types'),
 		'navigation' => array('table' => 'mst_navigations'),
         'category' => array('table' => 'mst_categories'),
+	    'area' => array('table' => 'mst_areas'),
+	    'quantity' => array('table' => 'mst_quantities'),
 		'tag' => array('table' => 'mst_tag')
     );
 
@@ -86,9 +88,12 @@ class master extends db_class
 		$slug = String::generateSEOString($data[$input_name]);
 		$slug = generateUniqueName($slug, $ID, $table, 'strSlug', 'id', '1');
 					
-		$modified = array($db_name_field => $data[$input_name],
-						  'strSlug' => $slug,
-						  'tinStatus' => '1');
+		$modified = array(
+			$db_name_field => $data[$input_name],
+			'strSlug' => $slug,
+			'tinStatus' => '1',
+			'dtiLastModified' => TODAY_DATETIME
+		);
 		
 		if(isset($data['description'])) {
 			$modified['txtDescription'] = $data['description'];
@@ -102,12 +107,12 @@ class master extends db_class
             $modified['strImageName'] = $data['imgname'];
         }
 		
-		if(isset($data['action']) && $data['action'] == 'add') {
+		/*if(isset($data['action']) && $data['action'] == 'add') {
 			$modified['dtiCreated'] = TODAY_DATETIME;
 			$modified['idCreatedBy'] = $_SESSION[PF.'USERID'];
 			$modified['idModifiedBy'] = $_SESSION[PF.'USERID'];
 			$modified['dtiModified'] = TODAY_DATETIME;		
-		}
+		}*/
 		
 		return $modified;
 	}

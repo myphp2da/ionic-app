@@ -1,8 +1,8 @@
-<a href="javascript:void(0);" id="dataLoad" class="ajaxButton loadMore firstLoad" data-url="career/load/all?sort=latest" data-container="#teamActivity" data-action="add" data-lib="dataTable" style="display:none;"></a>
+<a href="javascript:void(0);" id="dataLoad" class="ajaxButton loadMore firstLoad" data-url="career/load/all" data-container="#teamActivity" data-action="add" data-lib="dataTable" style="display:none;"></a>
 <?php 
 		
 		$pg = isset($_POST['page']) ? $_POST['page'] : 1;
-		$qAdd = "tinStatus = '2'";
+		$qAdd = "enmStatus = '2'";
 		if(isset($_POST['q']) && !empty($_POST['q'])) {
 			$qAdd .= " and strTitle like ('%".$_POST['q']."%')";
 		}
@@ -27,7 +27,7 @@ $page_count = $career_obj->getCareersCount("enmDeleted = :enmDeleted");
       <?php
  		  	$cnt = 1;
 		  	foreach($pages as $page) {
-			  	if($page['tinStatus']=='1') {
+			  	if($page['enmStatus']=='1') {
 					$class1="class='fa fa-eye _green ajaxButton'";
 					$title1="title='Click to Deactivate'";
 				} else {  
@@ -43,10 +43,10 @@ $page_count = $career_obj->getCareersCount("enmDeleted = :enmDeleted");
 
         <td><a href="<?php _e($module_url);?>/edit?id=<?php echo $page['id'];?>" class="fa fa-edit" title="Edit Content"></a>
         <span id="activate_<?php echo $page['id'];?>">
-        	<a href='javascript:void(0);'  <?php if($page['tinStatus']==1){ echo $class1; echo $title1; } else { echo $class; echo $title; }?> data-url="career/load/change-status?status=<?php echo $page['tinStatus']?>&id=<?php echo $page['id'];?>" data-container="#activate_<?php echo $page['id'];?>" data-action="add"></a>
+        	<a href='javascript:void(0);'  <?php if($page['enmStatus']==1){ echo $class1; echo $title1; } else { echo $class; echo $title; }?> data-url="career/load/change-status?status=<?php echo $page['enmStatus']?>&id=<?php echo $page['id'];?>" data-container="#activate_<?php echo $page['id'];?>" data-action="add"></a>
         </span>
     	<a href='javascript:void(0);' class="ajaxButton fa fa-trash-o" data-action="delete"
-		   data-msg="Are you really want to delete this record?"   data-url="career/load/delete-data?sort=latest&id=<?php echo $page['id'];?>" data-container="#tableListing" title="Delete Content" data-trigger="a#dataLoad"></a>
+		   data-msg="Are you really want to delete this record?"   data-url="career/load/delete-data&id=<?php echo $page['id'];?>" data-container="#tableListing" title="Delete Content" data-trigger="a#dataLoad"></a>
        </td>
       </tr>
       <?php }?>

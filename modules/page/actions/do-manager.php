@@ -34,7 +34,7 @@ if(isset($_POST['action']) && !empty($_POST['action'])){
 		if(isset($_POST['action']) && $_POST['action'] == 'add'){
 
 			$title=$_POST['title'];
-			$where_cond = "tinStatus = '2' and strTitle='$title'";
+			$where_cond = "enmStatus = '2' and strTitle='$title'";
 			$result = $page_obj->getPagesCount($where_cond);
 
 			if($result!=0) {
@@ -49,7 +49,7 @@ if(isset($_POST['action']) && !empty($_POST['action'])){
 				$insert_data = array('strSlug' => $slug,
 					'strTitle' => $_POST['title'],
 					'txtDescription' => $_POST['content'],
-					'txtShortDescription' => $_POST['shortcontent'],
+					'strShortDescription' => $_POST['shortcontent'],
 					'idCreatedBy' => $_SESSION[PF . 'USERID'],
 					'dtiCreated' => TODAY_DATETIME,
 					'strTemplate' => $_POST['page_template']);
@@ -68,7 +68,7 @@ if(isset($_POST['action']) && !empty($_POST['action'])){
 
 
 			$title=$_POST['title'];
-			$where_cond = "tinStatus = '2' and strTitle='$title' and id!=".$_POST['id'];
+			$where_cond = "enmStatus = '2' and strTitle='$title' and id!=".$_POST['id'];
 			$result = $page_obj->getPagesCount($where_cond);
 
 			if($result!=0) {
@@ -83,7 +83,7 @@ if(isset($_POST['action']) && !empty($_POST['action'])){
 					'strSlug' => $slug,
 					'strTitle' => $_POST['title'],
 					'txtDescription' => $_POST['content'],
-					'txtShortDescription' => $_POST['shortcontent'],
+					'strShortDescription' => $_POST['shortcontent'],
 					'strTemplate' => $_POST['page_template'],
 					'dtiModified' => TODAY_DATETIME,
 					'idModifiedBy' => $_SESSION[PF . 'USERID']);

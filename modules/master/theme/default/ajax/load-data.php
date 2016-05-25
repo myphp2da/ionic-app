@@ -59,7 +59,7 @@ foreach($master_data as $data)
 		?>
         <span id="activate_<?php echo $data['id'];?>">
            <a href='javascript:void(0);' <?php if($data['tinStatus']=='1'){ echo $class1; echo $title1; } else { echo $class; echo $title; }?>
-			  data-url="master/load/change-status?sort=latest&id=<?php echo $data['id'];?>&type=<?php _e($type);?>"  data-container="#activate_<?php echo $data['id'];?>" data-action="add"></a>
+			  data-url="master/load/change-status&id=<?php echo $data['id'];?>&type=<?php _e($type);?>"  data-container="#activate_<?php echo $data['id'];?>" data-action="add"></a>
         </span>
         <?php
 		}
@@ -81,7 +81,7 @@ foreach($master_data as $data)
 </table> 
 <?php } else { ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="listingPage">
-	<tr><td height="50" align="center">No Content Type<?php //_e($type);?> available.</td></tr>
+	<tr><td height="50" align="center">No <?php _e($type);?> available.</td></tr>
 </table>
 <?php } ?>
 </div>

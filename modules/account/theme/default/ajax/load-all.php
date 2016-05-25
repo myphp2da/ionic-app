@@ -4,12 +4,12 @@
 		exit;
 	}
 ?>
-	<a href="javascript:void(0);" id="dataLoad" class="ajaxButton loadMore firstLoad" data-url="account/load/all?sort=latest" data-container="#teamActivity" data-action="add" data-lib="dataTable" style="display:none;"></a>
+	<a href="javascript:void(0);" id="dataLoad" class="ajaxButton loadMore firstLoad" data-url="account/load/all" data-container="#teamActivity" data-action="add" data-lib="dataTable" style="display:none;"></a>
 	<?php 
 		
 		$pg = isset($_POST['page']) ? $_POST['page'] : 1;
 		
-		$qAdd = "main.tinStatus = '1' and main.enmActivated='1'";
+		$qAdd = "main.enmStatus = '2' and main.enmActivated='1'";
 		if(isset($_POST['q']) && !empty($_POST['q'])) {
 			$qAdd .= " and fullName like ('%".$_POST['q']."%')";
 		}

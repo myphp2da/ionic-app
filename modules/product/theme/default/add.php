@@ -107,7 +107,7 @@
                             <div class="form-group">
                                 <label for="content" class="control-label col-lg-2">Short Description:</label>
 
-                                <div class="col-lg-10"><input name="shortcontent" id="shortcontent" class="form-control" value="<?php echo @$product_details['txtShortDescription'];?>" maxlength="255" />
+                                <div class="col-lg-10"><input name="shortcontent" id="shortcontent" class="form-control" value="<?php echo @$product_details['strShortDescription'];?>" maxlength="255" />
                                 </div>
                             </div>
 

@@ -13,9 +13,9 @@
 	}
 	
 	_module('master');
-	$master_obj = new master();
+	$mstObj = new master();
 	
-	$access_types = $master_obj->getMasters(1, 'access-type');
+	$access_types = $mstObj->getMasters(1, 'access-type');
 ?>
 <style type="text/css">
 label.error {

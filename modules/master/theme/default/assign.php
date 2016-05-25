@@ -9,8 +9,12 @@ $modules = array(
 	'navigation' => array('title' => 'Navigations',
 		'action' => array('add', 'edit', 'list')),
 	'master' => array('title' => 'Manage Masters',
-		'action' => array('access-type', 'navigation', 'category')),
+		'action' => array('access-type', 'navigation', 'category', 'area', 'quantity')),
 	'category' => array('title' => 'Manage Categories',
+		'action' => array('add', 'edit', 'list')),
+	'area' => array('title' => 'Manage Areas',
+		'action' => array('add', 'edit', 'list')),
+	'quantity' => array('title' => 'Manage Quantities',
 		'action' => array('add', 'edit', 'list')),
 	'product' => array('title' => 'Products',
 		'action' => array('add', 'edit', 'list'))
