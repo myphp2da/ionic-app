@@ -14,7 +14,7 @@
 
     $post_data = json_decode($request);
 
-    if(isset($post_data['key']) && $post_data['key'] == KEY) {
+    if(isset($post_data->key) && $post_data->key == KEY) {
 
         $product_url = UPLOAD_URL.'product/thumbs/';
 
@@ -32,7 +32,7 @@
                     'id' => $product['id'],
                     'title' => $product['strProduct'],
                     'price' => $product['decPrice'],
-                    'photo' => $product['strImageProduct']
+                    'photo' => $product_url.$product['strImageName']
                 );
 
                 $output[] = $product_array;
