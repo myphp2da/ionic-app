@@ -30,7 +30,7 @@ export class Services {
 	}
 
     loadHome() {
-        var url = this.baseUrl+'content/0.1/get-home-contents';
+        var url = this.baseUrl+'product/0.1/get-products';
         var post_data = JSON.stringify({key: this.key});
 
         return this.http.post(url, post_data).map(res => res.json());

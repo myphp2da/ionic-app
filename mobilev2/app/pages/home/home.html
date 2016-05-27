@@ -13,7 +13,7 @@
 
 <ion-content class="home">
     <ion-item *ngFor="#content of contents" class="content" text-wrap>
-        <ion-icon name="cube" item-left></ion-icon>
+        <img src="{{content.photo}}">
         {{content.title}}
     </ion-item>
 </ion-content>
