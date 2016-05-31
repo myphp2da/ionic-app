@@ -13,8 +13,16 @@
 
 <ion-content class="home">
     <ion-item *ngFor="#content of contents" class="content" text-wrap>
-        <ion-icon name="cube" item-left></ion-icon>
+        <img src="{{content.photo}}">
         {{content.title}}
+
+        <select>
+            <option selected>Default</option>
+            <option >Green</option>
+            <option>Red</option>
+        </select>
+
+        <button type="button" class="button button-small button-clear" (click)="saveToCart(content.id)">Add to Cart</button>
     </ion-item>
 </ion-content>
 <button fab fab-bottom fab-right (click)="cart()" calm>

@@ -35,5 +35,19 @@ export class Services {
 
         return this.http.post(url, post_data).map(res => res.json());
     }
+
+    loadCart(user_id) {
+        var url = this.baseUrl+'product/0.1/get-cart-products';
+        var post_data = JSON.stringify({key: this.key, user: user_id});
+
+        return this.http.post(url, post_data).map(res => res.json());
+    }
+
+    addToCart(item_id, user_id, cart_id) {
+        var url = this.baseUrl+'product/0.1/add-to-cart';
+        var post_data = JSON.stringify({key: this.key, user: user_id, item: item_id, cart: cart_id});
+
+        return this.http.post(url, post_data).map(res => res.json());
+    }
 }
 
