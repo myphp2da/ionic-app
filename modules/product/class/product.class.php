@@ -11,7 +11,74 @@ class product extends db_class {
      */
     protected $_category_table = 'mst_categories';
 
+    /** @var string
+     * Product quantity relation table name
+     */
 	protected $_product_quantity_table = 'rel_product_quantities';
+
+    /** @var string
+     * Cart master table name
+     */
+    protected $_cart_table = 'rel_cart';
+
+    /** @var string
+     * Cart products master table name
+     */
+    protected $_cart_products_table = 'rel_cart_products';
+
+    /** Getting all cart products for provided cart ID
+     ** @param array $cart_id: Cart ID to fetch all products
+     *  @return int :Send particular count
+     */
+    function getProductsByCartID($cart_id) {
+        $sql = "select p.strProduct, cp.*
+                from ".$this->_cart_products_table." as cp
+                inner join ".$this->_table." as p
+                where cp.idCart = ".$cart_id;
+        return $this->getResults($sql);
+    }
+
+    /** Create a cart for customer ID provided
+     *
+     * @param int $customer_id : Customer ID for the cart
+     * @return int | bool : Returns cart id generated on success, otherwise returns 404
+     */
+    public function createCart($customer_id) {
+        $cart_array = array(
+            'idCustomer' => $customer_id,
+        );
+        return $this->insertByArray($this->_cart_table, $cart_array);
+    }
+
+    /** Insert product to the cart for provided data
+     * @param array $posted_data : Data to be added
+     * @return int | false : Returns last inserted ID on success,
+     *                      otherwise returns false
+     */
+    public function insertCartProduct($posted_data) {
+        $insert_array = array(
+            'idProduct' => $posted_data['product'],
+            'idQuantity' => $posted_data['quantity'],
+            'idCart' => $posted_data['cart'],
+            'decAmount' => $posted_data['amount'],
+            'decTotalAmount' => $posted_data['total_amount']
+        );
+        return $this->insertByArray($this->_cart_products_table, $insert_array);
+    }
+
+    /** Update cart product for provided data
+     * @param array $posted_data : Data to be updated
+     * @return int | false : Returns affected rows on success,
+     *                      otherwise returns false
+     */
+    public function updateCartProduct($posted_data) {
+        $update_array = array(
+            'idQuantity' => $posted_data['quantity'],
+            'decAmount' => $posted_data['amount'],
+            'decTotalAmount' => $posted_data['total_amount']
+        );
+        return $this->updateByArray($this->_cart_products_table, $update_array, "idProduct = ".$posted_data['product']." and idCart = ".$posted_data['cart']);
+    }
 
 	/** Insert product quantity for provided data
 	 * @param array $posted_data : Data to be added
@@ -27,15 +94,28 @@ class product extends db_class {
 		return $this->insertByArray($this->_product_quantity_table, $insert_array);
 	}
 
+    /** Getting all product quantities
+     ** @param array $products: Array of products to fetch limited records
+     *  @return int :Send particular count
+     */
+    function getProductQuantities($products = array()) {
+
+        $where_string = (sizeof($products) > 0) ? " and idProduct in (".implode(",", $products).")" : '';
+
+        $sql = "select * from ".$this->_product_quantity_table." where 1".$where_string;
+        return $this->getResults($sql);
+    }
+
 	/** getting Total Product Count rows related to productid
 	 ** @param  $where :$where is pass particular productid
 	 *  @return int :Send particular count
 	 */
-	function getProductsCount($where) {
+	public function getProductsCount($where) {
 		$sql = "select count(id) as total_rows from ".$this->_table." as p where ".$where;
 		$data = $this->getResult($sql);
 		return $data['total_rows'];
 	}
+
 	/** getting Product related to particular productid
 	 * @param  $where : $where is pass particular productid
 	 * @return int|array : return 404 if no data available for the query,
