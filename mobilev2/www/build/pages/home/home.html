@@ -12,19 +12,36 @@
 </ion-navbar>
 
 <ion-content class="home">
-    <ion-item *ngFor="#content of contents" class="content" text-wrap>
-        <img src="{{content.photo}}">
-        {{content.title}}
-
-        <select>
-            <option selected>Default</option>
-            <option >Green</option>
-            <option>Red</option>
-        </select>
-
-        <button type="button" class="button button-small button-clear" (click)="saveToCart(content.id)">Add to Cart</button>
+    <ion-item *ngFor="#content of contents" class="content" text-wrap (click)="itemTapped($event, content)">
+        
+        <ion-thumbnail item-left>
+            <img src="{{content.photo}}">
+        </ion-thumbnail>
+        
+        <h2>{{content.title}}</h2>
+        
+        <ion-item class="subitem">
+            <ion-select primary [(ngModel)]="gaming">
+                <ion-option value="nes" checked="true">NES</ion-option>
+                <ion-option value="n64">Nintendo64</ion-option>
+                <ion-option value="ps">PlayStation</ion-option>
+                <ion-option value="genesis">Sega Genesis</ion-option>
+                <ion-option value="saturn">Sega Saturn</ion-option>
+                <ion-option value="snes">SNES</ion-option>
+            </ion-select>
+        </ion-item>
+        
+        <p>Standard Delivery: Tomorrow Evening</p>
+        
+        <button outline type="button" class="button button-small button-info" (click)="saveToCart(content.id)">
+            <ion-icon name="add"></ion-icon> Add to Cart
+        </button>
+        
     </ion-item>
 </ion-content>
 <button fab fab-bottom fab-right (click)="cart()" calm>
     <ion-icon name="basket"></ion-icon>
 </button>
+<ion-toolbar position="bottom">
+  <ion-title>Footer</ion-title>
+</ion-toolbar>

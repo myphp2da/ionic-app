@@ -1,6 +1,23 @@
-.home {
-
+.home .subitem {
+  padding-left: 0;
 }
+
+.home .content {
+  border-bottom: 1px solid #DDD;
+}
+
+.home .item-inner {
+  border-bottom: none;
+}
+
+.home .subitem ion-select {
+  width: 80%;
+  border-radius: 5px;
+  border: 1px solid #DDD;
+  padding: 2px 5px;
+  max-width: 80%;
+}
+
 .button-fab {
   z-index: 100;
 }

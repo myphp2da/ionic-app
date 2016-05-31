@@ -1,6 +1,7 @@
 import {Page, Alert, NavController, Loading, Storage, LocalStorage} from 'ionic-angular';
 import {Services} from '../../providers/services/services';
 import {CartPage} from '../cart/cart';
+import {DetailPage} from '../detail/detail';
 
 /*
   Generated class for the HomePage page.
@@ -48,6 +49,14 @@ export class HomePage {
 
     cart() {
         this.nav.push(CartPage);
+    }
+    
+    itemTapped(event, content) {
+
+        this.nav.push(DetailPage, {
+            content: content
+        });
+
     }
 
     saveToCart(item_id) {

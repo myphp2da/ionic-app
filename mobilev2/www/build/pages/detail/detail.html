@@ -1,0 +1,42 @@
+<!--
+  Generated template for the DetailPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-navbar *navbar>
+  <a menu-toggle>
+    <icon menu></icon>
+  </a>
+  <ion-title>{{content.title}}</ion-title>
+</ion-navbar>
+
+<ion-content padding class="detail">
+    <ion-item>
+      <ion-image image-large>
+          <img src="{{content.photo}}"/>
+      </ion-image>
+        <ion-item-content>
+            <h2>{{content.title}}</h2>
+            <p>{{content.description}}</p>
+        </ion-item-content>
+    </ion-item>
+    
+    <ion-item class="subitem">
+      <ion-select primary [(ngModel)]="gaming">
+          <ion-option value="nes" checked="true">NES</ion-option>
+          <ion-option value="n64">Nintendo64</ion-option>
+          <ion-option value="ps">PlayStation</ion-option>
+          <ion-option value="genesis">Sega Genesis</ion-option>
+          <ion-option value="saturn">Sega Saturn</ion-option>
+          <ion-option value="snes">SNES</ion-option>
+      </ion-select>
+  </ion-item>
+  
+  <p>Standard Delivery: Tomorrow Evening</p>
+  
+  <button outline type="button" class="button button-small button-info" (click)="saveToCart(content.id)">
+      <ion-icon name="add"></ion-icon> Add to Cart
+  </button>
+        
+</ion-content>
