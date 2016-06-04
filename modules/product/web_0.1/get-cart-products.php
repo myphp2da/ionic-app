@@ -16,9 +16,15 @@
 
     if(isset($post_data->key) && $post_data->key == KEY) {
 
+        if(!isset($post_data->cart) || !is_numeric($post_data->cart)) {
+            $data['status'] = 'False'; //False
+            $data['msg'] = 'No cart provided';
+            die(json_encode($data));
+        }
+
         $product_url = UPLOAD_URL.'product/thumbs/';
 
-        $products = $product_obj->getProducts(1);
+        $products = $product_obj->getProductsByCartID($post_data->cart);
 
         if($products == '404'){
             $data['status'] = 'False'; //False
@@ -31,7 +37,11 @@
                 $product_array = array(
                     'id' => $product['id'],
                     'title' => $product['strProduct'],
-                    'price' => $product['decPrice'],
+                    'price' => $product['decAmount'],
+                    'quantity' => $product['intQuantity'],
+                    'total_price' => $product['decTotalAmount'],
+                    'remarks' => $product['strRemarks'],
+                    'label' => $product['strQuantity'],
                     'photo' => $product_url.$product['strImageName']
                 );
 

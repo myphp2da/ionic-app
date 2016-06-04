@@ -81,7 +81,7 @@ if (in_array($type, $master_obj::$_have_parents) && $childs == 0) {
 </style>
 <h3 class="timeline-title"><i class="fa fa-user"></i>&nbsp; Manage <?php _e($name);?></h3>
 <section class="panel">
-	<header class="panel-heading"><?php _e(ucwords($action)); ?><?php _e($name);?></header>
+	<header class="panel-heading"><?php _e(ucwords($action)); ?> <?php _e($name);?></header>
 	<div class="panel-body">
 		<div class="form">
 			<form id="master_form" name="master_form" method="post" class="cmxform form-horizontal tasi-form" action="<?php _e(SITE_URL); ?>master/manager/do" enctype="multipart/form-data">

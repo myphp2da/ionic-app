@@ -20,8 +20,6 @@
         <tr class="headBorder">
             <th>No.</th>
             <th>Product Title</th>
-            <th>Price</th>
-            <th>Offered Price</th>
             <th>Category</th>
             <th>Action</th>
         </tr>
@@ -41,8 +39,6 @@
                 <tr>
                     <td><?php echo $cnt++; ?></td>
                     <td><?php _e($product['strProduct']) ?></td>
-                    <td><?php _e($product['decPrice']) ?></td>
-                    <td><?php _e($product['decCurrentPrice']) ?></td>
                     <td><?php _e($product['category_name']) ?></td>
                     <td><a href="<?php _e($module_url); ?>/edit?id=<?php echo $product['id']; ?>" class="fa fa-edit" title="Edit Product"></a>
         <span id="activate_<?php echo $product['id']; ?>">

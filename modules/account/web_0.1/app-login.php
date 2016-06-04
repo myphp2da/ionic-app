@@ -12,11 +12,11 @@
 
     $request = file_get_contents('php://input');
 
-    $post_data = json_decode($request);
+    $post_data = json_decode($request); //pr($post_data);
 
     if(isset($post_data->key) && $post_data->key == KEY) {
 
-        if(empty($post_data->username) || empty($post_data->password)) {
+        if(empty($post_data->data->username) || empty($post_data->data->password)) {
             $data['status'] = 'false'; //false
             $data['msg'] = 'Please provide valid credentials';
             $data['code'] = 505;
@@ -24,8 +24,8 @@
             die(json_encode($data));
         }
 
-        $user_name = $post_data->username;
-        $password = $account_obj->hashEmail($post_data->password);
+        $user_name = $post_data->data->username;
+        $password = $account_obj->hashEmail($post_data->data->password);
 
         $check_result_id = $account_obj->checkLogin($user_name, $password);
 

@@ -22,18 +22,44 @@ class product extends db_class {
     protected $_cart_table = 'rel_cart';
 
     /** @var string
+     * Quantity master table name
+     */
+    protected $_quantity_table = 'mst_quantities';
+
+    /** @var string
      * Cart products master table name
      */
     protected $_cart_products_table = 'rel_cart_products';
+
+    /** Get product quantity details for data provided
+     *
+     * @param int $product_id : ID of the product
+     * @param int $quantity_id : ID of product quantity
+     *
+     * @return array | int : returns array of product quantity details on success,
+     *                      otherwise returns 404
+     */
+    public function getProductQuantity($product_id, $quantity_id) {
+        $sql = "select *
+                from ".$this->_product_quantity_table."
+                where idProduct = ".$product_id."
+                    and idQuantity = ".$quantity_id;
+        return $this->getResult($sql);
+    }
 
     /** Getting all cart products for provided cart ID
      ** @param array $cart_id: Cart ID to fetch all products
      *  @return int :Send particular count
      */
     function getProductsByCartID($cart_id) {
-        $sql = "select p.strProduct, cp.*
+        $sql = "select p.strProduct, p.strImageName, cp.*, pq.strRemarks, q.strQuantity
                 from ".$this->_cart_products_table." as cp
                 inner join ".$this->_table." as p
+                    on p.id = cp.idProduct
+                inner join ".$this->_product_quantity_table." as pq
+                    on pq.idProduct = p.id and pq.idQuantity = cp.idQuantity
+                inner join ".$this->_quantity_table." as q
+                    on q.id = pq.idQuantity
                 where cp.idCart = ".$cart_id;
         return $this->getResults($sql);
     }
@@ -80,6 +106,19 @@ class product extends db_class {
         return $this->updateByArray($this->_cart_products_table, $update_array, "idProduct = ".$posted_data['product']." and idCart = ".$posted_data['cart']);
     }
 
+    /** Update product quantity for provided data
+     * @param array $posted_data : Data to be updated
+     * @return int | false : Returns affected rows on success,
+     *                      otherwise returns false
+     */
+    public function updateProductQuantity($posted_data) {
+        $update_array = array(
+            'decPrice' => $posted_data['price'],
+            'strRemarks' => $posted_data['remarks']
+        );
+        return $this->updateByArray($this->_product_quantity_table, $update_array, "idProduct = ".$posted_data['product']." and idQuantity = ".$posted_data['quantity']);
+    }
+
 	/** Insert product quantity for provided data
 	 * @param array $posted_data : Data to be added
 	 * @return int | false : Returns last inserted ID on success,
@@ -89,7 +128,8 @@ class product extends db_class {
 		$insert_array = array(
 			'idProduct' => $posted_data['product'],
 			'idQuantity' => $posted_data['quantity'],
-			'strRemarks' => $posted_data['amount']
+            'decPrice' => $posted_data['price'],
+			'strRemarks' => $posted_data['remarks']
 		);
 		return $this->insertByArray($this->_product_quantity_table, $insert_array);
 	}
@@ -102,7 +142,11 @@ class product extends db_class {
 
         $where_string = (sizeof($products) > 0) ? " and idProduct in (".implode(",", $products).")" : '';
 
-        $sql = "select * from ".$this->_product_quantity_table." where 1".$where_string;
+        $sql = "select pq.*, q.strQuantity
+                from ".$this->_product_quantity_table." as pq
+                inner join ".$this->_quantity_table." as q
+                    on q.id = pq.idQuantity
+                where 1".$where_string;
         return $this->getResults($sql);
     }
 

@@ -37,6 +37,13 @@
             die(json_encode($data));
         }
 
+        // Check if product quantity is provided or not
+        if(!isset($post_data->quantity) || !is_numeric($post_data->quantity)) {
+            $data['status'] = 'False'; //False
+            $data['msg'] = 'No product quantity provided';
+            die(json_encode($data));
+        }
+
         // Get all cart products
         $cart_products = $product_obj->getProductsByCartID($cart_id);
 
@@ -49,13 +56,15 @@
             }
         }
 
+        $product_quantity = $product_obj->getProductQuantity($post_data->item, $post_data->quantity);
+
         if($cart_products == 404 || !in_array($post_data->item, $products_array)) {
             $cart_product_array = array(
                 'cart'         => $cart_id,
-                'quantity'     => 2,
+                'quantity'     => $post_data->quantity,
                 'product'      => $post_data->item,
-                'amount'       => 34,
-                'total_amount' => 68
+                'amount'       => $product_quantity['decPrice'],
+                'total_amount' => $product_quantity['decPrice']
             );
 
             $cart_product = $product_obj->insertCartProduct($cart_product_array);
@@ -65,10 +74,10 @@
 
             $cart_product_array = array(
                 'cart'         => $cart_id,
-                'quantity'     => 2,
+                'quantity'     => $post_data->quantity,
                 'product'      => $post_data->item,
-                'amount'       => $available_product['decAmount'] + 34,
-                'total_amount' => $available_product['decAmount'] + 68
+                'amount'       => $available_product['decPrice'] + $product_quantity['decPrice'],
+                'total_amount' => $available_product['decPrice'] + $product_quantity['decPrice']
             );
 
             $cart_product = $product_obj->updateCartProduct($cart_product_array);

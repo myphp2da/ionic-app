@@ -25,15 +25,40 @@
             $data['msg'] = 'No product available';
         } else {
 
+            $available_products  = array();
+            foreach($products as $product) {
+                $available_products[] = $product['id'];
+            }
+
+            $quantity_array = array();
+            if(sizeof($available_products) > 0) {
+                $product_quantities = $product_obj->getProductQuantities($available_products);
+
+                if($product_quantities != 404) {
+                    foreach($product_quantities as $pq) {
+                        $product_id = $pq['idProduct'];
+                        $quantity_array[$product_id][] = array(
+                            'id' => $pq['idQuantity'],
+                            'label' => $pq['strQuantity'],
+                            'remarks' => $pq['strRemarks'],
+                            'price' => $pq['decPrice']
+                        );
+                    }
+                }
+            }
+
             $output = array();
             foreach($products as $product) {
 
                 $product_array = array(
                     'id' => $product['id'],
                     'title' => $product['strProduct'],
-                    'price' => $product['decPrice'],
                     'photo' => $product_url.$product['strImageName']
                 );
+
+                if(isset($quantity_array[$product['id']])) {
+                    $product_array['quantities'] = $quantity_array[$product['id']];
+                }
 
                 $output[] = $product_array;
             }

@@ -1,6 +1,22 @@
 <?php
+
+    $action = 'add';
+
+    $quantity_array = array();
     if (isset($req['parent']) && $req['parent'] == 'edit') {
+
+        $action = 'edit';
+
         $product_details = $product_obj->getProduct("p.id=$_GET[id]");
+
+        $product_quantities = $product_obj->getProductQuantities(array($_GET['id']));
+
+        if($product_quantities != 404) {
+            foreach($product_quantities as $pq) {
+                $quantity_id = $pq['idQuantity'];
+                $quantity_array[$quantity_id] = $pq;
+            }
+        }
     }
 
     _module('master');
@@ -26,14 +42,11 @@
         <!--<h3 class="timeline-title"><i class="fa fa-file-text-o"></i> &nbsp; Products <a href="<?php /*echo _e($module_url); */?>/add" class="btn btn-shadow btn-primary ar"><i class="fa fa-plus"></i> Add New</a><div class="clear"></div></h3>-->
 
         <form id="product_form" name="product_form" method="post" class="cmxform form-horizontal tasi-form" action="<?php _e($module_url); ?>/manager/do" enctype="multipart/form-data">
-            <input type="hidden" name="action" id="action" value="<?php if ($req['parent'] == 'add') {
-                echo 'add';
-            } else if ($req['parent'] == 'edit') {
-                echo 'edit';
-            } ?>"/>
-            <input type="hidden" name="id" id="id" value="<?php if ($req['parent'] == 'edit') {
-                echo $product_details['id'];
-            } ?>"/>
+            <input type="hidden" name="action" id="action" value="<?php _e($action);?>" />
+            <?php if ($req['parent'] == 'edit') { ?>
+                <input type="hidden" name="id" id="id" value="<?php _e($product_details['id']);?>" />
+                <input type="hidden" name="available_quantities" id="available_quantities" value="<?php _e(implode(",", array_keys($quantity_array)));?>" />
+            <?php } ?>
 
                 <section class="panel">
                     <header class="panel-heading">Product Details</header>
@@ -45,22 +58,6 @@
 
                                 <div class="col-lg-10">
                                     <input type="text" name="product_name" id="product_name" maxlength="50" value="<?php echo @$product_details['strProduct']; ?>" class="form-control required"/>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="price" class="control-label col-lg-2">Original Price:</label>
-
-                                <div class="col-lg-4">
-                                    <input type="text" name="price" id="price" maxlength="50" value="<?php echo @$product_details['decPrice']; ?>" class="form-control required"/>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="current_price" class="control-label col-lg-2">Current Price:</label>
-
-                                <div class="col-lg-4">
-                                    <input type="text" name="current_price" id="current_price" maxlength="50" value="<?php echo @$product_details['decCurrentPrice']; ?>" class="form-control required"/>
                                 </div>
                             </div>
 
@@ -104,13 +101,19 @@
                                     <?php
                                     if($quantities != 404){
                                         foreach($quantities as $quantity) {
+
+                                            $quantity_details = @$quantity_array[$quantity['id']];
+
                                             ?>
                                             <div class="col-lg-4">
-                                                <input type="checkbox" name="quantity[]" id="quantity_<?php _e($quantity['id']);?>" value="<?php _e($quantity['id']);?>"/>
+                                                <input type="checkbox" name="quantity[]" id="quantity_<?php _e($quantity['id']);?>" value="<?php _e($quantity['id']);?>"<?php if(isset($quantity_array) && in_array($quantity['id'], array_keys($quantity_array))) { ?> checked<?php } ?> />
                                                 <?php _e($quantity['strQuantity']); ?>
                                             </div>
-                                            <div class="col-lg-8">
-                                                <input type="text" placeholder="Write Approx quantity" class="form-control" name="quantity_amount[<?php _e($quantity['id']);?>]" id="quantity_amount_<?php _e($quantity['id']);?>" value=""/>
+                                            <div class="col-lg-6">
+                                                <input type="text" placeholder="Write Approx quantity" class="form-control" name="quantity_amount[<?php _e($quantity['id']);?>]" id="quantity_amount_<?php _e($quantity['id']);?>" value="<?php echo @$quantity_details['strRemarks']; ?>"/>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <input type="text" placeholder="Price" name="price[<?php _e($quantity['id']);?>]" id="price_<?php _e($quantity['id']);?>" maxlength="50" value="<?php echo @$quantity_details['decPrice']; ?>" class="form-control required"/>
                                             </div>
                                             <?php
                                         }

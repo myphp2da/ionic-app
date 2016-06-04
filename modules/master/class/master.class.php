@@ -92,7 +92,7 @@ class master extends db_class
 			$db_name_field => $data[$input_name],
 			'strSlug' => $slug,
 			'tinStatus' => '1',
-			'dtiLastModified' => TODAY_DATETIME
+			'dtiLastUpdated' => TODAY_DATETIME
 		);
 		
 		if(isset($data['description'])) {

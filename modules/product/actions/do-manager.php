@@ -47,8 +47,6 @@
 					'txtDescription' => $_POST['content'],
 					'strShortDescription' => $_POST['shortcontent'],
 					'idCategory' => $_POST['category'],
-                    'decPrice' => $_POST['price'],
-                    'decCurrentPrice' => $_POST['current_price'],
                     'strImageName' => $imgurl
                 );
 				$product_id = $product_obj->insertData($insert_data);
@@ -57,8 +55,9 @@
 					foreach($_POST['quantity'] as $quantity) {
 						$quantity_array = array(
 							'quantity' => $quantity,
-							'amount' => $_POST['quantity_amount'][$quantity],
-							'product' => $product_id
+							'remarks' => $_POST['quantity_amount'][$quantity],
+							'product' => $product_id,
+                            'price' => $_POST['price'][$quantity],
 						);
 						$product_obj->insertProductQuantity($quantity_array);
 					}
@@ -73,10 +72,9 @@
 		}
 		else if($_POST['action'] == 'edit')
 		{
-			$id = isset($_POST['id']) ? $_POST['id'] : 0;
+			$product_id = isset($_POST['id']) ? $_POST['id'] : 0;
 
-
-			$product_name=$_POST['product_name'];
+			$product_name = $_POST['product_name'];
 			$where_cond = "tinStatus = '2' and strProduct='$product_name' and id!=".$_POST['id'];
 			$result = $product_obj->getProductsCount($where_cond);
 
@@ -86,16 +84,34 @@
 			}else {
 
 				$modified = array(
-                    'id' => $id,
+                    'id' => $product_id,
 					'strProduct' => $_POST['product_name'],
 					'txtDescription' => $_POST['content'],
 					'strShortDescription' => $_POST['shortcontent'],
 					'idCategory' => $_POST['category'],
-                    'decPrice' => $_POST['price'],
-                    'decCurrentPrice' => $_POST['current_price'],
                     'strImageName' => $imgurl
                 );
 				$rsData = $product_obj->updateData($modified);
+
+                $available_quantities = explode(",", $_POST['available_quantities']);
+
+                if(isset($_POST['quantity'])) {
+                    foreach($_POST['quantity'] as $quantity) {
+
+                        $quantity_array = array(
+                            'quantity' => $quantity,
+                            'remarks' => $_POST['quantity_amount'][$quantity],
+                            'product' => $product_id,
+                            'price' => $_POST['price'][$quantity],
+                        );
+
+                        if(in_array($quantity, $available_quantities)) {
+                            $product_obj->updateProductQuantity($quantity_array);
+                        } else {
+                            $product_obj->insertProductQuantity($quantity_array);
+                        }
+                    }
+                }
 
 				if ($rsData) {
 					$_SESSION[PF . 'MSG'] = "<strong>" . $_POST['product_name'] . "</strong> has been successfully Updated";
