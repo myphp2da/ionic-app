@@ -21,6 +21,8 @@ export class CartPage {
       this.local = new Storage(LocalStorage);
 
       var user_id = this.local.get('UserId');
+      
+      var itemAvailable = false;
 
       service.loadCart(user_id).subscribe(data => {
           console.log(data.status);
@@ -33,6 +35,7 @@ export class CartPage {
               this.nav.present(alert);
           } else {
               this.contents = data.data;
+              itemAvailable = true;
           }
       });
   }

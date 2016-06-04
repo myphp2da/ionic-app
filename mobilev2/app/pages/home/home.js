@@ -1,4 +1,4 @@
-import {Page, Alert, NavController, Loading, Storage, LocalStorage} from 'ionic-angular';
+import {IonicApp, Page, Alert, NavController, Loading, Storage, LocalStorage} from 'ionic-angular';
 import {Services} from '../../providers/services/services';
 import {CartPage} from '../cart/cart';
 import {DetailPage} from '../detail/detail';
@@ -14,16 +14,23 @@ import {DetailPage} from '../detail/detail';
 })
 export class HomePage {
   static get parameters() {
-    return [[Services], [NavController]];
+    return [[IonicApp], [Services], [NavController]];
   }
 
-  constructor(service, nav) {
+  constructor(app, service, nav) {
+      
+      this.loading = app.getComponent('loading');
 
       this.nav = nav;
       this.service = service;
+      
+      this.loading.show();
 
 	  service.loadHome().subscribe(data => {
 		  console.log(data.msg);
+          
+          this.loading.hide();
+          
 		  if(data.status == 'false') {
 			  var alert = Alert.create({
 				  title: 'ERROR!',
@@ -45,6 +52,8 @@ export class HomePage {
             console.log(this.cart);
         }
       });
+      
+      this.quantity = 0;
   }
 
     cart() {
@@ -67,7 +76,7 @@ export class HomePage {
                 user_id = value;
             }
 
-            this.service.addToCart(item_id, user_id, this.cart).subscribe(data => {
+            this.service.addToCart(item_id, user_id, this.cart, this.quantity).subscribe(data => {
                 console.log(data.status);
                 if(data.status == 'false') {
                     var alert = Alert.create({

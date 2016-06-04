@@ -8512,3 +8512,36 @@ ion-slide img {
 
 .button-fab {
   z-index: 100; }
+
+loading-modal .container {
+  z-index: -1;
+  -webkit-transition: z-index 0.2s step-end;
+  transition: z-index 0.2s step-end;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center; }
+  loading-modal .container.busy {
+    z-index: 9999;
+    -webkit-transition: z-index 0.2s step-start;
+    transition: z-index 0.2s step-start; }
+    loading-modal .container.busy .backdrop {
+      opacity: 0.3; }
+  loading-modal .container .backdrop {
+    opacity: 0.01;
+    -webkit-transition: opacity 0.2s;
+    transition: opacity 0.2s; }
+  loading-modal .container ion-spinner {
+    width: 60px;
+    height: 60px; }

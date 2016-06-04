@@ -22,9 +22,9 @@ export class Services {
       this.key = 'ca966ceb77c7ef7';
   }
 
-	loginToApp(username, password) {
+	loginToApp(postedData) {
         var url = this.baseUrl+'account/0.1/app-login';
-		var post_data = JSON.stringify({key: this.key, username: username, password: password});
+		var post_data = JSON.stringify({key: this.key, data: postedData});
 
 		return this.http.post(url, post_data).map(res => res.json());
 	}
@@ -43,9 +43,9 @@ export class Services {
         return this.http.post(url, post_data).map(res => res.json());
     }
 
-    addToCart(item_id, user_id, cart_id) {
+    addToCart(item_id, user_id, cart_id, quantity_id) {
         var url = this.baseUrl+'product/0.1/add-to-cart';
-        var post_data = JSON.stringify({key: this.key, user: user_id, item: item_id, cart: cart_id});
+        var post_data = JSON.stringify({key: this.key, user: user_id, item: item_id, cart: cart_id, quantity: quantity_id});
 
         return this.http.post(url, post_data).map(res => res.json());
     }

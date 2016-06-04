@@ -3,12 +3,14 @@ import {StatusBar} from 'ionic-native';
 import {MainPage} from './pages/main/main';
 import {HomePage} from './pages/home/home';
 import {IntroPage} from './pages/intro/intro';
-import {TabsPage} from './pages/tabs/tabs';
+import {AccountPage} from './pages/account/account';
 import {Services} from './providers/services/services';
+import {LoadingModal} from './components/loading-modal/loading-modal';
 
 @App({
   templateUrl: 'build/app.html',
-    providers: [Services],
+  providers: [Services],
+  directives: [LoadingModal],
   config: {} // http://ionicframework.com/docs/v2/api/config/Config/
 })
 export class MyApp {
@@ -29,8 +31,8 @@ export class MyApp {
       this.localStorage();
 
       this.pages = [
-          { title: 'Home', component: HomePage },
-          { title: 'My Account', component: TabsPage },
+          { title: 'Home', component: HomePage },   
+          { title: 'My Account', component: AccountPage },
           { title: 'Intro', component: IntroPage }
       ];
   }

@@ -8,26 +8,26 @@
     <button menuToggle>
         <ion-icon name="menu"></ion-icon>
     </button>
-  <ion-title>My Veggies and Fruits</ion-title>
+    <ion-title>My Veggies and Fruits</ion-title>
+    <ion-buttons end>
+    <button (click)="openModal()">
+      <ion-icon name="more"></ion-icon>
+    </button>
+  </ion-buttons>
 </ion-navbar>
 
 <ion-content class="home">
-    <ion-item *ngFor="#content of contents" class="content" text-wrap (click)="itemTapped($event, content)">
+    <ion-item *ngFor="#content of contents" class="content" text-wrap>
         
-        <ion-thumbnail item-left>
+        <ion-thumbnail item-left (click)="itemTapped($event, content)">
             <img src="{{content.photo}}">
         </ion-thumbnail>
         
-        <h2>{{content.title}}</h2>
+        <h2 (click)="itemTapped($event, content)">{{content.title}}</h2>
         
         <ion-item class="subitem">
-            <ion-select primary [(ngModel)]="gaming">
-                <ion-option value="nes" checked="true">NES</ion-option>
-                <ion-option value="n64">Nintendo64</ion-option>
-                <ion-option value="ps">PlayStation</ion-option>
-                <ion-option value="genesis">Sega Genesis</ion-option>
-                <ion-option value="saturn">Sega Saturn</ion-option>
-                <ion-option value="snes">SNES</ion-option>
+            <ion-select primary [(ngModel)]="quantity">
+                <ion-option *ngFor="#quantity of content.quantities" value="{{quantity.id}}">{{quantity.label}} ({{quantity.remarks}}) - {{quantity.price}}</ion-option>
             </ion-select>
         </ion-item>
         
