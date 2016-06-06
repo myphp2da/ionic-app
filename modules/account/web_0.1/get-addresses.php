@@ -29,7 +29,7 @@
 
         $addresses = $customer_obj->getCustomerAddresses($post_data->customer);
 
-        if($check_result_id == 404){
+        if($addresses == 404){
             $data['status'] = 'false'; //false
             $data['msg'] = 'No address added by you yet.';
         } else {
