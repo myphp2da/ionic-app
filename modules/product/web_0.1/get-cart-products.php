@@ -32,10 +32,14 @@
         } else {
 
             $output = array();
+            $total_cart_amount = 0;
             foreach($products as $product) {
+
+                $total_cart_amount += $product['decTotalAmount'];
 
                 $product_array = array(
                     'id' => $product['id'],
+                    'product' => $product['idProduct'],
                     'title' => $product['strProduct'],
                     'price' => $product['decAmount'],
                     'quantity' => $product['intQuantity'],
@@ -50,6 +54,7 @@
 
             $data['status'] = 'True'; //True
             $data['msg'] = 'Products have been successfully loaded';
+            $data['total_amount'] = $total_cart_amount;
             $data['data'] = $output;
         }
     } else {

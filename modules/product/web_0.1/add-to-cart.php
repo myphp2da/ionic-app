@@ -18,7 +18,7 @@
 
         // Check if user ID available or not
         if(!isset($post_data->user) || !is_numeric($post_data->user)) {
-            $data['status'] = 'False'; //False
+            $data['status'] = 'false'; //False
             $data['msg'] = 'No user provided';
             die(json_encode($data));
         }
@@ -32,14 +32,14 @@
 
         // Check if product ID is provided or not
         if(!isset($post_data->item) || !is_numeric($post_data->item)) {
-            $data['status'] = 'False'; //False
+            $data['status'] = 'false'; //False
             $data['msg'] = 'No product provided';
             die(json_encode($data));
         }
 
         // Check if product quantity is provided or not
         if(!isset($post_data->quantity) || !is_numeric($post_data->quantity)) {
-            $data['status'] = 'False'; //False
+            $data['status'] = 'false'; //False
             $data['msg'] = 'No product quantity provided';
             die(json_encode($data));
         }
@@ -62,6 +62,7 @@
             $cart_product_array = array(
                 'cart'         => $cart_id,
                 'quantity'     => $post_data->quantity,
+                'total_quantity' => 1,
                 'product'      => $post_data->item,
                 'amount'       => $product_quantity['decPrice'],
                 'total_amount' => $product_quantity['decPrice']
@@ -75,8 +76,8 @@
             $cart_product_array = array(
                 'cart'         => $cart_id,
                 'quantity'     => $post_data->quantity,
+                'total_quantity' => $available_product['intQuantity'] + 1,
                 'product'      => $post_data->item,
-                'amount'       => $available_product['decPrice'] + $product_quantity['decPrice'],
                 'total_amount' => $available_product['decPrice'] + $product_quantity['decPrice']
             );
 
@@ -84,16 +85,16 @@
         }
 
         if(!$cart_product){
-            $data['status'] = 'False'; //False
+            $data['status'] = 'false'; //False
             $data['msg'] = 'Sorry! Something went wrong. Please try again...';
         } else {
-            $data['status'] = 'True'; //True
+            $data['status'] = 'true'; //True
             $data['msg'] = 'Selected product has been successfully added to the cart';
             $data['cart'] = $cart_id;
             $data['data'] = $output;
         }
     } else {
-        $data['status'] = 'False'; //False
+        $data['status'] = 'false'; //False
         $data['msg'] = 'ERROR! Unauthorized access';
 
     }

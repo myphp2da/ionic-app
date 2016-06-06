@@ -199,7 +199,6 @@ class account extends db_class
 
 	function accountArray($data)
 	{
-		global $prefix;
 
 		$modified = array(
 			'strFullName' => $data['name'],
@@ -343,7 +342,7 @@ class account extends db_class
 	 * @return bool|int : id of the row inserted otherwise false on failure
 	 */
 	function loginLog(){
-		global $prefix;
+
 		$data = array('vId' => $_SESSION[PF . 'USERID'],
 			'loginDate' => TODAY_DATETIME,
 			'session' => $_SESSION[PF . 'MAIN'],

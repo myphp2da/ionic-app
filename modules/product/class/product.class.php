@@ -31,6 +31,20 @@ class product extends db_class {
      */
     protected $_cart_products_table = 'rel_cart_products';
 
+    /** Get cart product for provided cart ID and Product ID
+     * @param array $cart_id: ID of the cart
+     * @param array $product_id: ID of the product
+     * @return array | int : Returns cart product details for provided cart ID and product ID on success,
+     *                     otherwise returns 404
+     */
+    function getCartProduct($cart_id, $product_id) {
+        $sql = "select cp.*
+                from ".$this->_cart_products_table." as cp
+                where cp.idCart = ".$cart_id."
+                    and cp.idProduct = ".$product_id;
+        return $this->getResults($sql);
+    }
+
     /** Get product quantity details for data provided
      *
      * @param int $product_id : ID of the product
@@ -64,6 +78,19 @@ class product extends db_class {
         return $this->getResults($sql);
     }
 
+    /** Update cart product for provided data
+     *
+     * @param array $cart_data: cart data to be updated
+     * @return int | bool : Returns affected rows on success, otherwise returns 404
+     */
+    public function updateCart($cart_data) {
+        $cart_array = array(
+            'intQuantity' => $cart_data['quantity'],
+            'decTotalAmount' => $cart_data['total_amount']
+        );
+        return $this->updateByArray($this->_cart_products_table, $cart_array, "idProduct = ".$cart_data['product']." and idCart = ".$cart_data['cart']);
+    }
+
     /** Create a cart for customer ID provided
      *
      * @param int $customer_id : Customer ID for the cart
@@ -85,6 +112,7 @@ class product extends db_class {
         $insert_array = array(
             'idProduct' => $posted_data['product'],
             'idQuantity' => $posted_data['quantity'],
+            'intQuantity' => $posted_data['total_quantity'],
             'idCart' => $posted_data['cart'],
             'decAmount' => $posted_data['amount'],
             'decTotalAmount' => $posted_data['total_amount']
@@ -100,7 +128,7 @@ class product extends db_class {
     public function updateCartProduct($posted_data) {
         $update_array = array(
             'idQuantity' => $posted_data['quantity'],
-            'decAmount' => $posted_data['amount'],
+            'intQuantity' => $posted_data['total_quantity'],
             'decTotalAmount' => $posted_data['total_amount']
         );
         return $this->updateByArray($this->_cart_products_table, $update_array, "idProduct = ".$posted_data['product']." and idCart = ".$posted_data['cart']);
