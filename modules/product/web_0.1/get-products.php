@@ -46,7 +46,7 @@
                     }
                 }
             }
-
+            
             $output = array();
             foreach($products as $product) {
 

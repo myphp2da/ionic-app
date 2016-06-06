@@ -16,7 +16,7 @@
 
     if(isset($post_data->key) && $post_data->key == KEY) {
 
-        if(!isset($post_data->data)) {
+        if(empty($post_data->data->username) || empty($post_data->data->password)) {
             $data['status'] = 'false'; //false
             $data['msg'] = 'Please provide valid credentials';
             $data['code'] = 505;
@@ -24,30 +24,22 @@
             die(json_encode($data));
         }
 
+        $user_name = $post_data->data->username;
+        $password = String::getHash($post_data->data->password);
+
         _subModule('account', 'customer');
         $customer_obj = new customer();
 
-        $activation = rand(10000000, 99999999);
+        $check_result_id = $customer_obj->checkCustomerLogin($user_name, $password);
 
-        $customer_array = array(
-            'fname' => $post_data->data->fname,
-            'lname' => $post_data->data->lname,
-            'email' => $post_data->data->email,
-            'phone' => $post_data->data->phone,
-            'password' => String::getHash($post_data->data->password),
-            'activation' => $activation
-        );
-
-        $customer_id = $customer_obj->insertCustomer($customer_array);
-
-        if($customer_id === false){
+        if($check_result_id == 404){
             $data['status'] = 'false'; //false
-            $data['msg'] = 'ERROR! something went wrong. Please try again...';
+            $data['msg'] = 'Incorrect Username or Password.. Please try again';
         } else {
             $data['status'] = 'true'; //true
-            $data['msg'] = 'Signup Successful';
+            $data['msg'] = 'Login Successful';
             $data['code'] = 200;
-            $data['user_id'] = $customer_id;
+            $data['data']['user_details'] = $check_result_id;
         }
     } else {
         $data['status'] = 'false'; //false

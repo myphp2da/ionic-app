@@ -16,10 +16,10 @@
 
     if(isset($post_data->key) && $post_data->key == KEY) {
 
-        if(!isset($post_data->data)) {
+        if(!isset($post_data->customer) || !is_numeric($post_data->customer)) {
             $data['status'] = 'false'; //false
-            $data['msg'] = 'Please provide valid credentials';
-            $data['code'] = 505;
+            $data['msg'] = 'ERROR! no authenticated customer provided';
+            $data['code'] = 1005;
 
             die(json_encode($data));
         }
@@ -27,33 +27,33 @@
         _subModule('account', 'customer');
         $customer_obj = new customer();
 
-        $activation = rand(10000000, 99999999);
-
-        $customer_array = array(
+        $address_array = array(
+            'label' => $post_data->data->label,
             'fname' => $post_data->data->fname,
             'lname' => $post_data->data->lname,
-            'email' => $post_data->data->email,
-            'phone' => $post_data->data->phone,
-            'password' => String::getHash($post_data->data->password),
-            'activation' => $activation
+            'address1' => $post_data->data->address_line_1,
+            'address2' => $post_data->data->address_line_2,
+            'area' => $post_data->data->area,
+            'city' => $post_data->data->city,
+            'state' => $post_data->data->state,
+            'pincode' => $post_data->data->pincode,
+            'customer' => $post_data->data->customer
         );
 
-        $customer_id = $customer_obj->insertCustomer($customer_array);
+        $address_id = $customer_obj->insertCustomerAddress($address_array);
 
-        if($customer_id === false){
+        if($address_id === false){
             $data['status'] = 'false'; //false
             $data['msg'] = 'ERROR! something went wrong. Please try again...';
         } else {
             $data['status'] = 'true'; //true
-            $data['msg'] = 'Signup Successful';
+            $data['msg'] = 'Customer address has been successfully added';
             $data['code'] = 200;
-            $data['user_id'] = $customer_id;
         }
     } else {
         $data['status'] = 'false'; //false
         $data['msg'] = 'ERROR! Unauthorized access';
         $data['code'] = 1001;
-
     }
 
     //Always Return JSON string to handle it in devices.

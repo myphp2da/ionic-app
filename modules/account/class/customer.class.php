@@ -3,13 +3,30 @@
 class customer extends account
 {
 	/** @var string
-	 * Account master table name
+	 * Customer master table name
 	 */
 	protected $_customer_table = 'mst_customers';
 
-	/** Get all customer data and access details for Account ID provided
-	 * @param int $id : Account ID
-	 * @return array | int : returns Array of customer and access_types table for provided Account ID on success, otherwise returns 404
+	/** @var string
+	 * Customer Addresses master table name
+	 */
+	protected $_customer_addresses_table = 'rel_customer_addresses';
+
+	/** Get all customer addresses for Customer ID provided
+	 * @param int $customer_id : Customer ID
+	 * @return array | int : returns Array of customer addresses for provided Customer ID on success,
+	 *                      otherwise returns 404
+	 */
+	public function getCustomerAddresses($customer_id) {
+		$sql = "select a.*
+				from " . $this->_customer_addresses_table . " as a
+				where a.idCustomer = " . $customer_id;
+		return $this->getResults($sql);
+	}
+
+	/** Get all customer data and access details for Customer ID provided
+	 * @param int $id : Customer ID
+	 * @return array | int : returns Array of customer and access_types table for provided Customer ID on success, otherwise returns 404
 	 */
 	function getCustomerDetail($id)
 	{
@@ -31,6 +48,28 @@ class customer extends account
 		$sql = "select count(main.id) as total_rows from " . $this->_table . " as main where " . $where;
 		$data = $this->getResult($sql);
 		return $data['total_rows'];
+	}
+
+	/** Insert customer address for provided data
+	 * @param array $post_data : Posted data to be inserted
+	 * @return int | bool : Returns last inserted ID on success,
+	 *                      otherwise returns false
+	 */
+	public function insertCustomerAddress($post_data) {
+		$address_array = array(
+			'strFirstName' => $post_data['fname'],
+			'strLastName' => $post_data['lname'],
+			'strLabel' => $post_data['label'],
+			'idArea' => $post_data['area'],
+			'strAddressLine1' => $post_data['address1'],
+			'strAddressLine2' => $post_data['address2'],
+			'strCity' => $post_data['city'],
+			'strState' => $post_data['state'],
+			'strPinCode' => $post_data['pincode'],
+			'idCustomer' => $post_data['customer']
+		);
+
+		return $this->insertByArray($this->_customer_addresses_table, $address_array);
 	}
 
 	public function insertCustomer($data)
