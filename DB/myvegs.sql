@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.3.11
+-- version 4.2.12deb2+deb8u1build0.15.04.1
 -- http://www.phpmyadmin.net
 --
--- Host: 127.0.0.1
--- Generation Time: May 25, 2016 at 09:15 PM
--- Server version: 5.6.24
--- PHP Version: 5.6.8
+-- Host: localhost
+-- Generation Time: Jun 03, 2016 at 07:13 PM
+-- Server version: 5.6.28-0ubuntu0.15.04.1
+-- PHP Version: 5.6.4-4ubuntu6.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -28,12 +28,12 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS `mst_access_types`;
 CREATE TABLE IF NOT EXISTS `mst_access_types` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `strAccessType` varchar(50) NOT NULL,
   `txtDescription` text,
   `txtModules` text NOT NULL,
   `txtActions` text NOT NULL,
-  `tinStatus` tinyint(2) NOT NULL DEFAULT '1' COMMENT '0-Inactive,1-Active, 2-Deleted',
+  `tinStatus` tinyint(2) DEFAULT '1' COMMENT '0-Inactive,1-Active, 2-Deleted',
   `dtiCreated` datetime NOT NULL,
   `idCreatedBy` int(10) NOT NULL,
   `dtiModified` datetime NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `mst_access_types` (
 --
 
 INSERT INTO `mst_access_types` (`id`, `strAccessType`, `txtDescription`, `txtModules`, `txtActions`, `tinStatus`, `dtiCreated`, `idCreatedBy`, `dtiModified`, `idModifiedBy`, `enmDeleted`, `dtiDeleted`, `idDeletedBy`, `intDesgId`, `strSlug`) VALUES
-(1, 'Super Admin', 'Super Admin', 'a:9:{i:0;s:4:"page";i:1;s:11:"access-user";i:2;s:11:"access-type";i:3;s:10:"navigation";i:4;s:6:"master";i:5;s:8:"category";i:6;s:4:"area";i:7;s:8:"quantity";i:8;s:7:"product";}', 'a:9:{s:4:"page";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:11:"access-user";a:3:{s:3:"add";s:1:"1";s:6:"access";s:1:"1";s:4:"list";s:1:"1";}s:11:"access-type";a:4:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";s:6:"assign";s:1:"1";}s:10:"navigation";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:6:"master";a:5:{s:11:"access-type";s:1:"1";s:10:"navigation";s:1:"1";s:8:"category";s:1:"1";s:4:"area";s:1:"1";s:8:"quantity";s:1:"1";}s:8:"category";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:4:"area";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:8:"quantity";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:7:"product";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}}', 1, '2013-09-05 03:45:17', 1, '2013-09-05 03:45:17', 1, '0', NULL, NULL, 0, 'super-admin'),
+(1, 'Super Admin', 'Super Admin', 'a:9:{i:0;s:4:"page";i:1;s:11:"access-user";i:2;s:11:"access-type";i:3;s:10:"navigation";i:4;s:6:"master";i:5;s:8:"category";i:6;s:4:"area";i:7;s:8:"quantity";i:8;s:7:"product";}', 'a:9:{s:4:"page";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:11:"access-user";a:3:{s:3:"add";s:1:"1";s:6:"access";s:1:"1";s:4:"list";s:1:"1";}s:11:"access-type";a:4:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";s:6:"assign";s:1:"1";}s:10:"navigation";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:6:"master";a:3:{s:11:"access-type";s:1:"1";s:10:"navigation";s:1:"1";s:8:"quantity";s:1:"1";}s:8:"category";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:4:"area";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:8:"quantity";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:7:"product";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}}', 1, '2013-09-05 03:45:17', 1, '2013-09-05 03:45:17', 1, '0', NULL, NULL, 0, 'super-admin'),
 (2, 'Administrator', 'Administrator', 'a:4:{i:0;s:4:"page";i:1;s:10:"navigation";i:2;s:6:"master";i:3;s:8:"category";}', 'a:4:{s:4:"page";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:10:"navigation";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}s:6:"master";a:2:{s:11:"access-type";s:1:"1";s:10:"navigation";s:1:"1";}s:8:"category";a:3:{s:3:"add";s:1:"1";s:4:"edit";s:1:"1";s:4:"list";s:1:"1";}}', 1, '2015-09-22 18:57:23', 1, '2015-09-22 18:57:23', 1, '0', NULL, NULL, 1, 'administrator'),
 (3, 'Editor', 'Editor', '', '', 1, '2015-09-22 18:58:59', 1, '2015-09-22 18:58:59', 1, '0', NULL, NULL, 0, 'editor');
 
@@ -62,7 +62,7 @@ INSERT INTO `mst_access_types` (`id`, `strAccessType`, `txtDescription`, `txtMod
 
 DROP TABLE IF EXISTS `mst_accounts`;
 CREATE TABLE IF NOT EXISTS `mst_accounts` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `strFirstName` varchar(100) DEFAULT NULL,
   `strMiddleName` varchar(255) DEFAULT NULL,
   `strLastName` varchar(100) DEFAULT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `mst_accounts` (
   `idCreatedBy` int(11) NOT NULL,
   `dtiModified` datetime DEFAULT NULL,
   `idModifiedBy` int(11) DEFAULT NULL,
-  `tinStatus` tinyint(2) NOT NULL DEFAULT '0' COMMENT '0-Disable,1-Enable',
+  `tinStatus` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0-Disable,1-Enable, 2-Deleted',
   `enmDeleted` enum('0','1') DEFAULT '0' COMMENT '0-No,1-Yes',
   `idDeletedBy` int(11) DEFAULT NULL,
   `dtiDeleted` datetime DEFAULT NULL,
@@ -107,13 +107,12 @@ INSERT INTO `mst_accounts` (`id`, `strFirstName`, `strMiddleName`, `strLastName`
 
 DROP TABLE IF EXISTS `mst_areas`;
 CREATE TABLE IF NOT EXISTS `mst_areas` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `strArea` varchar(50) NOT NULL,
   `idCity` int(11) NOT NULL,
   `idState` int(11) NOT NULL,
   `intPinCode` int(6) NOT NULL,
-  `tinStatus` tinyint(2) DEFAULT '1' COMMENT '0-Inactive,1-Active, 2-Deleted',
-  `dtiLastUpdated` datetime NOT NULL
+  `tinStatus` tinyint(2) DEFAULT '1' COMMENT '0-Inactive,1-Active, 2-Deleted'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -124,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `mst_areas` (
 
 DROP TABLE IF EXISTS `mst_blocks`;
 CREATE TABLE IF NOT EXISTS `mst_blocks` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `strSlug` varchar(255) NOT NULL DEFAULT '',
   `strContentBlock` varchar(255) NOT NULL,
   `txtDescription` text NOT NULL,
@@ -156,7 +155,7 @@ INSERT INTO `mst_blocks` (`id`, `strSlug`, `strContentBlock`, `txtDescription`, 
 
 DROP TABLE IF EXISTS `mst_career`;
 CREATE TABLE IF NOT EXISTS `mst_career` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `strSlug` varchar(255) NOT NULL DEFAULT '',
   `strTitle` varchar(255) NOT NULL DEFAULT '',
   `strDescription` text,
@@ -188,10 +187,10 @@ INSERT INTO `mst_career` (`id`, `strSlug`, `strTitle`, `strDescription`, `strCod
 
 DROP TABLE IF EXISTS `mst_categories`;
 CREATE TABLE IF NOT EXISTS `mst_categories` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `strCategory` varchar(255) NOT NULL DEFAULT '',
   `txtDescription` text NOT NULL,
-  `strImageName` varchar(255) DEFAULT NULL,
+  `strImageName` varchar(50) DEFAULT NULL,
   `idParent` int(11) NOT NULL DEFAULT '0',
   `tinStatus` tinyint(2) DEFAULT '1' COMMENT '0-Inactive,1-Active, 2-Deleted',
   `strSlug` varchar(255) DEFAULT NULL
@@ -202,12 +201,12 @@ CREATE TABLE IF NOT EXISTS `mst_categories` (
 --
 
 INSERT INTO `mst_categories` (`id`, `strCategory`, `txtDescription`, `strImageName`, `idParent`, `tinStatus`, `strSlug`) VALUES
-(1, 'Organic Vegetables', '<p>This is the Content type of News</p>\r\n', '6419850787324916_1463897490_101303.jpg', 4, 1, 'organic-vegetables'),
+(1, 'Organically Grown Vegetables', '<p>This is the Content type of News</p>\r\n', '6210578870353715_1463745069_103742.png', 4, 1, 'organically-grown-vegetables'),
 (2, 'Events', '<p>This is Content type of Events</p>\r\n', NULL, 0, 1, NULL),
 (3, 'Studio', '<p>This is Content type of Studio</p>\r\n', NULL, 0, 1, NULL),
-(4, 'Organically Grown Vegetables', '<p>This is content type of Studio</p>\r\n', '4843384088087882_1463897522_103742.png', 0, 1, 'organically-grown-vegetables'),
+(4, 'Organic Vegetables', '<p>This is content type of Studio</p>\r\n', NULL, 0, 1, 'organic-vegetables'),
 (5, 'Research', '<p>This is Content type of Research.</p>\r\n', NULL, 0, 1, NULL),
-(6, 'Case studies', '<p>This is Content type of case studies.</p>\r\n', NULL, 0, 1, NULL);
+(6, 'Case studies', '<p>This is Content type of case studies.</p>\r\n', '211575102044301_1463725003_332044.jpg', 3, 1, 'case-studies');
 
 -- --------------------------------------------------------
 
@@ -217,7 +216,7 @@ INSERT INTO `mst_categories` (`id`, `strCategory`, `txtDescription`, `strImageNa
 
 DROP TABLE IF EXISTS `mst_contacts`;
 CREATE TABLE IF NOT EXISTS `mst_contacts` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `strName` varchar(100) DEFAULT NULL,
   `strEmail` varchar(255) DEFAULT NULL,
   `strSubject` varchar(200) DEFAULT NULL,
@@ -249,7 +248,7 @@ INSERT INTO `mst_contacts` (`id`, `strName`, `strEmail`, `strSubject`, `txtMessa
 
 DROP TABLE IF EXISTS `mst_content`;
 CREATE TABLE IF NOT EXISTS `mst_content` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `strSlug` varchar(255) NOT NULL DEFAULT '',
   `strTitle` varchar(255) NOT NULL DEFAULT '',
   `strDescription` text,
@@ -303,7 +302,7 @@ INSERT INTO `mst_content` (`id`, `strSlug`, `strTitle`, `strDescription`, `strCo
 
 DROP TABLE IF EXISTS `mst_customers`;
 CREATE TABLE IF NOT EXISTS `mst_customers` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `strFirstName` varchar(100) DEFAULT NULL,
   `strLastName` varchar(100) DEFAULT NULL,
   `strEmail` varchar(100) DEFAULT NULL,
@@ -325,144 +324,45 @@ CREATE TABLE IF NOT EXISTS `mst_customers` (
 
 DROP TABLE IF EXISTS `mst_errors`;
 CREATE TABLE IF NOT EXISTS `mst_errors` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `strRequestUri` varchar(255) NOT NULL,
   `intErrorNo` int(11) NOT NULL DEFAULT '0',
   `txtDescription` text NOT NULL,
   `txtSqlQuery` text NOT NULL,
   `dtiCreated` datetime NOT NULL,
   `enmStatus` enum('New','Pending','Closed') NOT NULL DEFAULT 'New'
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `mst_errors`
 --
 
 INSERT INTO `mst_errors` (`id`, `strRequestUri`, `intErrorNo`, `txtDescription`, `txtSqlQuery`, `dtiCreated`, `enmStatus`) VALUES
-(1, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1<br /> select count(id) as total_rows from mst_category where strCategory = ''Product'' and enmDeleted=1 and id!=', 'select count(id) as total_rows from mst_category where strCategory = ''Product'' and enmDeleted=1 and id!=', '2016-04-15 12:47:50', 'New'),
-(2, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1<br /> select count(id) as total_rows from mst_category where strCategory = ''Product'' and enmDeleted=1 and id!=', 'select count(id) as total_rows from mst_category where strCategory = ''Product'' and enmDeleted=1 and id!=', '2016-04-15 12:48:15', 'New'),
-(3, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1<br /> select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', 'select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', '2016-04-15 12:51:56', 'New'),
-(4, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1<br /> select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', 'select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', '2016-04-15 12:52:07', 'New'),
-(5, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1<br /> select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', 'select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', '2016-04-15 12:52:35', 'New'),
-(6, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1<br /> select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', 'select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', '2016-04-15 12:52:43', 'New'),
-(7, '/nascent/content/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''enmStatus=''1'' and enmDeleted=''0'''' at line 1<br /> select * from mst_tag where strTag = '''' enmStatus=''1'' and enmDeleted=''0''', 'select * from mst_tag where strTag = '''' enmStatus=''1'' and enmDeleted=''0''', '2016-04-15 12:55:01', 'New'),
-(8, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1<br /> select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', 'select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', '2016-04-15 12:55:12', 'New'),
-(9, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1<br /> select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', 'select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', '2016-04-15 12:55:27', 'New'),
-(10, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1<br /> select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', 'select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', '2016-04-15 12:55:32', 'New'),
-(11, '/nascent/content/manager/do', 0, 'SQLSTATE[HY000]: General error: 1364 Field ''txtDescription'' doesn''t have a default value<br /> INSERT INTO mst_tag (strTag, strSlug, enmStatus) VALUES (:strTag, :strSlug, :enmStatus)', 'INSERT INTO mst_tag (strTag, strSlug, enmStatus) VALUES (:strTag, :strSlug, :enmStatus)', '2016-04-15 12:55:33', 'New'),
-(12, '/nascent/content/manager/do', 0, 'SQLSTATE[23000]: Integrity constraint violation: 1048 Column ''strTag'' cannot be null<br /> INSERT INTO mst_tag (strTag, strSlug, enmStatus) VALUES (:strTag, :strSlug, :enmStatus)', 'INSERT INTO mst_tag (strTag, strSlug, enmStatus) VALUES (:strTag, :strSlug, :enmStatus)', '2016-04-15 12:55:58', 'New'),
-(13, '/nascent/content/manager/do', 0, 'SQLSTATE[23000]: Integrity constraint violation: 1048 Column ''strTag'' cannot be null<br /> INSERT INTO mst_tag (strTag, strSlug, enmStatus) VALUES (:strTag, :strSlug, :enmStatus)', 'INSERT INTO mst_tag (strTag, strSlug, enmStatus) VALUES (:strTag, :strSlug, :enmStatus)', '2016-04-15 12:56:18', 'New'),
-(14, '/nascent/content/manager/do', 0, 'SQLSTATE[23000]: Integrity constraint violation: 1048 Column ''strTag'' cannot be null<br /> INSERT INTO mst_tag (strTag, strSlug, enmStatus) VALUES (:strTag, :strSlug, :enmStatus)', 'INSERT INTO mst_tag (strTag, strSlug, enmStatus) VALUES (:strTag, :strSlug, :enmStatus)', '2016-04-15 12:56:36', 'New'),
-(15, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1<br /> select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', 'select count(id) as total_rows from mst_category where strCategory = ''News'' and enmDeleted=1 and id!=', '2016-04-15 12:56:53', 'New'),
-(16, '/nascent/master/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''where 1 and strSlug = '''' and id != 1'' at line 1<br /> select count(id) as total_rows from  where 1 and strSlug = '''' and id != 1', 'select count(id) as total_rows from  where 1 and strSlug = '''' and id != 1', '2016-04-15 12:59:27', 'New'),
-(17, '/nascent/content/edit?id=18', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''rel_tag'' in ''where clause''<br /> select mst_tag.strTag as tag_name from rel_tag as rel_tag\n				join mst_tag as mst_tag\n					on rel_tag.intTagID = mst_tag.id\n				where mst_tag.enmStatus = ''1''\n					and mst_tag.enmDeleted = ''0''\n					and rel_tag = 18', 'select mst_tag.strTag as tag_name from rel_tag as rel_tag\n				join mst_tag as mst_tag\n					on rel_tag.intTagID = mst_tag.id\n				where mst_tag.enmStatus = ''1''\n					and mst_tag.enmDeleted = ''0''\n					and rel_tag = 18', '2016-04-16 17:12:29', 'New'),
-(18, '/nascent/content/manager/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''intContentID'' in ''where clause''<br /> delete from mst_tag where intContentID = 18', 'delete from mst_tag where intContentID = 18', '2016-04-16 17:13:41', 'New'),
-(19, '/nasc/content/add-content', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''1'' at line 1<br /> select * from mst_content where enmDeleted = ''0'' and enmStatus = ''1''1', 'select * from mst_content where enmDeleted = ''0'' and enmStatus = ''1''1', '2016-04-16 17:53:57', 'New'),
-(20, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''as mst_cnt\n		join  as rtag on mst_cnt.id=rtag.intContentID\n		join  as mtag on mt'' at line 1<br /> select tg.strTag from   as mst_cnt\n		join  as rtag on mst_cnt.id=rtag.intContentID\n		join  as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select tg.strTag from   as mst_cnt\n		join  as rtag on mst_cnt.id=rtag.intContentID\n		join  as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:34:29', 'New'),
-(21, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''as mst_cnt\n		join  as rtag on mst_cnt.id=rtag.intContentID\n		join  as mtag on mt'' at line 1<br /> select tg.strTag from   as mst_cnt\n		join  as rtag on mst_cnt.id=rtag.intContentID\n		join  as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select tg.strTag from   as mst_cnt\n		join  as rtag on mst_cnt.id=rtag.intContentID\n		join  as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:34:29', 'New'),
-(22, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''as mst_cnt\n		join  as rtag on mst_cnt.id=rtag.intContentID\n		join  as mtag on mt'' at line 1<br /> select tg.strTag from   as mst_cnt\n		join  as rtag on mst_cnt.id=rtag.intContentID\n		join  as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select tg.strTag from   as mst_cnt\n		join  as rtag on mst_cnt.id=rtag.intContentID\n		join  as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:34:29', 'New'),
-(23, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag'' at line 1<br /> select tg.strTag from   as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select tg.strTag from   as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:35:31', 'New'),
-(24, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag'' at line 1<br /> select tg.strTag from   as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select tg.strTag from   as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:35:31', 'New'),
-(25, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag'' at line 1<br /> select tg.strTag from   as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select tg.strTag from   as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:35:32', 'New'),
-(26, '/nascent/', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''tg.strTag'' in ''field list''<br /> select tg.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select tg.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:35:47', 'New'),
-(27, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''tg.strTag'' in ''field list''<br /> select tg.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select tg.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:35:47', 'New'),
-(28, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''tg.strTag'' in ''field list''<br /> select tg.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select tg.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:35:47', 'New'),
-(29, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:42:03', 'New'),
-(30, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:42:04', 'New'),
-(31, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-16 18:42:04', 'New'),
-(32, '/nasc/content/manager/do', 0, 'SQLSTATE[HY000]: General error: 1364 Field ''strDescription'' doesn''t have a default value<br /> INSERT INTO mst_content (strTitle, strContentType, dtContent, strSlug, dtiCreated, idCreatedBy) VALUES (:strTitle, :strContentType, :dtContent, :strSlug, :dtiCreated, :idCreatedBy)', 'INSERT INTO mst_content (strTitle, strContentType, dtContent, strSlug, dtiCreated, idCreatedBy) VALUES (:strTitle, :strContentType, :dtContent, :strSlug, :dtiCreated, :idCreatedBy)', '2016-04-16 19:18:31', 'New'),
-(33, '/nasc/content/manager/do', 0, 'SQLSTATE[HY000]: General error: 1364 Field ''strDescription'' doesn''t have a default value<br /> INSERT INTO mst_content (strTitle, strContentType, dtContent, strSlug, dtiCreated, idCreatedBy) VALUES (:strTitle, :strContentType, :dtContent, :strSlug, :dtiCreated, :idCreatedBy)', 'INSERT INTO mst_content (strTitle, strContentType, dtContent, strSlug, dtiCreated, idCreatedBy) VALUES (:strTitle, :strContentType, :dtContent, :strSlug, :dtiCreated, :idCreatedBy)', '2016-04-16 19:20:42', 'New'),
-(34, '/nasc/content/manager/do', 0, 'SQLSTATE[HY000]: General error: 1364 Field ''strDescription'' doesn''t have a default value<br /> INSERT INTO mst_content (strTitle, strContentType, dtContent, strSlug, dtiCreated, idCreatedBy) VALUES (:strTitle, :strContentType, :dtContent, :strSlug, :dtiCreated, :idCreatedBy)', 'INSERT INTO mst_content (strTitle, strContentType, dtContent, strSlug, dtiCreated, idCreatedBy) VALUES (:strTitle, :strContentType, :dtContent, :strSlug, :dtiCreated, :idCreatedBy)', '2016-04-16 19:21:29', 'New'),
-(35, '/nasc/content/manager/do', 0, 'Undefined column ''intContentId''', '', '2016-04-16 19:22:29', 'New'),
-(36, '/nasc/content/manager/do', 0, 'Undefined column ''intCreatedBy''', '', '2016-04-16 19:24:35', 'New'),
-(37, '/nasc/content/manager/do', 0, 'SQLSTATE[HY000]: General error: 1366 Incorrect integer value: ''undefined'' for column ''intBlockId'' at row 1<br /> INSERT INTO rel_content_blocks (intContentId, intBlockId, intPosition, intCreatedBy, dtiCreated) VALUES (:intContentId, :intBlockId, :intPosition, :intCreatedBy, :dtiCreated)', 'INSERT INTO rel_content_blocks (intContentId, intBlockId, intPosition, intCreatedBy, dtiCreated) VALUES (:intContentId, :intBlockId, :intPosition, :intCreatedBy, :dtiCreated)', '2016-04-16 19:25:21', 'New'),
-(38, '/nasc/content/manager/do', 0, 'Undefined column ''intContentBlockId''<br /> INSERT INTO rel_content_blocks (intContentId, intBlockId, intPosition, intCreatedBy, dtiCreated) VALUES (:intContentId, :intBlockId, :intPosition, :intCreatedBy, :dtiCreated)', 'INSERT INTO rel_content_blocks (intContentId, intBlockId, intPosition, intCreatedBy, dtiCreated) VALUES (:intContentId, :intBlockId, :intPosition, :intCreatedBy, :dtiCreated)', '2016-04-16 19:27:47', 'New'),
-(39, '/nasc/content/manager/do', 0, 'Undefined column ''intContentBlockId''<br /> INSERT INTO rel_content_blocks (intContentId, intBlockId, intPosition, intCreatedBy, dtiCreated) VALUES (:intContentId, :intBlockId, :intPosition, :intCreatedBy, :dtiCreated)', 'INSERT INTO rel_content_blocks (intContentId, intBlockId, intPosition, intCreatedBy, dtiCreated) VALUES (:intContentId, :intBlockId, :intPosition, :intCreatedBy, :dtiCreated)', '2016-04-16 19:29:10', 'New'),
-(40, '/nasc/content/manager/do', 0, 'SQLSTATE[23000]: Integrity constraint violation: 1048 Column ''txtContent'' cannot be null<br /> INSERT INTO rel_block_details (intContentBlockId, txtContent) VALUES (:intContentBlockId, :txtContent)', 'INSERT INTO rel_block_details (intContentBlockId, txtContent) VALUES (:intContentBlockId, :txtContent)', '2016-04-16 19:29:51', 'New'),
-(41, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 11:56:22', 'New'),
-(42, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 11:56:22', 'New'),
-(43, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 11:56:22', 'New'),
-(44, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:27:56', 'New'),
-(45, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:27:56', 'New'),
-(46, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:27:56', 'New'),
-(47, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:29:32', 'New'),
-(48, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:29:32', 'New'),
-(49, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:29:33', 'New'),
-(50, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:30:03', 'New'),
-(51, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:30:03', 'New'),
-(52, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:30:03', 'New'),
-(53, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:46:26', 'New'),
-(54, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:46:26', 'New'),
-(55, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:46:26', 'New'),
-(56, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:00', 'New'),
-(57, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:00', 'New'),
-(58, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:00', 'New'),
-(59, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(60, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(61, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(62, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(63, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(64, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(65, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(66, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(67, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(68, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(69, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(70, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(71, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(72, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(73, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(74, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New'),
-(75, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:03', 'New');
-INSERT INTO `mst_errors` (`id`, `strRequestUri`, `intErrorNo`, `txtDescription`, `txtSqlQuery`, `dtiCreated`, `enmStatus`) VALUES
-(76, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:04', 'New'),
-(77, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:04', 'New'),
-(78, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:04', 'New'),
-(79, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:04', 'New'),
-(80, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:04', 'New'),
-(81, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:04', 'New'),
-(82, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:04', 'New'),
-(83, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:47:04', 'New'),
-(84, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:49:59', 'New'),
-(85, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:49:59', 'New'),
-(86, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:49:59', 'New'),
-(87, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:50:05', 'New'),
-(88, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:50:05', 'New'),
-(89, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:50:05', 'New'),
-(90, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:50:29', 'New'),
-(91, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:50:29', 'New'),
-(92, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:50:29', 'New'),
-(93, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:50:48', 'New'),
-(94, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:50:48', 'New'),
-(95, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:50:48', 'New'),
-(96, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:51:13', 'New'),
-(97, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:51:13', 'New'),
-(98, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:51:13', 'New'),
-(99, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:51:59', 'New'),
-(100, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:51:59', 'New'),
-(101, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:51:59', 'New'),
-(102, '/nascent/', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:55:56', 'New'),
-(103, '/nascent/themes/front/css/developer.css', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:55:56', 'New'),
-(104, '/nascent/images/blanck-sp.png', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'''' at line 4<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id= and  mtag.enmStatus = ''1''\n		and mtag.enmDeleted = ''0'' ', '2016-04-18 12:55:56', 'New'),
-(105, '/nascent/collaborate-us', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''l.strSlug'' in ''where clause''<br /> select p.*\n				from mst_pages as p	where l.strSlug=''collaborate-us''', 'select p.*\n				from mst_pages as p	where l.strSlug=''collaborate-us''', '2016-04-18 15:04:22', 'New'),
-(106, '/nascent/page/manager/do', 0, 'You must pass an array to the insertByArray() function.', '', '2016-04-18 19:06:19', 'New'),
-(107, '/nascent/page/manager/do', 0, 'Undefined column ''action''', '', '2016-04-18 19:07:23', 'New'),
-(108, '/nascent/page/manager/do', 0, 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '''' at line 1', '', '2016-04-18 19:16:28', 'New'),
-(109, '/myvegs/product/load/all', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''enmDeleted'' in ''where clause''<br /> select count(id) as total_rows from mst_products where enmDeleted = ''0''', 'select count(id) as total_rows from mst_products where enmDeleted = ''0''', '2016-05-18 23:43:12', 'New'),
-(110, '/myvegs/master/load/data', 0, 'SQLSTATE[42S02]: Base table or view not found: 1146 Table ''myvegs.mst_category'' doesn''t exist<br /> select count(id) as total_rows from mst_category where enmStatus = ''2''', 'select count(id) as total_rows from mst_category where enmStatus = ''2''', '2016-05-19 23:01:08', 'New'),
-(111, '/myvegs/master/load/data', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''enmStatus'' in ''where clause''<br /> select count(id) as total_rows from mst_categories where enmStatus = ''2''', 'select count(id) as total_rows from mst_categories where enmStatus = ''2''', '2016-05-19 23:09:15', 'New'),
-(112, '/myvegs/master/manager/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''enmDeleted'' in ''where clause''<br /> select count(id) as total_rows from mst_categories where strCategory = ''News'' and enmDeleted=1 and id!=1', 'select count(id) as total_rows from mst_categories where strCategory = ''News'' and enmDeleted=1 and id!=1', '2016-05-19 23:22:07', 'New'),
-(113, '/myvegs/master/manager/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''enmDeleted'' in ''where clause''<br /> select count(id) as total_rows from mst_categories where strCategory = ''News'' and enmDeleted=1 and id!=1', 'select count(id) as total_rows from mst_categories where strCategory = ''News'' and enmDeleted=1 and id!=1', '2016-05-19 23:23:07', 'New'),
-(114, '/myvegs/master/manager/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''enmDeleted'' in ''where clause''<br /> select count(id) as total_rows from mst_categories where strCategory = ''News'' and enmDeleted=1 and id!=1', 'select count(id) as total_rows from mst_categories where strCategory = ''News'' and enmDeleted=1 and id!=1', '2016-05-19 23:25:19', 'New'),
-(115, '/myvegs/master/manager/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''strSlug'' in ''where clause''<br /> select count(id) as total_rows from mst_categories where 1 and strSlug = ''news'' and id != 1', 'select count(id) as total_rows from mst_categories where 1 and strSlug = ''news'' and id != 1', '2016-05-19 23:26:08', 'New'),
-(116, '/myvegs/account/login/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''main.enmStatus'' in ''where clause''<br /> select main.id, strEmail, strFirstName, strLastName, idDesg, strImageName, enmActivated\n				from mst_accounts as main\n				where main.enmStatus = ''2'' AND main.strEmail = ''admin@nascentinfo.net'' AND main.tinStatus = ''1'' AND main.strPassword = ''3d1d274157bd91fcbb0f5009fe9869390cfb785a''', 'select main.id, strEmail, strFirstName, strLastName, idDesg, strImageName, enmActivated\n				from mst_accounts as main\n				where main.enmStatus = ''2'' AND main.strEmail = ''admin@nascentinfo.net'' AND main.tinStatus = ''1'' AND main.strPassword = ''3d1d274157bd91fcbb0f5009fe9869390cfb785a''', '2016-05-22 11:11:57', 'New'),
-(117, '/myvegs/product/load/all', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''p.tinStatus'' in ''where clause''<br /> select count(id) as total_rows from mst_products as p where p.tinStatus != ''2''', 'select count(id) as total_rows from mst_products as p where p.tinStatus != ''2''', '2016-05-22 11:25:13', 'New'),
-(118, '/myvegs/master/load/data', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''tinStatus'' in ''where clause''<br /> select count(id) as total_rows from mst_categories where tinStatus != ''2''', 'select count(id) as total_rows from mst_categories where tinStatus != ''2''', '2016-05-22 11:30:10', 'New'),
-(119, '/myvegs/master/manager/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''strImageName'' in ''field list''<br /> UPDATE mst_categories SET strCategory=:strCategory, strSlug=:strSlug, tinStatus=:tinStatus, txtDescription=:txtDescription, idParent=:idParent, strImageName=:strImageName WHERE id = 1', 'UPDATE mst_categories SET strCategory=:strCategory, strSlug=:strSlug, tinStatus=:tinStatus, txtDescription=:txtDescription, idParent=:idParent, strImageName=:strImageName WHERE id = 1', '2016-05-22 11:40:29', 'New'),
-(120, '/myvegs/product/manager/do', 0, 'Undefined column ''txtShortDescription''<br /> select count(id) as total_rows from mst_products as p where tinStatus != ''2'' and strProduct=''Tomato Local - Organically Grown''', 'select count(id) as total_rows from mst_products as p where tinStatus != ''2'' and strProduct=''Tomato Local - Organically Grown''', '2016-05-22 11:43:10', 'New'),
-(121, '/myvegs/master/load/data', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''tinStatus'' in ''where clause''<br /> select count(id) as total_rows from mst_access_types where tinStatus != ''2''', 'select count(id) as total_rows from mst_access_types where tinStatus != ''2''', '2016-05-23 10:24:52', 'New'),
-(122, '/myvegs/master/manager/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''strSlug'' in ''where clause''<br /> select count(id) as total_rows from mst_quantities where 1 and strSlug = ''1-kg''', 'select count(id) as total_rows from mst_quantities where 1 and strSlug = ''1-kg''', '2016-05-23 10:42:32', 'New'),
-(123, '/myvegs/master/manager/do', 0, 'Undefined column ''dtiCreated''<br /> select count(id) as total_rows from mst_quantities where strQuantity = ''1 Kg'' and tinStatus != ''2''', 'select count(id) as total_rows from mst_quantities where strQuantity = ''1 Kg'' and tinStatus != ''2''', '2016-05-23 10:43:27', 'New');
+(1, '/myvegs/master/load/data', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''enmStatus'' in ''where clause''<br /> select count(id) as total_rows from mst_categories where enmStatus = ''2''', 'select count(id) as total_rows from mst_categories where enmStatus = ''2''', '2016-05-20 11:26:00', 'New'),
+(2, '/myvegs/master/load/data', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''enmStatus'' in ''where clause''<br /> select count(id) as total_rows from mst_categories where enmStatus = ''2''', 'select count(id) as total_rows from mst_categories where enmStatus = ''2''', '2016-05-20 11:26:40', 'New'),
+(3, '/myvegs/master/load/data', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''tinStatus'' in ''where clause''<br /> select count(id) as total_rows from mst_access_types where tinStatus != ''2''', 'select count(id) as total_rows from mst_access_types where tinStatus != ''2''', '2016-05-20 12:01:11', 'New'),
+(4, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 12:02:34', 'New'),
+(5, '/myvegs/product/load/all', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''tinStatus'' in ''where clause''<br /> select count(id) as total_rows from mst_products where tinStatus = ''2''', 'select count(id) as total_rows from mst_products where tinStatus = ''2''', '2016-05-20 12:02:34', 'New'),
+(6, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 12:03:06', 'New'),
+(7, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 12:05:35', 'New'),
+(8, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 15:23:11', 'New'),
+(9, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 17:01:58', 'New'),
+(10, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 17:09:03', 'New'),
+(11, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 17:11:02', 'New'),
+(12, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 17:11:38', 'New'),
+(13, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 17:12:33', 'New'),
+(14, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 17:15:49', 'New'),
+(15, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 17:16:27', 'New'),
+(16, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 17:19:42', 'New'),
+(17, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 17:25:44', 'New'),
+(18, '/myvegs/themes/default/assets/advanced-datatable/media/css/demo_product.css', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''mtag.tinStatus'' in ''where clause''<br /> select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', 'select mtag.strTag from mst_content  as mst_cnt\n		join rel_tag as rtag on mst_cnt.id=rtag.intContentID\n		join mst_tag as mtag on mtag.id=rtag.intTagID\n		where mst_cnt.id=14 and  mtag.tinStatus = ''1''\n		and mtag.tinStatus = ''2'' ', '2016-05-20 18:07:36', 'New'),
+(19, '/myvegs/master/manager/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''strSlug'' in ''where clause''<br /> select count(id) as total_rows from mst_quantities where 1 and strSlug = ''1-kg''', 'select count(id) as total_rows from mst_quantities where 1 and strSlug = ''1-kg''', '2016-06-03 16:21:15', 'New'),
+(20, '/myvegs/master/manager/do', 0, 'Undefined column ''dtiLastModified''<br /> select count(id) as total_rows from mst_quantities where strQuantity = ''1 Kg'' and tinStatus != ''2''', 'select count(id) as total_rows from mst_quantities where strQuantity = ''1 Kg'' and tinStatus != ''2''', '2016-06-03 16:21:49', 'New'),
+(21, '/myvegs/master/manager/do', 0, 'Undefined column ''dtiLastModified''<br /> select count(id) as total_rows from mst_quantities where strQuantity = ''1 Kg'' and tinStatus != ''2''', 'select count(id) as total_rows from mst_quantities where strQuantity = ''1 Kg'' and tinStatus != ''2''', '2016-06-03 16:22:21', 'New'),
+(22, '/myvegs/product/manager/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''strShortDescription'' in ''field list''<br /> UPDATE mst_products SET id=:id, strProduct=:strProduct, txtDescription=:txtDescription, strShortDescription=:strShortDescription, idCategory=:idCategory, decPrice=:decPrice, decCurrentPrice=:decCurrentPrice, strImageName=:strImageName WHERE id = 1', 'UPDATE mst_products SET id=:id, strProduct=:strProduct, txtDescription=:txtDescription, strShortDescription=:strShortDescription, idCategory=:idCategory, decPrice=:decPrice, decCurrentPrice=:decCurrentPrice, strImageName=:strImageName WHERE id = 1', '2016-06-03 16:34:10', 'New'),
+(23, '/myvegs/product/manager/do', 0, 'Undefined column ''decPrice''<br /> UPDATE mst_products SET id=:id, strProduct=:strProduct, txtDescription=:txtDescription, strShortDescription=:strShortDescription, idCategory=:idCategory, decPrice=:decPrice, decCurrentPrice=:decCurrentPrice, strImageName=:strImageName WHERE id = 1', 'UPDATE mst_products SET id=:id, strProduct=:strProduct, txtDescription=:txtDescription, strShortDescription=:strShortDescription, idCategory=:idCategory, decPrice=:decPrice, decCurrentPrice=:decCurrentPrice, strImageName=:strImageName WHERE id = 1', '2016-06-03 17:13:28', 'New'),
+(24, '/myvegs/product/manager/do', 0, 'SQLSTATE[42S22]: Column not found: 1054 Unknown column ''decPrice'' in ''field list''<br /> UPDATE mst_products SET id=:id, strProduct=:strProduct, txtDescription=:txtDescription, strShortDescription=:strShortDescription, idCategory=:idCategory, decPrice=:decPrice, decCurrentPrice=:decCurrentPrice, strImageName=:strImageName WHERE id = 1', 'UPDATE mst_products SET id=:id, strProduct=:strProduct, txtDescription=:txtDescription, strShortDescription=:strShortDescription, idCategory=:idCategory, decPrice=:decPrice, decCurrentPrice=:decCurrentPrice, strImageName=:strImageName WHERE id = 1', '2016-06-03 17:14:19', 'New'),
+(25, '/myvegs/product/manager/do', 0, 'SQLSTATE[23000]: Integrity constraint violation: 1048 Column ''idProduct'' cannot be null<br /> INSERT INTO rel_product_quantities (idProduct, idQuantity, decPrice, strRemarks) VALUES (:idProduct, :idQuantity, :decPrice, :strRemarks)', 'INSERT INTO rel_product_quantities (idProduct, idQuantity, decPrice, strRemarks) VALUES (:idProduct, :idQuantity, :decPrice, :strRemarks)', '2016-06-03 17:14:45', 'New');
 
 -- --------------------------------------------------------
 
@@ -472,7 +372,7 @@ INSERT INTO `mst_errors` (`id`, `strRequestUri`, `intErrorNo`, `txtDescription`,
 
 DROP TABLE IF EXISTS `mst_navigations`;
 CREATE TABLE IF NOT EXISTS `mst_navigations` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `strNavigation` varchar(50) NOT NULL,
   `txtDescription` text,
   `enmStatus` enum('0','1') NOT NULL DEFAULT '1' COMMENT '0-Inactive,1-Active',
@@ -494,7 +394,7 @@ CREATE TABLE IF NOT EXISTS `mst_navigations` (
 
 DROP TABLE IF EXISTS `mst_pages`;
 CREATE TABLE IF NOT EXISTS `mst_pages` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `strSlug` varchar(255) NOT NULL DEFAULT '',
   `strTitle` varchar(255) NOT NULL DEFAULT '',
   `txtDescription` text NOT NULL,
@@ -527,7 +427,7 @@ INSERT INTO `mst_pages` (`id`, `strSlug`, `strTitle`, `txtDescription`, `txtShor
 
 DROP TABLE IF EXISTS `mst_photo_albums`;
 CREATE TABLE IF NOT EXISTS `mst_photo_albums` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `strName` varchar(100) CHARACTER SET utf8 NOT NULL,
   `idCategory` int(5) DEFAULT NULL,
   `txtDescription` text NOT NULL,
@@ -551,24 +451,22 @@ CREATE TABLE IF NOT EXISTS `mst_photo_albums` (
 
 DROP TABLE IF EXISTS `mst_products`;
 CREATE TABLE IF NOT EXISTS `mst_products` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `idCategory` int(11) NOT NULL DEFAULT '0',
   `strProduct` varchar(50) NOT NULL,
   `txtDescription` text,
-  `strShortDescription` varchar(150) DEFAULT NULL,
-  `decPrice` decimal(10,2) NOT NULL,
-  `decCurrentPrice` decimal(10,2) NOT NULL,
+  `strShortDescription` varchar(255) DEFAULT NULL,
   `strImageName` varchar(100) DEFAULT NULL,
-  `tinStatus` tinyint(2) DEFAULT '1' COMMENT '0-Inactive,1-Active, 2-Deleted',
-  `dtiLastUpdated` datetime NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  `tinStatus` tinyint(2) DEFAULT '1' COMMENT '0-Inactive,1-Active, 2-Deleted'
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `mst_products`
 --
 
-INSERT INTO `mst_products` (`id`, `idCategory`, `strProduct`, `txtDescription`, `strShortDescription`, `decPrice`, `decCurrentPrice`, `strImageName`, `tinStatus`, `dtiLastUpdated`) VALUES
-(1, 1, 'Tomato Local - Organically Grown', '<p>Tomato Local - Organically Grown</p>\r\n', '', '34.90', '0.00', '8698855622953394_1463897647_3890.jpg', 1, '0000-00-00 00:00:00');
+INSERT INTO `mst_products` (`id`, `idCategory`, `strProduct`, `txtDescription`, `strShortDescription`, `strImageName`, `tinStatus`) VALUES
+(1, 1, 'Tomato Local - Organically Grown', '<p>It Is Organically Grown And Handpicked From Farm&nbsp;<br />\r\nProduct image shown is for representation purpose only, the actually product may vary based on season, produce &amp; availability.</p>\r\n', 'Tomato Local - Organically Grown', '7185828325743610_1463744342_3890.jpg', 1),
+(2, 1, 'Fresho Potato - Organically Grown', '<p>It is organically grown and handpicked from farm&nbsp;<br />\r\nProduct image shown is for representation purpose only, the actually product may vary based on season, produce &amp; availability.</p>\r\n', '', '3284001355769940_1463744981_3135.jpg', 1);
 
 -- --------------------------------------------------------
 
@@ -578,20 +476,21 @@ INSERT INTO `mst_products` (`id`, `idCategory`, `strProduct`, `txtDescription`, 
 
 DROP TABLE IF EXISTS `mst_quantities`;
 CREATE TABLE IF NOT EXISTS `mst_quantities` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `strQuantity` varchar(255) NOT NULL,
   `txtDescription` text NOT NULL,
   `tinStatus` tinyint(2) DEFAULT '1' COMMENT '0-Inactive,1-Active, 2-Deleted',
-  `strSlug` varchar(20) NOT NULL
+  `strSlug` varchar(50) DEFAULT NULL,
+  `dtiLastUpdated` datetime DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `mst_quantities`
 --
 
-INSERT INTO `mst_quantities` (`id`, `strQuantity`, `txtDescription`, `tinStatus`, `strSlug`) VALUES
-(1, '1 Kg', '<p>1 Kg of the content</p>\r\n', 1, '1-kg'),
-(2, '500 Grams', '<p>500 grams of content</p>\r\n', 1, '500-grams');
+INSERT INTO `mst_quantities` (`id`, `strQuantity`, `txtDescription`, `tinStatus`, `strSlug`, `dtiLastUpdated`) VALUES
+(1, '1 Kg', '<p>1 Kg of the item</p>\r\n', 1, '1-kg', '2016-06-03 16:23:14'),
+(2, '500 Grams', '<p>500 grams of item</p>\r\n', 1, '500-grams', '2016-06-03 16:23:28');
 
 -- --------------------------------------------------------
 
@@ -601,7 +500,7 @@ INSERT INTO `mst_quantities` (`id`, `strQuantity`, `txtDescription`, `tinStatus`
 
 DROP TABLE IF EXISTS `mst_quotes`;
 CREATE TABLE IF NOT EXISTS `mst_quotes` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `strName` varchar(100) NOT NULL,
   `strEmail` varchar(255) NOT NULL,
   `strMobile` varchar(15) NOT NULL,
@@ -622,7 +521,7 @@ CREATE TABLE IF NOT EXISTS `mst_quotes` (
 
 DROP TABLE IF EXISTS `mst_settings`;
 CREATE TABLE IF NOT EXISTS `mst_settings` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `string` varchar(45) NOT NULL DEFAULT '',
   `title` varchar(255) NOT NULL DEFAULT '',
   `value` text NOT NULL,
@@ -657,7 +556,7 @@ INSERT INTO `mst_settings` (`id`, `string`, `title`, `value`, `add_date`, `enabl
 
 DROP TABLE IF EXISTS `mst_tag`;
 CREATE TABLE IF NOT EXISTS `mst_tag` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `strSlug` varchar(255) DEFAULT '',
   `strTag` varchar(255) DEFAULT '',
   `txtDescription` text,
@@ -690,7 +589,7 @@ INSERT INTO `mst_tag` (`id`, `strSlug`, `strTag`, `txtDescription`, `dtiCreated`
 
 DROP TABLE IF EXISTS `mst_video_albums`;
 CREATE TABLE IF NOT EXISTS `mst_video_albums` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `idCategory` int(5) DEFAULT NULL,
   `strName` varchar(100) CHARACTER SET utf8 NOT NULL,
   `txtUrl` text NOT NULL,
@@ -715,12 +614,12 @@ CREATE TABLE IF NOT EXISTS `mst_video_albums` (
 
 DROP TABLE IF EXISTS `rel_account_login_logs`;
 CREATE TABLE IF NOT EXISTS `rel_account_login_logs` (
-  `id` int(10) NOT NULL,
+`id` int(10) NOT NULL,
   `vId` int(11) NOT NULL,
   `loginDate` datetime NOT NULL,
   `session` varchar(255) NOT NULL,
   `ipAddress` varchar(255) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `rel_account_login_logs`
@@ -755,8 +654,13 @@ INSERT INTO `rel_account_login_logs` (`id`, `vId`, `loginDate`, `session`, `ipAd
 (26, 1, '2016-04-18 15:53:52', '8qru95pppr4l93eukcgpq92022', '127.0.0.1'),
 (27, 1, '2016-04-18 17:20:36', '7i38df8fl1n2g98tojkkm9jq14', '127.0.0.1'),
 (28, 1, '2016-04-18 17:52:40', 'rvdn6656prsc4vpegf4f9vic10', '127.0.0.1'),
-(29, 1, '2016-05-18 21:30:09', 'oincqo2h8urnc15fs570hcvik1', '::1'),
-(30, 1, '2016-05-22 11:23:49', 'qmnfi92njn0a3p17btq3uvt1c6', '::1');
+(29, 1, '2016-05-20 11:23:41', 'rvdn6656prsc4vpegf4f9vic10', '127.0.0.1'),
+(30, 1, '2016-05-20 15:23:08', 'rvdn6656prsc4vpegf4f9vic10', '127.0.0.1'),
+(31, 1, '2016-05-20 17:01:56', 'rvdn6656prsc4vpegf4f9vic10', '127.0.0.1'),
+(32, 1, '2016-06-03 14:21:33', '0jdkaan2kqbbtb7eeq69dqvag5', '127.0.0.1'),
+(33, 1, '2016-06-03 15:39:50', '0jdkaan2kqbbtb7eeq69dqvag5', '127.0.0.1'),
+(34, 1, '2016-06-03 16:20:46', '0jdkaan2kqbbtb7eeq69dqvag5', '127.0.0.1'),
+(35, 1, '2016-06-03 17:13:07', '0jdkaan2kqbbtb7eeq69dqvag5', '127.0.0.1');
 
 -- --------------------------------------------------------
 
@@ -766,7 +670,7 @@ INSERT INTO `rel_account_login_logs` (`id`, `vId`, `loginDate`, `session`, `ipAd
 
 DROP TABLE IF EXISTS `rel_block_details`;
 CREATE TABLE IF NOT EXISTS `rel_block_details` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `intContentBlockId` int(5) NOT NULL,
   `txtContent` text NOT NULL,
   `decLatitude` decimal(10,2) DEFAULT NULL,
@@ -792,7 +696,7 @@ INSERT INTO `rel_block_details` (`id`, `intContentBlockId`, `txtContent`, `decLa
 
 DROP TABLE IF EXISTS `rel_cart`;
 CREATE TABLE IF NOT EXISTS `rel_cart` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `idCustomer` int(11) NOT NULL,
   `decAmount` decimal(10,2) NOT NULL,
   `intTotalProducts` tinyint(2) NOT NULL,
@@ -807,7 +711,7 @@ CREATE TABLE IF NOT EXISTS `rel_cart` (
 
 DROP TABLE IF EXISTS `rel_cart_products`;
 CREATE TABLE IF NOT EXISTS `rel_cart_products` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `idCart` int(11) NOT NULL,
   `idProduct` int(11) NOT NULL,
   `idQuantity` int(11) NOT NULL,
@@ -825,7 +729,7 @@ CREATE TABLE IF NOT EXISTS `rel_cart_products` (
 
 DROP TABLE IF EXISTS `rel_content`;
 CREATE TABLE IF NOT EXISTS `rel_content` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `intCategoryID` int(5) NOT NULL,
   `intContentID` int(5) NOT NULL,
   `dtiCreated` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -840,7 +744,7 @@ CREATE TABLE IF NOT EXISTS `rel_content` (
 
 DROP TABLE IF EXISTS `rel_content_blocks`;
 CREATE TABLE IF NOT EXISTS `rel_content_blocks` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `intBlockId` int(5) NOT NULL,
   `intContentId` int(5) NOT NULL,
   `intPosition` int(11) DEFAULT '0',
@@ -864,7 +768,7 @@ INSERT INTO `rel_content_blocks` (`id`, `intBlockId`, `intContentId`, `intPositi
 
 DROP TABLE IF EXISTS `rel_customer_addresses`;
 CREATE TABLE IF NOT EXISTS `rel_customer_addresses` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `idCustomer` int(11) NOT NULL,
   `strLabel` varchar(15) NOT NULL,
   `strFirstName` varchar(25) NOT NULL,
@@ -886,7 +790,7 @@ CREATE TABLE IF NOT EXISTS `rel_customer_addresses` (
 
 DROP TABLE IF EXISTS `rel_date_logs`;
 CREATE TABLE IF NOT EXISTS `rel_date_logs` (
-  `id` int(10) NOT NULL,
+`id` int(10) NOT NULL,
   `strType` varchar(25) DEFAULT NULL,
   `strAccountType` varchar(10) DEFAULT 'customer',
   `enmDateType` enum('C','M','D','A') DEFAULT 'C',
@@ -905,7 +809,7 @@ CREATE TABLE IF NOT EXISTS `rel_date_logs` (
 
 DROP TABLE IF EXISTS `rel_navigation_links`;
 CREATE TABLE IF NOT EXISTS `rel_navigation_links` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `idNavigation` int(10) unsigned DEFAULT '1',
   `enmType` enum('EL','PG','LB','PL') NOT NULL DEFAULT 'PG',
   `idPage` int(10) unsigned NOT NULL DEFAULT '0',
@@ -934,7 +838,7 @@ CREATE TABLE IF NOT EXISTS `rel_navigation_links` (
 
 DROP TABLE IF EXISTS `rel_offers`;
 CREATE TABLE IF NOT EXISTS `rel_offers` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `strOffer` varchar(50) NOT NULL,
   `intPercent` int(11) NOT NULL,
   `strImageName` varchar(100) DEFAULT NULL,
@@ -949,7 +853,7 @@ CREATE TABLE IF NOT EXISTS `rel_offers` (
 
 DROP TABLE IF EXISTS `rel_offer_products`;
 CREATE TABLE IF NOT EXISTS `rel_offer_products` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `idProduct` int(11) NOT NULL,
   `idOffer` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -962,7 +866,7 @@ CREATE TABLE IF NOT EXISTS `rel_offer_products` (
 
 DROP TABLE IF EXISTS `rel_photos`;
 CREATE TABLE IF NOT EXISTS `rel_photos` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `idPhotoAlbum` int(11) NOT NULL COMMENT 'Ref key of mst_photo_albums',
   `strImageName` varchar(200) CHARACTER SET utf8 DEFAULT NULL,
   `strDescription` varchar(200) CHARACTER SET utf8 DEFAULT NULL,
@@ -985,11 +889,20 @@ CREATE TABLE IF NOT EXISTS `rel_photos` (
 
 DROP TABLE IF EXISTS `rel_product_quantities`;
 CREATE TABLE IF NOT EXISTS `rel_product_quantities` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `idProduct` int(11) NOT NULL,
   `idQuantity` int(11) NOT NULL,
-  `intTotalProducts` tinyint(2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `strRemarks` varchar(50) DEFAULT NULL,
+  `decPrice` decimal(10,2) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `rel_product_quantities`
+--
+
+INSERT INTO `rel_product_quantities` (`id`, `idProduct`, `idQuantity`, `strRemarks`, `decPrice`) VALUES
+(1, 1, 1, 'Approx. 15 items', '33.90'),
+(2, 1, 2, 'Approx. 8 items', '17.00');
 
 -- --------------------------------------------------------
 
@@ -999,7 +912,7 @@ CREATE TABLE IF NOT EXISTS `rel_product_quantities` (
 
 DROP TABLE IF EXISTS `rel_tag`;
 CREATE TABLE IF NOT EXISTS `rel_tag` (
-  `id` int(10) unsigned NOT NULL,
+`id` int(10) unsigned NOT NULL,
   `intTagID` int(5) DEFAULT NULL,
   `intContentID` int(5) NOT NULL,
   `dtiCreated` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -1053,199 +966,199 @@ INSERT INTO `rel_tag` (`id`, `intTagID`, `intContentID`, `dtiCreated`, `idCreate
 -- Indexes for table `mst_access_types`
 --
 ALTER TABLE `mst_access_types`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_accounts`
 --
 ALTER TABLE `mst_accounts`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_areas`
 --
 ALTER TABLE `mst_areas`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_blocks`
 --
 ALTER TABLE `mst_blocks`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_career`
 --
 ALTER TABLE `mst_career`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_categories`
 --
 ALTER TABLE `mst_categories`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_contacts`
 --
 ALTER TABLE `mst_contacts`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_content`
 --
 ALTER TABLE `mst_content`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_customers`
 --
 ALTER TABLE `mst_customers`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_errors`
 --
 ALTER TABLE `mst_errors`
-  ADD UNIQUE KEY `error_id` (`id`);
+ ADD UNIQUE KEY `error_id` (`id`);
 
 --
 -- Indexes for table `mst_navigations`
 --
 ALTER TABLE `mst_navigations`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_pages`
 --
 ALTER TABLE `mst_pages`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_photo_albums`
 --
 ALTER TABLE `mst_photo_albums`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_products`
 --
 ALTER TABLE `mst_products`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_quantities`
 --
 ALTER TABLE `mst_quantities`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_quotes`
 --
 ALTER TABLE `mst_quotes`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_settings`
 --
 ALTER TABLE `mst_settings`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_tag`
 --
 ALTER TABLE `mst_tag`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mst_video_albums`
 --
 ALTER TABLE `mst_video_albums`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_account_login_logs`
 --
 ALTER TABLE `rel_account_login_logs`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_block_details`
 --
 ALTER TABLE `rel_block_details`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_cart`
 --
 ALTER TABLE `rel_cart`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_cart_products`
 --
 ALTER TABLE `rel_cart_products`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_content`
 --
 ALTER TABLE `rel_content`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_content_blocks`
 --
 ALTER TABLE `rel_content_blocks`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_customer_addresses`
 --
 ALTER TABLE `rel_customer_addresses`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_date_logs`
 --
 ALTER TABLE `rel_date_logs`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_navigation_links`
 --
 ALTER TABLE `rel_navigation_links`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_offers`
 --
 ALTER TABLE `rel_offers`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_offer_products`
 --
 ALTER TABLE `rel_offer_products`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_photos`
 --
 ALTER TABLE `rel_photos`
-  ADD PRIMARY KEY (`id`), ADD KEY `gallery_id` (`idPhotoAlbum`);
+ ADD PRIMARY KEY (`id`), ADD KEY `gallery_id` (`idPhotoAlbum`);
 
 --
 -- Indexes for table `rel_product_quantities`
 --
 ALTER TABLE `rel_product_quantities`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rel_tag`
 --
 ALTER TABLE `rel_tag`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -1255,167 +1168,167 @@ ALTER TABLE `rel_tag`
 -- AUTO_INCREMENT for table `mst_access_types`
 --
 ALTER TABLE `mst_access_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `mst_accounts`
 --
 ALTER TABLE `mst_accounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `mst_areas`
 --
 ALTER TABLE `mst_areas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `mst_blocks`
 --
 ALTER TABLE `mst_blocks`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `mst_career`
 --
 ALTER TABLE `mst_career`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `mst_categories`
 --
 ALTER TABLE `mst_categories`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `mst_contacts`
 --
 ALTER TABLE `mst_contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `mst_content`
 --
 ALTER TABLE `mst_content`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=28;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=28;
 --
 -- AUTO_INCREMENT for table `mst_customers`
 --
 ALTER TABLE `mst_customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `mst_errors`
 --
 ALTER TABLE `mst_errors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=124;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=26;
 --
 -- AUTO_INCREMENT for table `mst_navigations`
 --
 ALTER TABLE `mst_navigations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `mst_pages`
 --
 ALTER TABLE `mst_pages`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `mst_photo_albums`
 --
 ALTER TABLE `mst_photo_albums`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `mst_products`
 --
 ALTER TABLE `mst_products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `mst_quantities`
 --
 ALTER TABLE `mst_quantities`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `mst_quotes`
 --
 ALTER TABLE `mst_quotes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `mst_settings`
 --
 ALTER TABLE `mst_settings`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `mst_tag`
 --
 ALTER TABLE `mst_tag`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=26;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=26;
 --
 -- AUTO_INCREMENT for table `mst_video_albums`
 --
 ALTER TABLE `mst_video_albums`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rel_account_login_logs`
 --
 ALTER TABLE `rel_account_login_logs`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=31;
+MODIFY `id` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=36;
 --
 -- AUTO_INCREMENT for table `rel_block_details`
 --
 ALTER TABLE `rel_block_details`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `rel_cart`
 --
 ALTER TABLE `rel_cart`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rel_cart_products`
 --
 ALTER TABLE `rel_cart_products`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rel_content`
 --
 ALTER TABLE `rel_content`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rel_content_blocks`
 --
 ALTER TABLE `rel_content_blocks`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `rel_customer_addresses`
 --
 ALTER TABLE `rel_customer_addresses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rel_date_logs`
 --
 ALTER TABLE `rel_date_logs`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rel_navigation_links`
 --
 ALTER TABLE `rel_navigation_links`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rel_offers`
 --
 ALTER TABLE `rel_offers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rel_offer_products`
 --
 ALTER TABLE `rel_offer_products`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rel_photos`
 --
 ALTER TABLE `rel_photos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `rel_product_quantities`
 --
 ALTER TABLE `rel_product_quantities`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `rel_tag`
 --
 ALTER TABLE `rel_tag`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=59;
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=59;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

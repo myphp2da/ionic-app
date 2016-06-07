@@ -22,9 +22,51 @@ export class Services {
       this.key = 'ca966ceb77c7ef7';
   }
 
-	loginToApp(postedData) {
+    loadAreas() {
+        var url = this.baseUrl+'master/0.1/get-areas';
+		var post_data = JSON.stringify({key: this.key});
+
+		return this.http.post(url, post_data).map(res => res.json());
+    }
+
+    addAddress(user_id, area_id, posted_data) {
+        var url = this.baseUrl+'account/0.1/add-address';
+		var post_data = JSON.stringify({key: this.key, user: user_id, area: area_id, data: posted_data});
+
+		return this.http.post(url, post_data).map(res => res.json());
+	}
+
+    loadAddresses(user_id) {
+        var url = this.baseUrl+'account/0.1/get-addresses';
+		var post_data = JSON.stringify({key: this.key, user: user_id});
+
+		return this.http.post(url, post_data).map(res => res.json());
+    }
+  
+    updateCart(cart_id, posted_data) {
+        var url = this.baseUrl+'product/0.1/update-cart';
+		var post_data = JSON.stringify({key: this.key, cart: cart_id, data: posted_data});
+
+		return this.http.post(url, post_data).map(res => res.json());
+    }
+  
+    checkoutCart(cart_id, posted_data) {
+        var url = this.baseUrl+'product/0.1/checkout';
+		var post_data = JSON.stringify({key: this.key, cart: cart_id, data: posted_data});
+
+		return this.http.post(url, post_data).map(res => res.json());
+    }
+
+	loginToApp(posted_data) {
         var url = this.baseUrl+'account/0.1/app-login';
-		var post_data = JSON.stringify({key: this.key, data: postedData});
+		var post_data = JSON.stringify({key: this.key, data: posted_data});
+
+		return this.http.post(url, post_data).map(res => res.json());
+	}
+    
+    signupInApp(posted_data) {
+        var url = this.baseUrl+'account/0.1/app-signup';
+		var post_data = JSON.stringify({key: this.key, data: posted_data});
 
 		return this.http.post(url, post_data).map(res => res.json());
 	}
@@ -36,9 +78,9 @@ export class Services {
         return this.http.post(url, post_data).map(res => res.json());
     }
 
-    loadCart(user_id) {
+    loadCart(cart_id) {
         var url = this.baseUrl+'product/0.1/get-cart-products';
-        var post_data = JSON.stringify({key: this.key, user: user_id});
+        var post_data = JSON.stringify({key: this.key, cart: cart_id});
 
         return this.http.post(url, post_data).map(res => res.json());
     }

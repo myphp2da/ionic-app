@@ -16,7 +16,7 @@
   </ion-buttons>
 </ion-navbar>
 
-<ion-content class="home">
+<ion-content class="home" padding>
     <ion-item *ngFor="#content of contents" class="content" text-wrap>
         
         <ion-thumbnail item-left (click)="itemTapped($event, content)">
@@ -27,7 +27,7 @@
         
         <ion-item class="subitem">
             <ion-select primary [(ngModel)]="quantity">
-                <ion-option *ngFor="#quantity of content.quantities" value="{{quantity.id}}">{{quantity.label}} ({{quantity.remarks}}) - {{quantity.price}}</ion-option>
+                <ion-option *ngFor="#quantity of content.quantities" value="{{quantity.id}}">{{quantity.label}} ({{quantity.remarks}}) - ₹ {{quantity.price}}</ion-option>
             </ion-select>
         </ion-item>
         
@@ -39,7 +39,7 @@
         
     </ion-item>
 </ion-content>
-<button fab fab-bottom fab-right (click)="cart()" calm>
+<button fab fab-bottom fab-right (click)="viewCart()" calm>
     <ion-icon name="basket"></ion-icon>
 </button>
 <ion-toolbar position="bottom">

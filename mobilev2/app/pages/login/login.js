@@ -22,8 +22,6 @@ export class LoginPage {
   constructor(app, service, nav, fb) {
       
       this.loading = app.getComponent('loading');
-      
-      console.log(this.loading);
 
       this.data = {};
       this.data.username = '';

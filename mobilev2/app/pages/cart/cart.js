@@ -1,5 +1,6 @@
-import {Page, NavController, Storage, LocalStorage} from 'ionic-angular';
+import {IonicApp, Page, Alert, NavController, Storage, LocalStorage} from 'ionic-angular';
 import {Services} from '../../providers/services/services';
+import {DeliveryPage} from '../delivery/delivery';
 
 /*
   Generated class for the CartPage page.
@@ -12,31 +13,104 @@ import {Services} from '../../providers/services/services';
 })
 export class CartPage {
   static get parameters() {
-      return [[Services], [NavController]];
+      return [[IonicApp], [Services], [NavController]];
   }
 
-  constructor(service, nav) {
+  constructor(app, service, nav) {
+      
+      this.loading = app.getComponent('loading');
+      
+      this.loading.show();
+      
       this.nav = nav;
 
       this.local = new Storage(LocalStorage);
-
-      var user_id = this.local.get('UserId');
       
       var itemAvailable = false;
+      
+      this.total_amount = 0;
+      
+      this.service = service;
+      
+      this.local.get('CartId').then((value) => {
+          
+          this.cart = value;
+          
+          console.log('Cart: '+value);
 
-      service.loadCart(user_id).subscribe(data => {
-          console.log(data.status);
-          if(data.status == 'false') {
-              var alert = Alert.create({
-                  title: 'ERROR!',
-                  message: data.msg,
-                  buttons: ['Ok']
-              });
-              this.nav.present(alert);
-          } else {
-              this.contents = data.data;
-              itemAvailable = true;
-          }
+        service.loadCart(value).subscribe(data => {
+            console.log(data.status);
+            this.loading.hide();
+            if(data.status == 'false') {
+                var alert = Alert.create({
+                    title: 'ERROR!',
+                    message: data.msg,
+                    buttons: ['Ok']
+                });
+                this.nav.present(alert);
+            } else {
+                this.contents = data.data;
+                this.total_amount = data.total_amount;
+                itemAvailable = true;
+            }
+        });
       });
+  }
+  
+  itemTapped(event, content) {
+
+    this.nav.push(DetailPage, {
+        content: content
+    });
+
+  }
+  
+  increment(event, content) {
+      if(content.quantity < 20) {
+        content.quantity = parseInt(content.quantity) + 1;
+        content.total_price = Math.round(content.quantity * content.price * 100)/100;
+        this.updateCart(content);
+      } else {
+        var alert = Alert.create({
+            title: 'ERROR!',
+            message: 'Cannot add more than 20 qunatities',
+            buttons: ['Ok']
+        });
+        this.nav.present(alert);
+      }
+  }
+  
+  decrement(event, content) {
+      if(content.quantity != 1) {
+        content.quantity = parseInt(content.quantity) - 1;
+        content.total_price = Math.round(content.quantity * content.price * 100)/100;
+        this.updateCart(content);
+      }
+  }
+  
+  updateCart(content) {
+      this.loading.show();
+      this.service.updateCart(this.cart, content).subscribe(data => {
+            console.log(data.status);
+            this.loading.hide();
+            if(data.status == 'false') {
+                var alert = Alert.create({
+                    title: 'ERROR!',
+                    message: data.msg,
+                    buttons: ['Ok']
+                });
+                this.nav.present(alert);
+            }
+      });
+      
+      var total_amount = 0;
+      this.contents.forEach(function(item) {
+        total_amount += item.quantity * item.price;
+      });
+      this.total_amount = Math.round(total_amount*100)/100;
+  }
+  
+  checkoutCart() {
+      this.nav.push(DeliveryPage);
   }
 }

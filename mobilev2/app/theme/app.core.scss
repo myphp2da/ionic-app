@@ -18,3 +18,12 @@
 @import "../pages/cart/cart";
 @import "../pages/account/account";
 @import "../components/loading-modal/loading-modal";
+@import "../pages/delivery/delivery.scss";
+@import "../pages/address/address.scss";
+
+.item {
+    padding-left: 0;
+}
+ion-input::after {
+    left: 0;
+}

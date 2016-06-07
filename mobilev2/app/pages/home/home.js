@@ -45,18 +45,12 @@ export class HomePage {
 
       this.local = new Storage(LocalStorage);
 
-      this.cart = 0;
-      this.local.get('CartId').then((result) => {
-        if(result) {
-            this.cart = result;
-            console.log(this.cart);
-        }
-      });
-      
       this.quantity = 0;
+      
+      this.cart = 0;
   }
 
-    cart() {
+    viewCart() {
         this.nav.push(CartPage);
     }
     
@@ -69,6 +63,12 @@ export class HomePage {
     }
 
     saveToCart(item_id) {
+        
+        this.local.get('CartId').then((result) => {
+            if(result) {
+                this.cart = result;
+            }
+        });
 
         var user_id = 0;
         this.local.get('UserId').then((value) => {

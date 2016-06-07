@@ -1,6 +1,6 @@
 <?php
 	/* Different Environment */
-	define('ENV', 1);		// 1 = Developement, 2 = Production
+	define('ENV', 1);		// 1 = Developement, 2 = Production, 3 = Demo Testing
 	
 	/* Paging Variables */
 	define('PER_PAGE', 50);
@@ -20,6 +20,9 @@
 	
 	// Default module to load
 	$module = 'page';
+
+    /** Key for webservices */
+    define('KEY', 'ca966ceb77c7ef7');
 	
 	/** Prefix for session variables */
 	define('PF', 'MVF_');

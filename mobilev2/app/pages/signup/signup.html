@@ -5,9 +5,49 @@
   Ionic pages and navigation.
 -->
 <ion-navbar *navbar>
-  <ion-title>signup</ion-title>
+  <ion-title>Sign Up</ion-title>
 </ion-navbar>
 
-<ion-content padding class="signup">
-  
+<ion-content class="signup" padding>
+    <form [ngFormModel]="authForm" (ngSubmit)="onSubmit(authForm.value)">
+        <ion-item [class.error]="!fname.valid && fname.touched">
+            <ion-label floating>First Name</ion-label>
+            <ion-input type="text" value="" [ngFormControl]="fname"></ion-input>         
+        </ion-item>
+        <div *ngIf="fname.hasError('required') && fname.touched" 
+            class="error-box">First Name is required!</div>
+        <div *ngIf="fname.hasError('maxlength') && fname.touched" 
+            class="error-box">Minimum first name length is 20!</div>
+        <ion-item [class.error]="!lname.valid && lname.touched">
+            <ion-label floating>Last Name</ion-label>
+            <ion-input type="text" value="" [ngFormControl]="lname"></ion-input>         
+        </ion-item>
+        <div *ngIf="lname.hasError('required') && lname.touched" 
+            class="error-box">Last Name is required!</div>
+        <div *ngIf="lname.hasError('maxlength') && lname.touched" 
+            class="error-box">Minimum last name length is 20!</div>
+        <ion-item [class.error]="!phone.valid && phone.touched">
+            <ion-label floating>Phone</ion-label>
+            <ion-input type="text" value="" [ngFormControl]="phone"></ion-input>         
+        </ion-item>
+        <div *ngIf="phone.hasError('required') && phone.touched" 
+            class="error-box">Phone is required!</div>
+        <div *ngIf="(phone.hasError('maxLength') || phone.hasError('minLength')) && phone.touched" 
+            class="error-box">Invalid Phone</div>
+        <ion-item [class.error]="!email.valid && email.touched">
+            <ion-label floating>E-mail Address</ion-label>
+            <ion-input type="text" value="" [ngFormControl]="email"></ion-input>         
+        </ion-item>
+        <div *ngIf="email.hasError('required') && email.touched" 
+            class="error-box">E-mail address is required!</div>
+        <ion-item [class.error]="!password.valid && password.touched">
+            <ion-label floating>Password</ion-label>
+            <ion-input type="password" value="" [ngFormControl]="password" ></ion-input>
+        </ion-item>
+        <div *ngIf="password.hasError('required') && password.touched" 
+            class="error-box">Password is required</div>    
+        <div *ngIf="password.hasError('minlength') && password.touched" 
+            class="error-box">Minimum password length is 8!</div>
+        <button full type="submit" class="button" [disabled]="!authForm.valid">Submit</button>
+    </form>
 </ion-content>

@@ -1,6 +1,6 @@
 import {Page, NavController} from 'ionic-angular';
 import {LoginPage} from '../login/login';
-import {SignUpPage} from '../signup/signup';
+import {SignupPage} from '../signup/signup';
 
 /*
   Generated class for the MainPage page.
@@ -25,6 +25,6 @@ export class MainPage {
     }
 
     appSignUp() {
-        this.nav.push(SignUpPage);
+        this.nav.push(SignupPage);
     }
 }

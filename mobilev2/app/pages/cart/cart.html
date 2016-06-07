@@ -6,9 +6,14 @@
 -->
 <ion-navbar *navbar>
   <ion-title>My Shopping Cart</ion-title>
+	<ion-buttons end>
+    <button (click)="openModal()">
+      <ion-icon name="more"></ion-icon>
+    </button>
+  </ion-buttons>
 </ion-navbar>
 
-<ion-content padding class="cart">
+<ion-content class="cart">
 	<ion-item *ngFor="#content of contents" class="content" text-wrap>
         
 			<ion-thumbnail item-left (click)="itemTapped($event, content)">
@@ -17,19 +22,30 @@
 			
 			<h2 (click)="itemTapped($event, content)">{{content.title}}</h2>
 			
-			<ion-item class="subitem">
-					<ion-select primary [(ngModel)]="quantity">
-							<ion-option *ngFor="#quantity of content.quantities" value="{{quantity.id}}">{{quantity.label}} ({{quantity.remarks}}) - {{quantity.price}}</ion-option>
-					</ion-select>
-			</ion-item>
+			<p>{{content.label}} - {{content.remarks}}</p>
 			
 			<p>Standard Delivery: Tomorrow Evening</p>
 			
-			<button outline type="button" class="button button-small button-info" (click)="saveToCart(content.id)">
-					<ion-icon name="add"></ion-icon> Add to Cart
+			<h3>₹ {{content.total_price}}</h3>
+			
+			<button clear (click)="decrement($event, content)">
+				<ion-icon name="remove-circle"></ion-icon>
+			</button>
+			<span class="ticker-progress">{{content.quantity}}</span>
+			<button clear (click)="increment($event, content)">
+				<ion-icon name="add-circle"></ion-icon>
 			</button>
 			
 	</ion-item>
 
 	<div *ngIf="itemAvailable === false">The cart is empty</div>
 </ion-content>
+
+<ion-toolbar position="bottom" padding>
+		<ion-title>Total Amount: <strong (ngModel)="total_amount">₹ {{total_amount}}</strong></ion-title>
+		<ion-buttons end>
+			<button dark class="button button-small button-info" (click)="checkoutCart()" item-right>
+				Checkout
+			</button>
+		</ion-buttons>
+</ion-toolbar>

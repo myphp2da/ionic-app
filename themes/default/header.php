@@ -54,8 +54,10 @@
                     <?php if(strstr(_env('request_uri'), 'master')) {?> active<?php } ?>">
                         <i class="fa fa-user"></i>Master</a>
                     <ul class="dropdown-menu">
-                        <li<?php if(strstr(_env('request_uri'), 'master')) {?> class="active"<?php } ?>>
-                            <a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('category'));?>">Manage Content Type</a></li>
+                        <li<?php if(strstr(_env('request_uri'), _b64('category'))) {?> class="active"<?php } ?>>
+                            <a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('category'));?>">Manage Categories</a></li>
+                        <li<?php if(strstr(_env('request_uri'), _b64('quantity'))) {?> class="active"<?php } ?>>
+                            <a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('quantity'));?>">Manage Quantities</a></li>
                     </ul>
                 </li>
 
