@@ -11,8 +11,8 @@
 	} else {
 		$_SESSION[PF.'MAIN'] = session_id();
 		$_SESSION[PF.'USERID'] = $session_data['id'];
-		$_SESSION[PF.PF.'NAME'] = $session_data['strFirstName'].' '.$session_data['strLastName'];
-		$_SESSION[PF.PF.'DESGID'] = $session_data['idDesg'];
+		$_SESSION[PF.'NAME'] = $session_data['strFirstName'].' '.$session_data['strLastName'];
+		$_SESSION[PF.'DESGID'] = $session_data['idDesg'];
 		
 		$page = SITE_URL.'account/dashboard';
 		if(isset($_POST['r']) && !empty($_POST['r'])) {

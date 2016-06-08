@@ -7,11 +7,14 @@ class master extends db_class
         'category' => array('table' => 'mst_categories'),
 	    'area' => array('table' => 'mst_areas'),
 	    'quantity' => array('table' => 'mst_quantities'),
-		'tag' => array('table' => 'mst_tag')
+		'tag' => array('table' => 'mst_tag'),
+	    'city' => array('table' => 'mst_cities'),
     );
 
 	static $_have_parents = array('category');
 	static $_have_photo = array('category');
+
+	static $_is_custom = array('area');
 
 	function getChilds($id, $type = 'access-type') {
 		$where = "idParent = ".$id;

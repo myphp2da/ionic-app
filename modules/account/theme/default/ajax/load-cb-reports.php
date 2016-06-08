@@ -11,7 +11,7 @@
 		
 		$pg = isset($_POST['page']) ? $_POST['page'] : 1;
 		
-		if($_SESSION[PF.PF.'DESGID'] == 2) {
+		if($_SESSION[PF.'DESGID'] == 2) {
 			$qAdd = " and idStore = ".$reg['idStore'];
 		}
 		
