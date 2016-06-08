@@ -1,32 +1,33 @@
-import {App, Platform, Storage, LocalStorage, IonicApp, MenuController} from 'ionic-angular';
+import {App, Platform, Storage, SqlStorage, IonicApp, MenuController} from 'ionic-angular';
 import {StatusBar} from 'ionic-native';
 import {MainPage} from './pages/main/main';
 import {HomePage} from './pages/home/home';
 import {IntroPage} from './pages/intro/intro';
 import {AccountPage} from './pages/account/account';
 import {Services} from './providers/services/services';
+import {SQLite} from './providers/sqlite/sqlite';
 import {LoadingModal} from './components/loading-modal/loading-modal';
 
 @App({
   templateUrl: 'build/app.html',
-  providers: [Services],
+  providers: [Services, SQLite],
   directives: [LoadingModal],
   config: {} // http://ionicframework.com/docs/v2/api/config/Config/
 })
 export class MyApp {
   static get parameters() {
-    return [[Platform], [IonicApp], [MenuController]];
+    return [[Platform], [IonicApp], [MenuController], [SQLite]];
   }
 
-  constructor(platform, app, menu) {
+  constructor(platform, app, menu, sqlite) {
+
+      this.sqlite = sqlite;
 
       this.platform = platform;
       this.menu = menu;
       this.app = app;
 
       this.initializeApp();
-
-      this.local = new Storage(LocalStorage);
 
       this.localStorage();
 
@@ -39,9 +40,9 @@ export class MyApp {
 
     localStorage() {
 
-        this.local.get('IntroShown').then((result) => {
+        this.sqlite.getKey('IntroShown').then((result) => {
             if(result) {
-                this.local.get('UserId').then((result) => {
+                this.sqlite.getKey('UserId').then((result) => {
                     if(result) {
                         this.rootPage = HomePage;
                     } else {
@@ -49,7 +50,7 @@ export class MyApp {
                     }
                 });
             } else {
-                this.local.set('IntroShown', true);
+                this.sqlite.setKey('IntroShown', true);
                 this.rootPage = IntroPage;
             }
         });
@@ -57,9 +58,7 @@ export class MyApp {
 
     initializeApp() {
         this.platform.ready().then(() => {
-            // Okay, so the platform is ready and our plugins are available.
-            // Here you can do any higher level native things you might need.
-            StatusBar.styleDefault();
+
         });
     }
 

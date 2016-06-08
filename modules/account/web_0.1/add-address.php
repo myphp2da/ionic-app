@@ -16,9 +16,17 @@
 
     if(isset($post_data->key) && $post_data->key == KEY) {
 
-        if(!isset($post_data->customer) || !is_numeric($post_data->customer)) {
+        if(!isset($post_data->user) || !is_numeric($post_data->user)) {
             $data['status'] = 'false'; //false
-            $data['msg'] = 'ERROR! no authenticated customer provided';
+            $data['msg'] = 'ERROR! no authenticated user provided';
+            $data['code'] = 1005;
+
+            die(json_encode($data));
+        }
+
+        if(!isset($post_data->area) || !is_numeric($post_data->area)) {
+            $data['status'] = 'false'; //false
+            $data['msg'] = 'ERROR! no area selected';
             $data['code'] = 1005;
 
             die(json_encode($data));
@@ -33,11 +41,11 @@
             'lname' => $post_data->data->lname,
             'address1' => $post_data->data->address_line_1,
             'address2' => $post_data->data->address_line_2,
-            'area' => $post_data->data->area,
+            'area' => $post_data->area,
             'city' => $post_data->data->city,
             'state' => $post_data->data->state,
             'pincode' => $post_data->data->pincode,
-            'customer' => $post_data->data->customer
+            'customer' => $post_data->user
         );
 
         $address_id = $customer_obj->insertCustomerAddress($address_array);

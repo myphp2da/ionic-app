@@ -1,7 +1,8 @@
-import {IonicApp, Page, Alert, NavController, Storage, LocalStorage} from 'ionic-angular';
+import {IonicApp, Page, Alert, NavController, Storage, SqlStorage} from 'ionic-angular';
 import {Services} from '../../providers/services/services';
+import {SQLite} from '../../providers/sqlite/sqlite';
 import {HomePage} from '../home/home';
-import { Component } from 'angular2/core';  
+import { Component } from 'angular2/core';
 import { FORM_DIRECTIVES, FormBuilder, ControlGroup, Validators, AbstractControl } from 'angular2/common';
 
 /*
@@ -16,10 +17,10 @@ import { FORM_DIRECTIVES, FormBuilder, ControlGroup, Validators, AbstractControl
 })
 export class LoginPage {
   static get parameters() {
-    return [[IonicApp], [Services], [NavController], [FormBuilder]];
+    return [[IonicApp], [Services], [NavController], [FormBuilder], [SQLite]];
   }
 
-  constructor(app, service, nav, fb) {
+  constructor(app, service, nav, fb, sqlite) {
       
       this.loading = app.getComponent('loading');
 
@@ -28,8 +29,8 @@ export class LoginPage {
       this.data.response = '';
 
       this.service = service;
+      this.sqlite = sqlite;
       this.nav = nav;
-      this.local = new Storage(LocalStorage);
       
       this.authForm = fb.group({  
             'username': ['', Validators.compose([Validators.required, Validators.minLength(8)])],
@@ -55,7 +56,7 @@ export class LoginPage {
                 });
                 this.nav.present(alert);
             } else {
-                this.local.set('UserId', data.data.user_details.id);
+                this.sqlite.setKey('UserId', data.data.user_details.id);
                 this.nav.push(HomePage);
             }
         });

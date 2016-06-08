@@ -16,7 +16,7 @@
 
     if(isset($post_data->key) && $post_data->key == KEY) {
 
-        if(!isset($post_data->customer) || !is_numeric($post_data->customer)) {
+        if(!isset($post_data->user) || !is_numeric($post_data->user)) {
             $data['status'] = 'false'; //false
             $data['msg'] = 'ERROR! no authenticated customer provided';
             $data['code'] = 1005;
@@ -27,7 +27,7 @@
         _subModule('account', 'customer');
         $customer_obj = new customer();
 
-        $addresses = $customer_obj->getCustomerAddresses($post_data->customer);
+        $addresses = $customer_obj->getCustomerAddresses($post_data->user);
 
         if($addresses == 404){
             $data['status'] = 'false'; //false
@@ -35,7 +35,7 @@
         } else {
 
             $output = array();
-            foreach($addresss as $address) {
+            foreach($addresses as $address) {
 
                 $address_array = array(
                     'id' => $address['id'],
@@ -46,7 +46,7 @@
                     'area' => $address['strArea'],
                     'city' => $address['strCity'],
                     'state' => $address['strState'],
-                    'pincode' => $address['pincode']
+                    'pincode' => $address['intPinCode']
                 );
 
                 $output[] = $address_array;

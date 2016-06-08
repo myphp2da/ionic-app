@@ -1,5 +1,6 @@
-import {IonicApp, Page, Alert, NavController, Loading, Storage, LocalStorage} from 'ionic-angular';
+import {IonicApp, Page, Alert, NavController, Loading, Storage, SqlStorage} from 'ionic-angular';
 import {Services} from '../../providers/services/services';
+import {SQLite} from '../../providers/sqlite/sqlite';
 import {CartPage} from '../cart/cart';
 import {DetailPage} from '../detail/detail';
 
@@ -14,15 +15,17 @@ import {DetailPage} from '../detail/detail';
 })
 export class HomePage {
   static get parameters() {
-    return [[IonicApp], [Services], [NavController]];
+    return [[IonicApp], [Services], [NavController],[SQLite]];
   }
 
-  constructor(app, service, nav) {
+  constructor(app, service, nav, sqlite) {
       
       this.loading = app.getComponent('loading');
 
       this.nav = nav;
       this.service = service;
+
+      this.sqlite = sqlite;
       
       this.loading.show();
 
@@ -42,12 +45,18 @@ export class HomePage {
               this.contents = data.data;
 		  }
 	  });
-
-      this.local = new Storage(LocalStorage);
-
-      this.quantity = 0;
       
       this.cart = 0;
+      this.sqlite.getKey('Cart').then((result) => {
+        if(result) {
+            console.log(result);
+            this.cart = result;
+
+            /*this.sqlite.getCart(this.cart).then((data) => {
+                console.log(data.res.rows.item(0));
+            });*/
+        }
+      });
   }
 
     viewCart() {
@@ -62,21 +71,15 @@ export class HomePage {
 
     }
 
-    saveToCart(item_id) {
-        
-        this.local.get('CartId').then((result) => {
-            if(result) {
-                this.cart = result;
-            }
-        });
+    saveToCart(content) {
 
         var user_id = 0;
-        this.local.get('UserId').then((value) => {
+        this.sqlite.getKey('UserId').then((value) => {
             if(value) {
                 user_id = value;
             }
 
-            this.service.addToCart(item_id, user_id, this.cart, this.quantity).subscribe(data => {
+            this.service.addToCart(content.id, user_id, this.cart, content.quantity).subscribe(data => {
                 console.log(data.status);
                 if(data.status == 'false') {
                     var alert = Alert.create({
@@ -86,8 +89,23 @@ export class HomePage {
                     });
                     this.nav.present(alert);
                 } else {
-                    this.local.set('CartId', data.cart);
-                    this.nav.push(CartPage);
+
+                    this.sqlite.getCart(data.cart).then((cart_data) => {
+                        var cart_detail = JSON.stringify(cart_data.res);
+
+                        if(!cart_detail.id) {
+                            this.sqlite.insertCart(data).then((idata) => {
+                                console.log("Cart Added -> " + JSON.stringify(idata.res));
+                            }, (error) => {
+                                console.log("ERROR -> " + JSON.stringify(error.err));
+                            });
+                        }
+
+                        this.sqlite.setKey('Cart', data.cart);
+                        this.nav.push(CartPage);
+                    }, (error) => {
+                        console.log("ERROR -> " + JSON.stringify(error.err));
+                    });
                 }
             });
         });

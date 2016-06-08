@@ -12,14 +12,21 @@ class customer extends account
 	 */
 	protected $_customer_addresses_table = 'rel_customer_addresses';
 
+    /** @var string
+     * Areas master table name
+     */
+    protected $_area_table = 'mst_areas';
+
 	/** Get all customer addresses for Customer ID provided
 	 * @param int $customer_id : Customer ID
 	 * @return array | int : returns Array of customer addresses for provided Customer ID on success,
 	 *                      otherwise returns 404
 	 */
 	public function getCustomerAddresses($customer_id) {
-		$sql = "select a.*
+		$sql = "select a.*, ar.strArea 
 				from " . $this->_customer_addresses_table . " as a
+				inner join ".$this->_area_table." as ar
+				    on ar.id = a.idArea
 				where a.idCustomer = " . $customer_id;
 		return $this->getResults($sql);
 	}
@@ -65,7 +72,7 @@ class customer extends account
 			'strAddressLine2' => $post_data['address2'],
 			'strCity' => $post_data['city'],
 			'strState' => $post_data['state'],
-			'strPinCode' => $post_data['pincode'],
+			'intPinCode' => $post_data['pincode'],
 			'idCustomer' => $post_data['customer']
 		);
 

@@ -16,7 +16,10 @@
 
     if(isset($post_data->key) && $post_data->key == KEY) {
 
-        $areas = $master_obj->getMasters(1, 'area');
+        _subModule('master', 'area');
+        $area_obj = new area();
+
+        $areas = $area_obj->getAreas(1);
 
         if($areas == 404){
             $data['status'] = 'false'; //false
@@ -31,7 +34,7 @@
                     'name' => $area['strArea'],
                     'city' => $area['strCity'],
                     'state' => $area['strState'],
-                    'pincode' => $area['pincode']
+                    'pincode' => $area['intPinCode']
                 );
 
                 $output[] = $area_array;

@@ -1,6 +1,6 @@
 <?php
 
-    if(in_array($req['parent'], array('login','forget-password', 'signup', 'signup-success', 'pdf', 'set-password', 'verify', 'verification','email', 'password', 'reset-password','new-password'))) {
+    if(isset($req['parent']) && in_array($req['parent'], array('login','forget-password', 'signup', 'signup-success', 'pdf', 'set-password', 'verify', 'verification','email', 'password', 'reset-password','new-password'))) {
         $req['auth'] = false;
     }
 

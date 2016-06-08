@@ -24,6 +24,12 @@
         },
         "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "com.ionicframework.mobilev2899231"
+        },
+        "cordova-sqlite-storage": {
+            "PACKAGE_NAME": "com.inheritlab.mvf"
+        },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "com.inheritlab.mvf"
         }
     },
     "dependent_plugins": {}

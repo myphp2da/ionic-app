@@ -1,5 +1,6 @@
 import {IonicApp, Page, Alert, NavController, Storage, LocalStorage} from 'ionic-angular';
 import {Services} from '../../providers/services/services';
+import {SQLite} from '../../providers/sqlite/sqlite';
 import {DeliveryPage} from '../delivery/delivery';
 
 /*
@@ -13,26 +14,26 @@ import {DeliveryPage} from '../delivery/delivery';
 })
 export class CartPage {
   static get parameters() {
-      return [[IonicApp], [Services], [NavController]];
+      return [[IonicApp], [Services], [NavController], [SQLite]];
   }
 
-  constructor(app, service, nav) {
+  constructor(app, service, nav, sqlite) {
       
       this.loading = app.getComponent('loading');
       
       this.loading.show();
       
       this.nav = nav;
-
-      this.local = new Storage(LocalStorage);
       
       var itemAvailable = false;
       
       this.total_amount = 0;
       
       this.service = service;
+
+      this.sqlite = sqlite;
       
-      this.local.get('CartId').then((value) => {
+      this.sqlite.getKey('Cart').then((value) => {
           
           this.cart = value;
           

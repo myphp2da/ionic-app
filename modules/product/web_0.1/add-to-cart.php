@@ -24,7 +24,7 @@
         }
 
         // Create cart if cart ID is 0, otherwise use provided cart ID
-        if(isset($post_data->cart) && $post_data->cart == 0) {
+        if(!isset($post_data->cart) || $post_data->cart == 0) {
             $cart_id = $product_obj->createCart($post_data->user);
         } else {
             $cart_id = $post_data->cart;
@@ -91,7 +91,6 @@
             $data['status'] = 'true'; //True
             $data['msg'] = 'Selected product has been successfully added to the cart';
             $data['cart'] = $cart_id;
-            $data['data'] = $output;
         }
     } else {
         $data['status'] = 'false'; //False
