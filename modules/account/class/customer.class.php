@@ -241,7 +241,7 @@ class customer extends account
 			$mainAdd .= " AND main.strPassword = '" . $password . "'";
 		}
 
-		$sql = "select main.id, strEmail, strFirstName, strLastName, strImageName, enmActivated
+		$sql = "select main.id, strEmail, strFirstName, strLastName, strImageName, enmActivated, strEmail
 				from " . $this->_customer_table . " as main
 				where 1" . $mainAdd;
 		return $this->getResult($sql);

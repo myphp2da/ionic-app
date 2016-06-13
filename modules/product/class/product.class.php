@@ -31,13 +31,40 @@ class product extends db_class {
      */
     protected $_cart_products_table = 'rel_cart_products';
 
+    /** Complete order for provided details
+     *
+     * @param array $cart_data: cart data to complete the order
+     * @return int | bool : Returns affected rows on success, otherwise returns 404
+     */
+    public function completeOrder($cart_data) {
+        $cart_array = array(
+            'intAddress' => $cart_data['address'],
+            'strSlot' => $cart_data['slot'],
+            'strPayment' => $cart_data['payment'],
+            'tinStatus' => $cart_data['status']
+        );
+        return $this->updateByArray($this->_cart_table, $cart_array, "id = ".$cart_data['cart']);
+    }
+
+    /** Get cart for provided cart ID
+     * @param array $cart_id: ID of the cart
+     * @return array | int : Returns cart details for provided cart ID on success,
+     *                     otherwise returns 404
+     */
+    public function getCart($cart_id) {
+        $sql = "select c.*
+                from ".$this->_cart_table." as c
+                where c.id = ".$cart_id;
+        return $this->getResult($sql);
+    }
+
     /** Get cart product for provided cart ID and Product ID
      * @param array $cart_id: ID of the cart
      * @param array $product_id: ID of the product
      * @return array | int : Returns cart product details for provided cart ID and product ID on success,
      *                     otherwise returns 404
      */
-    function getCartProduct($cart_id, $product_id) {
+    public function getCartProduct($cart_id, $product_id) {
         $sql = "select cp.*
                 from ".$this->_cart_products_table." as cp
                 where cp.idCart = ".$cart_id."
