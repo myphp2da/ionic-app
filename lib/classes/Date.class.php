@@ -43,7 +43,7 @@
                 $value = sprintf("%d %s%p", $no, $phrase[$i], (($no <> 1) ? 's' : '')).' ago';
             }
 
-            if(($stf == 1) && ($i >= 1) && (($cur_tm-$time) > 0)) $value .= time_ago($time);
+            if(($stf == 1) && ($i >= 1) && (($cur_time-$time) > 0)) $value .= time_ago($time);
 
             return $value;
         }
