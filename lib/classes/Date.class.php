@@ -2,6 +2,11 @@
 
     class Date
     {
+        public static function displayDate($date, $format = 'd-m-Y') {
+            if(empty($date)) return null;
+            return date($format, strtotime($date));
+        }
+
         /** Get timestamp from XL date provided
          * @param int $date: XL date
          *
