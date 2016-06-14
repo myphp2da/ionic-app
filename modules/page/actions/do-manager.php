@@ -34,7 +34,7 @@ if(isset($_POST['action']) && !empty($_POST['action'])){
 		if(isset($_POST['action']) && $_POST['action'] == 'add'){
 
 			$title=$_POST['title'];
-			$where_cond = "enmStatus = '2' and strTitle='$title'";
+			$where_cond = "tinStatus != '2' and strTitle='$title'";
 			$result = $page_obj->getPagesCount($where_cond);
 
 			if($result!=0) {
@@ -68,7 +68,7 @@ if(isset($_POST['action']) && !empty($_POST['action'])){
 
 
 			$title=$_POST['title'];
-			$where_cond = "enmStatus = '2' and strTitle='$title' and id!=".$_POST['id'];
+			$where_cond = "tinStatus = '2' and strTitle='$title' and id!=".$_POST['id'];
 			$result = $page_obj->getPagesCount($where_cond);
 
 			if($result!=0) {

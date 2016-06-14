@@ -274,7 +274,7 @@ class account extends db_class
 	 */
 	function checkAccount($id)
 	{
-		$query = "SELECT * from " . $this->_table . " where enmStatus = '1' and id = " . $id;
+		$query = "SELECT * from " . $this->_table . " where tinStatus = '1' and id = " . $id;
 		return $this->getResult($query);
 	}
 

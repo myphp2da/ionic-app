@@ -9,7 +9,7 @@ if(!empty($id))
 	else if($status =='1')
 		$status = 0;
 		
-	$data = array('enmStatus' => $status);
+	$data = array('tinStatus' => $status);
 	$page_obj->updateData($data);
 ?> 
 	<a href='javascript:void(0);' data-url="page/load/change-status?status=<?php echo $status;?>&id=<?php echo $id;?>" data-action="add" data-container="#activate_<?php echo $id;?>"  class="ajaxButton fa<?php if($status=='1') echo " _green fa-eye"; else echo " _red fa-eye-slash"?>" title="Click to <?php if($status=='0') echo "Active"; else echo "DeActivate";?>"></a>

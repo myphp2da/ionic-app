@@ -9,6 +9,7 @@ class master extends db_class
 	    'quantity' => array('table' => 'mst_quantities'),
 		'tag' => array('table' => 'mst_tag'),
 	    'city' => array('table' => 'mst_cities'),
+	    'slot' => array('table' => 'mst_slots')
     );
 
 	static $_have_parents = array('category');

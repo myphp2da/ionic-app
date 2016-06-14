@@ -52,7 +52,7 @@ class customer extends account
 	 */
 	function getCustomersCount($where)
 	{
-		$sql = "select count(main.id) as total_rows from " . $this->_table . " as main where " . $where;
+		$sql = "select count(main.id) as total_rows from " . $this->_customer_table . " as main where " . $where;
 		$data = $this->getResult($sql);
 		return $data['total_rows'];
 	}
@@ -107,12 +107,9 @@ class customer extends account
 	 * @return int|array : return 404 if no data available for the query,
 	 *                     otherwise return array of results
 	 */
-	function getCustomers($where)
-	{
-		$sql = "select main.*, at.strAccessType as atName
-				from " . $this->_table . " as main
-				inner join " . $this->_access_type_table . " as at
-					on at.id = main.idDesg 
+	public function getCustomers($where) {
+		$sql = "select main.*
+				from " . $this->_customer_table . " as main
 				where " . $where;
 		return $this->getResults($sql);
 	}
@@ -150,7 +147,7 @@ class customer extends account
 	 */
 	function checkCustomer($id)
 	{
-		$query = "SELECT * from " . $this->_table . " where enmStatus = '1' and id = " . $id;
+		$query = "SELECT * from " . $this->_table . " where tinStatus = '1' and id = " . $id;
 		return $this->getResult($query);
 	}
 
