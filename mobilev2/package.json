@@ -18,8 +18,8 @@
     "ionic-gulp-scripts-copy": "^1.0.1",
     "run-sequence": "1.1.5"
   },
-  "name": "mobilev2",
-  "description": "mobilev2: An Ionic project",
+  "name": "myvegs",
+  "description": "e-Commerce project to buy vegetables and fruits.",
   "cordovaPlugins": [
     "cordova-plugin-device",
     "cordova-plugin-console",

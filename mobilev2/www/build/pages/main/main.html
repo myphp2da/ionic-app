@@ -5,11 +5,16 @@
   Ionic pages and navigation.
 -->
 <ion-content padding class="main">
-        <button full type="button" class="button button-info" light (click)="appLogin()">
-            <ion-icon name="key"></ion-icon> Login
-        </button>
-    
-        <button full type="button" class="button button-info" light (click)="appSignUp()">
-            <ion-icon name="clipboard"></ion-icon> Sign Up
-        </button>
+    <ion-row>
+        <ion-col>
+            <img src="images/main.jpg" />
+        </ion-col>
+    </ion-row>
+    <button full round type="button" (click)="appLogin()">
+        Login
+    </button>
+
+    <button full round type="button" (click)="appSignUp()">
+        Sign Up
+    </button>
 </ion-content>

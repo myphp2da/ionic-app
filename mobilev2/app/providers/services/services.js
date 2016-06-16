@@ -42,7 +42,7 @@ export class Services {
     });*/
   }
 
-    completeOrder(cart) {
+    completeOrder(user_id, cart) {
         var url = this.baseUrl+'product/0.1/complete-order';
         var post_data = JSON.stringify({key: this.key, user: user_id, cart: cart});
 

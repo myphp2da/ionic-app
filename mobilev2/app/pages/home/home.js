@@ -2,6 +2,7 @@ import {IonicApp, Page, Alert, NavController, Loading, Storage, SqlStorage} from
 import {Services} from '../../providers/services/services';
 import {SQLite} from '../../providers/sqlite/sqlite';
 import {CartPage} from '../cart/cart';
+import {SearchPage} from '../search/search';
 import {DetailPage} from '../detail/detail';
 
 /*
@@ -26,6 +27,8 @@ export class HomePage {
       this.service = service;
 
       this.sqlite = sqlite;
+
+      this.hasFilter = false;
       
       this.loading.show();
 
@@ -43,6 +46,10 @@ export class HomePage {
 			  this.nav.present(alert);
 		  } else {
               this.contents = data.data;
+              this.contents.forEach(function(item) {
+                  item.quantity = (!item.quantity) ? 1 : item.quantity;
+                  this.quantityUpdated(item);
+              }, this);
 		  }
 	  });
       
@@ -57,10 +64,33 @@ export class HomePage {
             });*/
         }
       });
+
+      this.user_image = 'images/profile.jpg';
+      this.sqlite.getUser().then((result) => {
+          this.user = result.res.rows.item(0);
+          console.log(this.user.strName);
+          if(this.user.strImageName != null) {
+              this.user_image = this.service.baseUrl + 'file-manager/customers/' + this.user.strImageName;
+          }
+      }, (error) => {
+          console.log(error);
+      });
   }
 
+    quantityUpdated(content) {
+        content.quantities.forEach(function(qty) {
+            if(qty.id == content.quantity) {
+                content.price = qty.price;
+            }
+        });
+    }
+
     viewCart() {
-        this.nav.push(CartPage);
+        this.nav.push(CartPage, {cart: this.cart});
+    }
+
+    gotoSearch() {
+        this.nav.setRoot(SearchPage);
     }
     
     itemTapped(event, content) {

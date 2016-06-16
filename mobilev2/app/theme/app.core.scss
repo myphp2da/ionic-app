@@ -21,10 +21,37 @@
 @import "../pages/delivery/delivery.scss";
 @import "../pages/address/address.scss";
 @import "../pages/payment/payment.scss";
+@import "../pages/confirm/confirm.scss";
+@import "../pages/search/search.scss";
+@import "../pages/orders/orders.scss";
+@import "../pages/forgot-password/forgot-password.scss";
+@import "../pages/products/products.scss";
+@import "../pages/order-details/order-details.scss";
 
 .item {
     padding-left: 0;
 }
 ion-input::after {
     left: 0;
+}
+
+ion-slide img {
+    height: auto !important;
+}
+
+.menu-left{
+    background:url('http://tutorialsplane.com/wp-content/uploads/2016/02/1511516_1035103706511033_695479665952545706_n.jpg') no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+
+.item-profile {
+  height: 150px;
+}
+
+.item-avatar > img:first-child {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 50%;
 }

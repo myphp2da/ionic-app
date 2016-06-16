@@ -56,8 +56,8 @@ export class LoginPage {
                 });
                 this.nav.present(alert);
             } else {
-                this.sqlite.setKey('UserId', data.data.user_details.id);
-                this.nav.push(HomePage);
+                this.sqlite.updateUser(data.data.user_details);
+                this.nav.setRoot(HomePage);
             }
         });
     }

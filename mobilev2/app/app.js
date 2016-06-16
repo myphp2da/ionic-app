@@ -12,7 +12,7 @@ import {LoadingModal} from './components/loading-modal/loading-modal';
   templateUrl: 'build/app.html',
   providers: [Services, SQLite],
   directives: [LoadingModal],
-  config: {} // http://ionicframework.com/docs/v2/api/config/Config/
+  config: { mode: 'md' } // http://ionicframework.com/docs/v2/api/config/Config/
 })
 export class MyApp {
   static get parameters() {
@@ -32,9 +32,15 @@ export class MyApp {
       this.localStorage();
 
       this.pages = [
-          { title: 'Home', component: HomePage },   
-          { title: 'My Account', component: AccountPage },
-          { title: 'Intro', component: IntroPage }
+          { title: 'Home', component: HomePage, icon: 'home' },   
+          { title: 'My Account', component: AccountPage, icon: 'user' },
+          { title: 'Main Page', component: MainPage, icon: 'page' }
+      ];
+
+      this.account_pages = [
+          { title: 'My Account', component: AccountPage, icon: 'user' },
+          { title: 'Manage Delivery Addresses', component: MainPage, icon: 'page' },
+          { title: 'My Orders', component: MainPage, icon: 'page' }
       ];
   }
 
@@ -58,7 +64,7 @@ export class MyApp {
 
     initializeApp() {
         this.platform.ready().then(() => {
-
+            
         });
     }
 

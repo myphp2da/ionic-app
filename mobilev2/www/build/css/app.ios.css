@@ -7938,6 +7938,12 @@ ion-slide img {
 .button-fab {
   z-index: 100; }
 
+a.button {
+  color: #FFF;
+  font-size: 150%;
+  padding: 0 10px;
+  line-height: 50px; }
+
 loading-modal .container {
   z-index: -1;
   -webkit-transition: z-index 0.2s step-end;
@@ -7976,3 +7982,18 @@ loading-modal .container {
 
 ion-input::after {
   left: 0; }
+
+ion-slide img {
+  height: auto !important; }
+
+.menu-left {
+  background: url("http://tutorialsplane.com/wp-content/uploads/2016/02/1511516_1035103706511033_695479665952545706_n.jpg") no-repeat center center fixed;
+  background-size: cover; }
+
+.item-profile {
+  height: 150px; }
+
+.item-avatar > img:first-child {
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 50%; }
