@@ -1,0 +1,79 @@
+<!--
+  Generated template for the AddressPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-navbar *navbar>
+  <ion-title>Add Address</ion-title>
+</ion-navbar>
+
+<ion-content padding class="address">
+    <form [ngFormModel]="authForm" (ngSubmit)="onSubmit(authForm.value)">
+        <ion-item [class.error]="!label.valid && label.touched">
+            <ion-label floating>Label</ion-label>
+            <ion-input type="text" value="" [ngFormControl]="label"></ion-input>         
+        </ion-item>
+        <div *ngIf="label.hasError('required') && label.touched" 
+            class="error-box">Label is required!</div>
+        <div *ngIf="label.hasError('maxlength') && label.touched" 
+            class="error-box">Maximum label length is 20!</div>
+        <ion-item [class.error]="!fname.valid && fname.touched">
+            <ion-label floating>First Name</ion-label>
+            <ion-input type="text" value="" [ngFormControl]="fname"></ion-input>         
+        </ion-item>
+        <div *ngIf="fname.hasError('required') && fname.touched" 
+            class="error-box">First Name is required!</div>
+        <div *ngIf="fname.hasError('maxlength') && fname.touched" 
+            class="error-box">Maximum first name length is 20!</div>
+        <ion-item [class.error]="!lname.valid && lname.touched">
+            <ion-label floating>Last Name</ion-label>
+            <ion-input type="text" value="" [ngFormControl]="lname"></ion-input>         
+        </ion-item>
+        <div *ngIf="lname.hasError('required') && lname.touched" 
+            class="error-box">Last Name is required!</div>
+        <div *ngIf="lname.hasError('maxlength') && lname.touched" 
+            class="error-box">Maximum last name length is 20!</div>
+        <ion-item [class.error]="!address1.valid && address1.touched">
+            <ion-label floating>Address Line 1</ion-label>
+            <ion-input type="text" value="" [ngFormControl]="address1"></ion-input>         
+        </ion-item>
+        <div *ngIf="address1.hasError('required') && address1.touched" 
+            class="error-box">Address Line 1 is required!</div>
+        <ion-item [class.error]="!address2.valid && address2.touched">
+            <ion-label floating>Address Line 2</ion-label>
+            <ion-input type="text" value="" [ngFormControl]="address2"></ion-input>         
+        </ion-item>
+        <ion-item>
+            <ion-label floating>Select Area</ion-label>
+            <ion-select primary [(ngModel)]="area" (ngModelChange)="itemSelected()">
+                <ion-option *ngFor="#area of contents" value="{{area.id}}">{{area.name}} ({{area.city}})</ion-option>
+            </ion-select>
+        </ion-item>
+        <ion-item [class.error]="!city.valid && city.touched">
+            <ion-label floating>City</ion-label>
+            <ion-input type="text" value="" [(ngModel)]="area_city" [ngFormControl]="city"></ion-input>         
+        </ion-item>
+        <div *ngIf="city.hasError('required') && city.touched" 
+            class="error-box">City is required!</div>
+        <div *ngIf="city.hasError('maxlength') && city.touched" 
+            class="error-box">Maximum city length is 20!</div>
+        <ion-item [class.error]="!state.valid && state.touched">
+            <ion-label floating>State</ion-label>
+            <ion-input type="text" value="" [(ngModel)]="area_state" [ngFormControl]="state"></ion-input>         
+        </ion-item>
+        <div *ngIf="state.hasError('required') && state.touched" 
+            class="error-box">State is required!</div>
+        <div *ngIf="state.hasError('maxlength') && state.touched" 
+            class="error-box">Maximum state length is 20!</div>
+        <ion-item [class.error]="!pincode.valid && pincode.touched">
+            <ion-label floating>Pin Code</ion-label>
+            <ion-input type="number" value="" [(ngModel)]="area_pincode" [ngFormControl]="pincode"></ion-input>         
+        </ion-item>
+        <div *ngIf="pincode.hasError('required') && pincode.touched" 
+            class="error-box">Pin Code is required!</div>
+        <div *ngIf="pincode.hasError('maxlength') && pincode.touched" 
+            class="error-box">Maximum pin code length is 6!</div>
+        <button full type="submit" class="button" [disabled]="!authForm.valid">Submit</button>  
+    </form>
+</ion-content>
