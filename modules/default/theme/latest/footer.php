@@ -1,1 +1,0 @@
-<div id="footer">&copy; KAMAL KEMP 2013,  All rights reserved</div>
