@@ -62,5 +62,9 @@
 		if(isset($account_details['idDesg']) && is_numeric($account_details['idDesg']) && $account_details['idDesg'] != 0) {
 			$account_obj->getAccessRights($account_details['idDesg']);
 		}
-
 	}
+
+    _class('CustomError');
+    $error_obj = new CustomError();
+
+    $error_obj->checkErrorLog();
