@@ -16,9 +16,14 @@
 
     if(isset($post_data->key) && $post_data->key == KEY) {
 
+        $query_string = '1';
+        if(isset($post_data->category) && is_numeric($post_data->category)) {
+            $query_string .= " and p.idCategory = ".$post_data->category;
+        }
+
         $product_url = UPLOAD_URL.'product/thumbs/';
 
-        $products = $product_obj->getProducts(1);
+        $products = $product_obj->getProducts($query_string);
 
         if($products == '404'){
             $data['status'] = 'False'; //False
@@ -53,7 +58,8 @@
                 $product_array = array(
                     'id' => $product['id'],
                     'title' => $product['strProduct'],
-                    'photo' => $product_url.$product['strImageName']
+                    'photo' => !empty($product['strImageName']) ? $product_url.$product['strImageName'] : '',
+                    'category' => $product['strCategory']
                 );
 
                 if(isset($quantity_array[$product['id']])) {

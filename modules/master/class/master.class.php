@@ -128,7 +128,7 @@ class master extends db_class
 	function getMasters($where = '1', $type = 'access-type', $order = '') {
 		$table = $this->_types[$type]['table'];
 		$name = str_replace('-', '_', $type).'_name';
-		$orderAdd = (!empty($order)) ? ' order by '.$order : '';
+		$orderAdd = (!empty($order)) ? ' order by '.$order : ' order by '.$name;
 		$sql = "select * from ".$table." where ".$where.$orderAdd;
 		return $this->getResults($sql);
 	}

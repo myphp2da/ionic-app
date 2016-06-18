@@ -107,7 +107,7 @@ if (in_array($type, $master_obj::$_have_parents) && $childs == 0) {
 						<label for="parent" class="control-label col-lg-2">Parent:</label>
 
 						<div class="col-lg-6">
-							<select name="parent" id="parent" class="form-control required">
+							<select name="parent" id="parent" class="form-control">
 								<option value="" selected="selected"> -- Select --</option>
 								<?php
 								foreach ($categories as $category) {

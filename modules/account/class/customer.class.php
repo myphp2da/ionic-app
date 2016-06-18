@@ -75,8 +75,7 @@ class customer extends account
 			'intPinCode' => $post_data['pincode'],
 			'idCustomer' => $post_data['customer']
 		);
-
-		return $this->insertByArray($this->_customer_addresses_table, $address_array);
+        return $address_id = $this->insertByArray($this->_customer_addresses_table, $address_array);
 	}
 
 	public function insertCustomer($data)

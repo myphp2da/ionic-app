@@ -14,7 +14,7 @@
 
     $post_data = json_decode($request);
 
-    if(isset($post_data['key']) && $post_data['key'] == KEY) {
+    if(isset($post_data->key) && $post_data->key == KEY) {
 
         $output = array();
 
@@ -23,19 +23,33 @@
         _module('master');
         $master_obj = new master();
 
-        $categories = $master_obj->getMasters(1, 'category');
+        $categories = $master_obj->getMasters(1, 'category', 'idParent');
 
+        $category_array = $sub_categories = array();
         if($categories != 404){
 
             foreach($categories as $category) {
+                $category_id = $category['id'];
 
-                $category_array = array(
+                $data_array = array(
                     'id' => $category['id'],
-                    'title' => $category['strCategory'],
-                    'photo' => $category['strImageName']
+                    'name' => $category['strCategory'],
+                    'photo' => !empty($category['strImageName']) ? $category_url.$category['strImageName'] : ''
                 );
 
-                $output['categories'][] = $category_array;
+                if($category['idParent'] == 0) {
+                    $category_array[] = $data_array;
+                } else {
+                    $sub_categories[$category['idParent']] = $data_array;
+                }
+            }
+
+            foreach($category_array as $category) {
+                if(isset($sub_categories[$category['id']])) {
+                    $category['sub_categories'][] = $sub_categories[$category['id']];
+
+                    $output['categories'][] = $category;
+                }
             }
         }
 
@@ -45,14 +59,40 @@
 
         if($products != 404){
 
+            $available_products  = array();
+            foreach($products as $product) {
+                $available_products[] = $product['id'];
+            }
+
+            $quantity_array = array();
+            if(sizeof($available_products) > 0) {
+                $product_quantities = $product_obj->getProductQuantities($available_products);
+
+                if($product_quantities != 404) {
+                    foreach($product_quantities as $pq) {
+                        $product_id = $pq['idProduct'];
+                        $quantity_array[$product_id][] = array(
+                            'id' => $pq['idQuantity'],
+                            'label' => $pq['strQuantity'],
+                            'remarks' => $pq['strRemarks'],
+                            'price' => $pq['decPrice']
+                        );
+                    }
+                }
+            }
+
             foreach($products as $product) {
 
                 $product_array = array(
                     'id' => $product['id'],
                     'title' => $product['strProduct'],
-                    'price' => $product['decPrice'],
-                    'photo' => $product['strImageName']
+                    'photo' => !empty($product['strImageName']) ? $product_url.$product['strImageName'] : '',
+                    'category' => $product['strCategory']
                 );
+
+                if(isset($quantity_array[$product['id']])) {
+                    $product_array['quantities'] = $quantity_array[$product['id']];
+                }
 
                 $output['products'][] = $product_array;
             }
