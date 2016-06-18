@@ -14,7 +14,7 @@
 <ion-content padding class="detail">
     <ion-item>
       <ion-image image-large>
-          <img src="{{content.photo}}"/>
+          <img src="{{content.photo}}" width="100%"/>
       </ion-image>
         <ion-item-content>
             <h2>{{content.title}}</h2>
@@ -23,20 +23,16 @@
     </ion-item>
     
     <ion-item class="subitem">
-      <ion-select primary [(ngModel)]="gaming">
-          <ion-option value="nes" checked="true">NES</ion-option>
-          <ion-option value="n64">Nintendo64</ion-option>
-          <ion-option value="ps">PlayStation</ion-option>
-          <ion-option value="genesis">Sega Genesis</ion-option>
-          <ion-option value="saturn">Sega Saturn</ion-option>
-          <ion-option value="snes">SNES</ion-option>
-      </ion-select>
-  </ion-item>
+        <ion-select primary [(ngModel)]="content.quantity" (change)="quantityUpdated(content)">
+            <ion-option *ngFor="#quantity of content.quantities" value="{{quantity.id}}">{{quantity.label}} ({{quantity.remarks}}) - ₹ {{quantity.price}}</ion-option>
+        </ion-select>
+    </ion-item>
   
   <p>Standard Delivery: Tomorrow Evening</p>
-  
-  <button outline type="button" class="button button-small button-info" (click)="saveToCart(content.id)">
-      <ion-icon name="add"></ion-icon> Add to Cart
-  </button>
         
 </ion-content>
+<ion-toolbar position="bottom">
+  <button full (click)="saveToCart()">
+      <ion-icon name="cart"></ion-icon> Buy for {{content.price}}
+  </button>
+</ion-toolbar>

@@ -44,7 +44,7 @@
 <ion-toolbar position="bottom" padding>
 		<ion-title>Total Amount: <strong (ngModel)="total_amount">₹ {{total_amount}}</strong></ion-title>
 		<ion-buttons end>
-			<button dark class="button button-small button-info" (click)="checkoutCart()" item-right>
+			<button (click)="checkoutCart()" item-right>
 				Checkout
 			</button>
 		</ion-buttons>

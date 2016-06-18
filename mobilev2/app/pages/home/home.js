@@ -2,6 +2,7 @@ import {IonicApp, Page, Alert, NavController, Loading, Storage, SqlStorage} from
 import {Services} from '../../providers/services/services';
 import {SQLite} from '../../providers/sqlite/sqlite';
 import {CartPage} from '../cart/cart';
+import {ProductsPage} from '../products/products';
 import {SearchPage} from '../search/search';
 import {DetailPage} from '../detail/detail';
 
@@ -20,6 +21,13 @@ export class HomePage {
   }
 
   constructor(app, service, nav, sqlite) {
+
+      this.extraOptions = {
+        pagination: '.swiper-pagination',
+        paginationClickable: true,
+        slidesPerView: 2,
+        spaceBetween: 50
+      }
       
       this.loading = app.getComponent('loading');
 
@@ -32,39 +40,24 @@ export class HomePage {
       
       this.loading.show();
 
-	  service.loadHome().subscribe(data => {
-		  console.log(data.msg);
+	  service.loadHome().subscribe(response => {
+		  console.log(response.msg);
           
           this.loading.hide();
           
-		  if(data.status == 'false') {
+		  if(response.status == 'false') {
 			  var alert = Alert.create({
 				  title: 'ERROR!',
-				  message: data.msg,
+				  message: response.msg,
 				  buttons: ['Ok']
 			  });
 			  this.nav.present(alert);
 		  } else {
-              this.contents = data.data;
-              this.contents.forEach(function(item) {
-                  item.quantity = (!item.quantity) ? 1 : item.quantity;
-                  this.quantityUpdated(item);
-              }, this);
+              this.categories = response.data.categories;
+              this.products = response.data.products;
 		  }
 	  });
       
-      this.cart = 0;
-      this.sqlite.getKey('Cart').then((result) => {
-        if(result) {
-            console.log(result);
-            this.cart = result;
-
-            /*this.sqlite.getCart(this.cart).then((data) => {
-                console.log(data.res.rows.item(0));
-            });*/
-        }
-      });
-
       this.user_image = 'images/profile.jpg';
       this.sqlite.getUser().then((result) => {
           this.user = result.res.rows.item(0);
@@ -77,67 +70,23 @@ export class HomePage {
       });
   }
 
-    quantityUpdated(content) {
-        content.quantities.forEach(function(qty) {
-            if(qty.id == content.quantity) {
-                content.price = qty.price;
-            }
-        });
-    }
-
     viewCart() {
-        this.nav.push(CartPage, {cart: this.cart});
+        this.nav.push(CartPage);
     }
 
     gotoSearch() {
-        this.nav.setRoot(SearchPage);
+        this.nav.push(SearchPage);
     }
     
-    itemTapped(event, content) {
-
+    productTapped(event, content) {
         this.nav.push(DetailPage, {
             content: content
         });
-
     }
 
-    saveToCart(content) {
-
-        var user_id = 0;
-        this.sqlite.getKey('UserId').then((value) => {
-            if(value) {
-                user_id = value;
-            }
-
-            this.service.addToCart(content.id, user_id, this.cart, content.quantity).subscribe(data => {
-                console.log(data.status);
-                if(data.status == 'false') {
-                    var alert = Alert.create({
-                        title: 'ERROR!',
-                        message: data.msg,
-                        buttons: ['Ok']
-                    });
-                    this.nav.present(alert);
-                } else {
-
-                    this.sqlite.getCart(data.cart).then((cart_data) => {
-                        var cart_detail = JSON.stringify(cart_data.res);
-
-                        if(!cart_detail.id) {
-                            this.sqlite.insertCart(data).then((idata) => {
-                                console.log("Cart Added -> " + JSON.stringify(idata.res));
-                            }, (error) => {
-                                console.log("ERROR -> " + JSON.stringify(error.err));
-                            });
-                        }
-
-                        this.sqlite.setKey('Cart', data.cart);
-                        this.nav.push(CartPage);
-                    }, (error) => {
-                        console.log("ERROR -> " + JSON.stringify(error.err));
-                    });
-                }
-            });
+    categoryTapped(event, category) {
+        this.nav.push(ProductsPage, {
+            category: category
         });
     }
 }

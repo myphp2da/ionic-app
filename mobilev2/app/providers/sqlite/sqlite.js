@@ -33,6 +33,7 @@ export class SQLite {
   }
 
   updateUser(data) {
+
       let cart = 'DROP TABLE IF EXISTS cart';
       this.storage.query(cart);
 
@@ -70,9 +71,12 @@ export class SQLite {
       return this.storage.get(key);
   }
 
+  removeKey(key) {
+      return this.storage.remove(key);
+  }
+
   getCart(id) {
       let sql = "select * from cart where id = ? and tinStatus = ?";
-      console.log(sql + ' - ' + id);
       return this.storage.query(sql, [id, 0]);
   }
 

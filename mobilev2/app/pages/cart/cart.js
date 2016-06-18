@@ -2,6 +2,7 @@ import {IonicApp, Page, Alert, NavController, Storage, LocalStorage} from 'ionic
 import {Services} from '../../providers/services/services';
 import {SQLite} from '../../providers/sqlite/sqlite';
 import {DeliveryPage} from '../delivery/delivery';
+import {DetailPage} from '../detail/detail';
 
 /*
   Generated class for the CartPage page.

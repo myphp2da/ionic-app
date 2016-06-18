@@ -12,9 +12,6 @@
 @import "../pages/login/login";
 @import "../pages/home/home";
 @import "../pages/signup/signup";
-@import "../pages/page1/page1";
-@import "../pages/page2/page2";
-@import "../pages/page3/page3";
 @import "../pages/cart/cart";
 @import "../pages/account/account";
 @import "../components/loading-modal/loading-modal";
@@ -27,6 +24,19 @@
 @import "../pages/forgot-password/forgot-password.scss";
 @import "../pages/products/products.scss";
 @import "../pages/order-details/order-details.scss";
+
+
+.subitem {
+    padding-left: 0;
+}
+
+.subitem ion-select {
+  width: 80%;
+  border-radius: 5px;
+  border: 1px solid #DDD;
+  padding: 2px 5px;
+  max-width: 80%;
+}
 
 .item {
     padding-left: 0;

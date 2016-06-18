@@ -23,42 +23,26 @@
 </ion-navbar>
 
 <ion-content class="home" padding>
-    <ion-item *ngFor="#content of contents" class="content" text-wrap>
+    <h2>Categories</h2>
+    <ion-card *ngFor="#category of categories" text-wrap>
         
-        <ion-thumbnail item-left (click)="itemTapped($event, content)">
-            <img src="{{content.photo}}">
-        </ion-thumbnail>
+        <h3>{{category.name}}</h3>
         
-        <h2 (click)="itemTapped($event, content)">{{content.title}}</h2>
-        
-        <ion-item class="subitem">
-            <ion-select primary [(ngModel)]="content.quantity" (change)="quantityUpdated(content)">
-                <ion-option *ngFor="#quantity of content.quantities" value="{{quantity.id}}">{{quantity.label}} ({{quantity.remarks}}) - ₹ {{quantity.price}}</ion-option>
-            </ion-select>
+        <ion-item *ngFor="#subcategory of category.sub_categories" class="subitem" (click)="categoryTapped($event, subcategory)">
+            {{subcategory.name}}
         </ion-item>
+        
+    </ion-card>
 
-        <h1>₹ {{content.price}}</h1>
-        
-        <p>Standard Delivery: Tomorrow Evening</p>
-        
-        <ion-buttons end>
-        <button small (click)="saveToCart(content)">
-            <ion-icon name="cart"></ion-icon>
-        </button>
-        </ion-buttons>
-        
-    </ion-item>
+    <h2>Products</h2>
+    <ion-slides [options]="extraOptions" id="slider">
+        <ion-slide *ngFor="#product of products">
+            <img src="{{product.photo}}" width="100%">
+            <p (click)="productTapped($event, product)">{{product.title}}</p>
+        </ion-slide>
+    </ion-slides>
+    <div class="swiper-pagination"></div>
 </ion-content>
 <button fab fab-bottom fab-right (click)="viewCart()" calm>
     <ion-icon name="basket"></ion-icon>
 </button>
-<ion-toolbar position="bottom">
-  <ion-buttons>
-    <button small>
-        <ion-icon name="funnel"></ion-icon> Refine
-    </button>
-    <button small>
-        <ion-icon name="reorder"></ion-icon> Sort
-    </button>
-  </ion-buttons>
-</ion-toolbar>
