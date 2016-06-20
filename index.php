@@ -2,12 +2,12 @@
 	$site_root = './';
 	
 	include_once($site_root.'include.php'); //echo $template; exit;
-	
+
 	//echo $module_path;
 	
 	// load controller file
-	if(file_exists($module_path.'/controller.php')) {
-		include_once($module_path.'/controller.php');
+	if(file_exists($module_path.'controller.php')) {
+		include_once($module_path.'controller.php');
 	} else {
 		die('controller not available');
 	}

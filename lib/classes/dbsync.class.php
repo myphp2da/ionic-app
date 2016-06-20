@@ -27,7 +27,13 @@
 
         public function encodeStructure() {
             $structure = $this->getDBStructure();
-            return serialize($structure);
+
+            $setting_array = array(
+                'string' => 'DB_STRUCTURE',
+                'value' => serialize($structure)
+            );
+
+            return $this->updateSetting($setting_array);
         }
 
         public function checkStructure() {

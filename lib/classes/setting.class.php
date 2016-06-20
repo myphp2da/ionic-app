@@ -15,6 +15,21 @@
 					where loadable = '1'".$where;
 			return $this->getResults($sql);
 		}
+
+        function getSetting($string) {
+            $sql = "select main.*
+					from ".$this->_table." as main
+					where string = '".$string."'";
+            $data = $this->getResult($sql);
+            return $data['value'];
+        }
+
+        function updateSetting($setting) {
+            $update_array = array(
+                'value' => $setting['value']
+            );
+            return $this->updateByArray($this->_table, $update_array, "string = '".$setting['string']."'");
+        }
 		
 		function loadConstants() {
 			$settings = $this->getSettings(" and constant = '1'");
@@ -31,4 +46,3 @@
 			return $this->getSettings(" and constant = '0'");
 		}
 	}
-?>

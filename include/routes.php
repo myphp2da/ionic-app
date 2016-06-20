@@ -93,8 +93,8 @@
 			
 			if($routes['action'] == 'detail' || $routes['action'] == 'single') {
 				if(isset($routes['slug'])) {
-					if(file_exists($module_path.'/theme/'.$theme.'/view.php')) {
-						$template = $module_path.'/theme/'.$theme.'/view.php';
+					if(file_exists($module_path.'theme/'.$theme.'/view.php')) {
+						$template = $module_path.'theme/'.$theme.'/view.php';
 					} else {
 						$template = SITE_PATH.'errors/404.php';
 					}
@@ -102,8 +102,8 @@
 			} else if($routes['action'] == 'webservice') {
 				$layout_path = '';
 				if(isset($routes['version']) && isset($routes['slug'])) {
-					if(file_exists($module_path.'/web_'.$routes['version'].'/'.$routes['slug'].'.php')) {
-						$template = $module_path.'/web_'.$routes['version'].'/'.$routes['slug'].'.php';
+					if(file_exists($module_path.'web_'.$routes['version'].'/'.$routes['slug'].'.php')) {
+						$template = $module_path.'web_'.$routes['version'].'/'.$routes['slug'].'.php';
 					} else {
 						$template = SITE_PATH.'errors/404.php';
 					}
@@ -111,8 +111,8 @@
 			} else if(file_exists($module_path) && is_dir($module_path) && $routes['action'] != 'single') {
 				if(isset($routes['action']) && $routes['action'] == 'ajax') {
 					$layout_path = '';
-					if(file_exists($module_path.'/theme/'.$theme.'/ajax/load-'.$routes['slug'].'.php')) {
-						$template = $module_path.'/theme/'.$theme.'/ajax/load-'.$routes['slug'].'.php';
+					if(file_exists($module_path.'theme/'.$theme.'/ajax/load-'.$routes['slug'].'.php')) {
+						$template = $module_path.'theme/'.$theme.'/ajax/load-'.$routes['slug'].'.php';
 					} else {
 						$template = SITE_PATH.'errors/404.php';
 					}
@@ -126,15 +126,15 @@
 				} else if(isset($routes['parent'])) {
 					$filename = $routes['parent'].'.php';
 					if(strstr($routes['parent'], 'edit')) $filename = str_replace('edit', 'add', $routes['parent']).'.php';
-					if(file_exists($module_path.'/theme/'.$theme.'/'.$filename)) {
-						$template = $module_path.'/theme/'.$theme.'/'.$filename;
+					if(file_exists($module_path.'theme/'.$theme.'/'.$filename)) {
+						$template = $module_path.'theme/'.$theme.'/'.$filename;
 					} else {
 						$template = SITE_PATH.'errors/404.php';
 					}
 				}
 			} else if($routes['action'] == 'single' && $routes['slug'] != 'admin') {
-				if(file_exists($module_path.'/theme/'.$theme.'/'.$routes['action'].'.php')) {
-					$template = $module_path.'/theme/'.$theme.'/'.$routes['action'].'.php';
+				if(file_exists($module_path.'theme/'.$theme.'/'.$routes['action'].'.php')) {
+					$template = $module_path.'theme/'.$theme.'/'.$routes['action'].'.php';
 				} else {
 					$template = SITE_PATH.'errors/404.php';
 				}

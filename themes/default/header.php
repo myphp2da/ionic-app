@@ -82,13 +82,13 @@
               <!-- user login dropdown start-->
               <li class="dropdown">
                  <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                      <?php _e($_SESSION[PF.PF.'NAME']);?>
+                      <?php _e($_SESSION[PF.'NAME']);?>
                       <b class="caret"></b>
                   </a>
                 <ul class="dropdown-menu extended logout">
                       <div class="log-arrow-up"></div>
                       <?php ?><li><a href="<?php _e(SITE_URL);?>account/profile"><i class=" fa fa-suitcase"></i>Profile</a></li><?php ?>
-                      <li><a href="javascript:void(0);"><?php _e($_SESSION[PF.PF.'NAME']);?></a></li>
+                      <li><a href="javascript:void(0);"><?php _e($_SESSION[PF.'NAME']);?></a></li>
                       <?php /*?><li><a href="<?php _e(SITE_URL);?>account/settings"><i class="fa fa-cog"></i> Settings</a></li><?php */?>
                       <li><a href="<?php _e(SITE_URL);?>account/logout/do"><i class="fa fa-key"></i> Log Out</a></li>
                   </ul>

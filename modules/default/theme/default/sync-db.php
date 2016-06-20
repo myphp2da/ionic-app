@@ -10,7 +10,10 @@
     $dbsync_obj = new dbsync();
 
     if(ENV == 1) {
-        echo $dbsync_obj->encodeStructure();
+        $sync = $dbsync_obj->encodeStructure();
+        if($sync) {
+            die('DB Structure has been stored to settings');
+        }
     } else {
         $not_available = $dbsync_obj->checkStructure();
         pr($not_available);

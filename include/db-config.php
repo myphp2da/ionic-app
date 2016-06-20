@@ -7,8 +7,11 @@
 		define('DB_USERNAME', 'root');
 		define('DB_PASSWORD','allin1server');
 		define('DB_SCHEMA','myvegs');
-		
-		error_reporting(E_ALL);
+
+        ini_set('error_reporting', E_ALL);
+        error_reporting(E_ALL);
+        ini_set('html_errors',true);
+        ini_set('display_errors',true);
 	}
 	
 	if(ENV == 2) { // Testing
