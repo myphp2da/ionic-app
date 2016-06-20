@@ -80,20 +80,20 @@ export class SQLite {
       this.storage.query(area);
 
       data.forEach(function(row) {
-          let sql = "insert into categories(id, strCategory) values (?, ?, ?)";
-          this.storage.query(sql, [row.id, row.strCategory, ?]);
+          let sql = "insert into categories(id, strCategory, idParent) values (?, ?, ?)";
+          this.storage.query(sql, [row.id, row.strCategory, 0]);
 
           if(row.sub_categories) {
               row.sub_categories.forEach(function(sub_row) {
-                let sql = "insert into categories(id, strCategory) values (?, ?, ?)";
-                this.storage.query(sql, [row.id, row.strCategory, ?]);
+                let sql = "insert into categories(id, strCategory, idParent) values (?, ?, ?)";
+                this.storage.query(sql, [sub_row.id, sub_row.strCategory, sub_row.idParent]);
               }
           }   
       }, this);
   }
 
   createStorage() {
-    let cart = 'CREATE TABLE IF NOT EXISTS cart (id INTEGER PRIMARY KEY, idAddress INTEGER NULL, strSlot VARCHAR(50) NULL, strPayment VARCHAR(5) NULL, tinStatus TINYINT(1) DEFAULT "0")';
+    let cart = 'CREATE TABLE IF NOT EXISTS cart(id INTEGER PRIMARY KEY, idAddress INTEGER NULL, strSlot VARCHAR(50) NULL, strPayment VARCHAR(5) NULL, tinStatus TINYINT(1) DEFAULT "0")';
     this.storage.query(cart);
   }
 
