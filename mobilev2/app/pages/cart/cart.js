@@ -41,7 +41,6 @@ export class CartPage {
           console.log('Cart: '+value);
 
         service.loadCart(value).subscribe(data => {
-            console.log(data.status);
             this.loading.hide();
             if(data.status == 'false') {
                 var alert = Alert.create({

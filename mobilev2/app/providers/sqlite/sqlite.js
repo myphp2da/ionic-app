@@ -26,7 +26,6 @@ export class SQLite {
     this.createStorage();
   }
 
-
   clearStorage() {
     let drop_user = 'DROP TABLE IF EXISTS user_details';
     this.storage.query(drop_user);
@@ -34,22 +33,68 @@ export class SQLite {
 
   updateUser(data) {
 
-      let cart = 'DROP TABLE IF EXISTS cart';
+      let drop_user = 'DROP TABLE IF EXISTS user_details';
       this.storage.query(cart);
 
-      let user = 'CREATE TABLE IF NOT EXISTS user_details (id INTEGER PRIMARY KEY, strName VARCHAR(50) NOT NULL, strImageName VARCHAR(100), strEmail VARCHAR(100) NOT NULL)';
+      let create_user = 'CREATE TABLE IF NOT EXISTS user_details (id INTEGER PRIMARY KEY, strName VARCHAR(50) NOT NULL, strImageName VARCHAR(100), strEmail VARCHAR(100) NOT NULL)';
       this.storage.query(user);
 
       let sql = "insert into user_details(id, strName, strImageName, strEmail) values (?, ?, ?, ?)"
       return this.storage.query(sql, [data.id, data.strFirstName+' '+data.strLastName, data.strImageName, data.strEmail])
   }
 
+  updateAreas(data) {
+
+      let drop_area = 'DROP TABLE IF EXISTS areas';
+      this.storage.query(cart);
+
+      let create_area = 'CREATE TABLE IF NOT EXISTS areas (id INTEGER PRIMARY KEY, strArea VARCHAR(50) NOT NULL, strCity VARCHAR(50) NOT NULL, strState VARCHAR(50) NOT NULL, intPinCode INTEGER(6) NOT NULL)';
+      this.storage.query(area);
+
+      data.forEach(function(row) {
+          let sql = "insert into areas(id, strArea, strCity, strState, intPinCode) values (?, ?, ?, ?, ?)";
+          this.storage.query(sql, [row.id, row.strArea, row.strCity, row.strState, row.intPinCode]);     
+      }, this);
+  }
+
+  updateSlots(data) {
+
+      let drop_slot = 'DROP TABLE IF EXISTS slots';
+      this.storage.query(cart);
+
+      let create_slot = 'CREATE TABLE IF NOT EXISTS slots (id INTEGER PRIMARY KEY, strSlot VARCHAR(50) NOT NULL)';
+      this.storage.query(area);
+
+      data.forEach(function(row) {
+          let sql = "insert into slots(id, strSlot) values (?, ?)";
+          this.storage.query(sql, [row.id, row.strSlot]);    
+      }, this);
+  }
+
+  updateCategories(data) {
+
+      let drop_category = 'DROP TABLE IF EXISTS categories';
+      this.storage.query(cart);
+
+      let create_category = 'CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY, strCategory VARCHAR(50) NOT NULL, idParent INTEGER DEFAULT 0 NULL)';
+      this.storage.query(area);
+
+      data.forEach(function(row) {
+          let sql = "insert into categories(id, strCategory) values (?, ?, ?)";
+          this.storage.query(sql, [row.id, row.strCategory, ?]);
+
+          if(row.sub_categories) {
+              row.sub_categories.forEach(function(sub_row) {
+                let sql = "insert into categories(id, strCategory) values (?, ?, ?)";
+                this.storage.query(sql, [row.id, row.strCategory, ?]);
+              }
+          }   
+      }, this);
+  }
+
   createStorage() {
     let cart = 'CREATE TABLE IF NOT EXISTS cart (id INTEGER PRIMARY KEY, idAddress INTEGER NULL, strSlot VARCHAR(50) NULL, strPayment VARCHAR(5) NULL, tinStatus TINYINT(1) DEFAULT "0")';
     this.storage.query(cart);
-
-    let area = 'CREATE TABLE IF NOT EXISTS areas (id INTEGER PRIMARY KEY, strArea VARCHAR(50) NOT NULL, strCity VARCHAR(50) NOT NULL, strState VARCHAR(50) NOT NULL, intPinCode INTEGER(6) NOT NULL, tinStatus TINYINT(1) DEFAULT "1")';
-    this.storage.query(area);
   }
 
   insertCart(data) {
@@ -82,7 +127,6 @@ export class SQLite {
 
   getUser() {
       let sql = "select * from user_details limit 1";
-      console.log(sql);
       return this.storage.query(sql);
   }
 }

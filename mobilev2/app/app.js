@@ -4,6 +4,8 @@ import {MainPage} from './pages/main/main';
 import {HomePage} from './pages/home/home';
 import {IntroPage} from './pages/intro/intro';
 import {AccountPage} from './pages/account/account';
+import {DeliveryPage} from './pages/delivery/delivery';
+import {OrdersPage} from './pages/orders/orders';
 import {Services} from './providers/services/services';
 import {SQLite} from './providers/sqlite/sqlite';
 import {LoadingModal} from './components/loading-modal/loading-modal';
@@ -39,9 +41,19 @@ export class MyApp {
 
       this.account_pages = [
           { title: 'My Account', component: AccountPage, icon: 'user' },
-          { title: 'Manage Delivery Addresses', component: MainPage, icon: 'page' },
-          { title: 'My Orders', component: MainPage, icon: 'page' }
+          { title: 'Manage Delivery Addresses', component: DeliveryPage, icon: 'page' },
+          { title: 'My Orders', component: OrdersPage, icon: 'page' }
       ];
+
+      this.user_image = 'images/profile.jpg';
+      this.sqlite.getUser().then((result) => {
+          this.user = result.res.rows.item(0);
+          if(this.user.strImageName != null) {
+              this.user_image = this.user.strImageName;
+          }
+      }, (error) => {
+          console.log(error);
+      });
   }
 
     localStorage() {

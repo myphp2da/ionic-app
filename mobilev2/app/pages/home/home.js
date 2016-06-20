@@ -57,17 +57,6 @@ export class HomePage {
               this.products = response.data.products;
 		  }
 	  });
-      
-      this.user_image = 'images/profile.jpg';
-      this.sqlite.getUser().then((result) => {
-          this.user = result.res.rows.item(0);
-          console.log(this.user.strName);
-          if(this.user.strImageName != null) {
-              this.user_image = this.service.baseUrl + 'file-manager/customers/' + this.user.strImageName;
-          }
-      }, (error) => {
-          console.log(error);
-      });
   }
 
     viewCart() {

@@ -1,5 +1,7 @@
 import {Page, Storage, LocalStorage, NavController} from 'ionic-angular';
 import {MainPage} from '../main/main';
+import {Services} from '../../providers/services/services';
+import {SQLite} from '../../providers/sqlite/sqlite';
 
 /*
   Generated class for the MyAccountPage page.
@@ -12,18 +14,23 @@ import {MainPage} from '../main/main';
 })
 export class AccountPage {
   static get parameters() {
-    return [[NavController]];
+    return [[NavController], [SQLite], [Services]];
   }
 
-  constructor(nav) {
-    this.nav = nav;
+  constructor(nav, sqlite, services) {
+      this.nav = nav;
+
+      this.sqlite = sqlite;
     
-    this.local = new Storage(LocalStorage);
-    
-    this.local.get('UserId').then((result) => {
-        if(!result) {
-            this.nav.push(MainPage);
-        }
-    });
-  }
+      this.sqlite.getKey('UserId').then((result) => {
+          if(!result) {
+              this.nav.push(MainPage);
+          } else {
+              this.sqlite.getUser(result).then((response) => {
+                  this.profile = response.res.rows.item(0);
+                  console.log(this.profile);
+              });
+          }
+      });
+    }
 }
