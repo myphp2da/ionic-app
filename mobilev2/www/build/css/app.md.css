@@ -8635,21 +8635,11 @@ ion-slide img {
   height: 70vh !important;
   width: auto !important; }
 
-.home .subitem {
-  padding-left: 0; }
-
 .home .content {
   border-bottom: 1px solid #DDD; }
 
 .home .item-inner {
   border-bottom: none; }
-
-.home .subitem ion-select {
-  width: 80%;
-  border-radius: 5px;
-  border: 1px solid #DDD;
-  padding: 2px 5px;
-  max-width: 80%; }
 
 .button-fab {
   z-index: 100; }
@@ -8659,6 +8649,20 @@ a.button {
   font-size: 150%;
   padding: 0 10px;
   line-height: 50px; }
+
+ion-slides {
+  height: inherit; }
+
+div.selection {
+  font-size: 22px;
+  display: block;
+  text-align: center;
+  padding-top: 5%; }
+
+.ios ion-card ion-avatar img {
+  max-width: 8rem;
+  max-height: 8rem;
+  border-radius: 50%; }
 
 loading-modal .container {
   z-index: -1;
@@ -8683,15 +8687,19 @@ loading-modal .container {
     z-index: 9999;
     -webkit-transition: z-index 0.2s step-start;
     transition: z-index 0.2s step-start; }
-    loading-modal .container.busy .backdrop {
-      opacity: 0.3; }
-  loading-modal .container .backdrop {
-    opacity: 0.01;
-    -webkit-transition: opacity 0.2s;
-    transition: opacity 0.2s; }
   loading-modal .container ion-spinner {
     width: 60px;
     height: 60px; }
+
+.subitem {
+  padding-left: 0; }
+
+.subitem ion-select {
+  width: 80%;
+  border-radius: 5px;
+  border: 1px solid #DDD;
+  padding: 2px 5px;
+  max-width: 80%; }
 
 .item {
   padding-left: 0; }

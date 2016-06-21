@@ -1,4 +1,4 @@
-import {Page, NavController} from 'ionic-angular';
+import {Page, NavController, NavParams} from 'ionic-angular';
 import {SQLite} from '../../providers/sqlite/sqlite';
 import {Services} from '../../providers/services/services';
 import {ConfirmPage} from '../confirm/confirm';
@@ -14,23 +14,18 @@ import {ConfirmPage} from '../confirm/confirm';
 })
 export class PaymentPage {
   static get parameters() {
-    return [[NavController], [SQLite], [Services]];
+    return [[NavController], [SQLite], [Services], [NavParams]];
   }
 
-  constructor(nav, sqlite, service) {
+  constructor(nav, sqlite, service, params) {
     this.nav = nav;
 
     this.sqlite = sqlite;
 
     this.service = service;
 
-    this.cart = 0;
-    this.sqlite.getKey('Cart').then((value) => {
-      if(value) {
-        this.cart = value;
-      }
-    });
-
+    this.cart = params.get('cart');
+    
     this.user = 0;
     this.sqlite.getKey('UserId').then((value) => {
       if(value) {
@@ -45,6 +40,7 @@ export class PaymentPage {
 
   confirmOrder() {
     this.sqlite.updateCart('tinStatus', 1, this.cart);
+
     this.sqlite.getCart(this.cart).then((data) => {
         var cart_details = data.res.rows.item(0);
         this.service.completeOrder(this.user, cart_details).then((response) => {

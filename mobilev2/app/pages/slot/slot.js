@@ -1,4 +1,4 @@
-import {Page, NavController} from 'ionic-angular';
+import {Page, NavController, NavParams} from 'ionic-angular';
 import {PaymentPage} from '../payment/payment';
 import {SQLite} from '../../providers/sqlite/sqlite';
 
@@ -13,20 +13,15 @@ import {SQLite} from '../../providers/sqlite/sqlite';
 })
 export class SlotPage {
   static get parameters() {
-    return [[NavController], [SQLite]];
+    return [[NavController], [SQLite], [NavParams]];
   }
 
-  constructor(nav, sqlite) {
+  constructor(nav, sqlite, params) {
     this.nav = nav;
 
     this.sqlite = sqlite;
 
-    this.cart = 0;
-    this.sqlite.getKey('Cart').then((value) => {
-      if(value) {
-        this.cart = value;
-      }
-    });
+    this.cart = params.get('cart');
 
     this.slots = [
       { time: '12:00', range: '7:00 AM to 12:00 Noon'},
@@ -46,7 +41,7 @@ export class SlotPage {
   }
 
   gotoPayment() {
-    this.nav.push(PaymentPage);
+    this.nav.push(PaymentPage, {'cart' => this.cart});
   }
 
   setSlot(date, range) {

@@ -1,13 +1,65 @@
 <!--
-  Generated template for the ProductsPage page.
+  Generated template for the HomePage page.
 
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-navbar *navbar>
-  <ion-title>products</ion-title>
+<ion-navbar dark *navbar>
+    <button menuToggle="left">
+        <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>MVF</ion-title>
+    <ion-buttons end>
+        <a class="button button-clear button-small" (click)="gotoSearch()">
+            <ion-icon name="search"></ion-icon>
+        </a>
+        <a class="button button-clear button-small">
+            <ion-icon ios="ios-notifications" md="md-notifications"></ion-icon>
+        </a>
+        <a menuToggle="right" class="button button-clear button-small">
+            <ion-icon ios="ios-menu" md="md-menu"></ion-icon>
+        </a>
+    </ion-buttons>
 </ion-navbar>
 
-<ion-content padding class="products">
-  
+<ion-content class="home" padding>
+    <ion-item *ngFor="#content of contents" class="content" text-wrap>
+        
+        <ion-thumbnail item-left (click)="itemTapped($event, content)">
+            <img src="{{content.photo}}">
+        </ion-thumbnail>
+        
+        <h2 (click)="itemTapped($event, content)">{{content.title}}</h2>
+        
+        <ion-item class="subitem">
+            <ion-select primary [(ngModel)]="content.quantity" (change)="quantityUpdated(content)">
+                <ion-option *ngFor="#quantity of content.quantities" value="{{quantity.id}}">{{quantity.label}} ({{quantity.remarks}}) - ₹ {{quantity.price}}</ion-option>
+            </ion-select>
+        </ion-item>
+
+        <h1>₹ {{content.price}}</h1>
+        
+        <p>Standard Delivery: Tomorrow Evening</p>
+        
+        <ion-buttons end>
+        <button small (click)="saveToCart(content)">
+            <ion-icon name="cart"></ion-icon>
+        </button>
+        </ion-buttons>
+        
+    </ion-item>
+    <div *ngIf="!hasProducts">No product available in {{category.name}}</div>
 </ion-content>
+<button fab fab-bottom fab-right (click)="viewCart()" calm>
+    <ion-icon name="basket"></ion-icon>
+</button>
+<ion-toolbar position="bottom">
+  <ion-buttons>
+    <button small>
+        <ion-icon name="funnel"></ion-icon> Refine
+    </button>
+    <button small>
+        <ion-icon name="reorder"></ion-icon> Sort
+    </button>
+  </ion-buttons>
+</ion-toolbar>

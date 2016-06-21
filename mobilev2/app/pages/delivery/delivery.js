@@ -1,4 +1,4 @@
-import {IonicApp, Page, NavController} from 'ionic-angular';
+import {IonicApp, Page, NavParams, NavController} from 'ionic-angular';
 import {Services} from '../../providers/services/services';
 import {SQLite} from '../../providers/sqlite/sqlite';
 import {AddressPage} from '../address/address';
@@ -15,10 +15,10 @@ import {SlotPage} from '../slot/slot';
 })
 export class DeliveryPage {
   static get parameters() {
-    return [[IonicApp], [Services], [NavController], [SQLite]];
+    return [[IonicApp], [Services], [NavController], [SQLite], [NavParams]];
   }
 
-  constructor(app, service, nav, sqlite) {
+  constructor(app, service, nav, sqlite, params) {
 
     this.loading = app.getComponent('loading');  
     this.loading.show();
@@ -29,12 +29,7 @@ export class DeliveryPage {
 
     var itemAvailable = false;
 
-    this.cart = 0;
-    this.sqlite.getKey('Cart').then((value) => {
-      if(value) {
-        this.cart = value;
-      }
-    });
+    this.cart = params.get('cart');
 
     this.sqlite.getKey('UserId').then((value) => {
           
@@ -58,7 +53,7 @@ export class DeliveryPage {
   }
 
   gotoSlots() {
-    this.nav.push(SlotPage);
+    this.nav.push(SlotPage, {'cart' => this.cart});
   }
 
   setDelivery(address) {

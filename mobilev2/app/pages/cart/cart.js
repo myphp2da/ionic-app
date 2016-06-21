@@ -112,6 +112,6 @@ export class CartPage {
   }
   
   checkoutCart() {
-      this.nav.push(DeliveryPage);
+      this.nav.push(DeliveryPage, {'cart' => this.cart});
   }
 }

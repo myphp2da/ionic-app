@@ -2,18 +2,17 @@
 	class CustomError extends db_class {
 
         protected $_table = 'mst_error_logs';
-        protected $error_path = SITE_PATH.'errors/error.log';
+        protected $error_path = 'errors/error.log';
 
         public function uniqueErrorLogs() {
-            $file_content = file($this->error_path);
+            $file_content = file(SITE_PATH.$this->error_path);
 
-            $errors_array = array();
+            $errors_array = $error_details = array();
             if(sizeof($file_content) > 0) {
-                $error_details = array();
                 foreach($file_content as $row) {
                     $errors = explode(":  ", $row);
 
-                    if(empty($errors[1])) exit;
+                    if(empty($errors[1])) continue;
 
                     if(!in_array($errors[1], $error_details)) {
                         $error_details[] = $errors[1];
@@ -26,7 +25,9 @@
         }
 
         public function clearLogFile() {
-            file_put_contents($this->error_path, '');
+            if(is_writable(SITE_PATH.$this->error_path)) {
+                file_put_contents(SITE_PATH.$this->error_path, '');
+            }
         }
 
         public function saveErrorLogs() {
@@ -55,10 +56,10 @@
 
         public function checkErrorLog() {
 
-            if(file_exists($this->error_path) && filesize($this->error_path) > (1024*1024)) {
+            if(file_exists(SITE_PATH.$this->error_path) && filesize(SITE_PATH.$this->error_path) > (100 * 1024)) {
                 $error_count = $this->saveErrorLogs();
 
-                if($error_count > 0) {
+                /*if($error_count > 0) {
 
                     _class('emailer');
                     $emailer_obj = new emailer();
@@ -70,7 +71,7 @@
                         'subject'      => MAIL_NAME . ' : ' . $error_count . ' error(s) found'
                     );
                     $emailer_obj->sendMail('system-errors', $edata);
-                }
+                }*/
             }
         }
 	}

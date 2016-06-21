@@ -87,7 +87,7 @@
                     'id' => $product['id'],
                     'title' => $product['strProduct'],
                     'photo' => !empty($product['strImageName']) ? $product_url.$product['strImageName'] : '',
-                    'category' => $product['strCategory']
+                    'category' => $product['category_name']
                 );
 
                 if(isset($quantity_array[$product['id']])) {

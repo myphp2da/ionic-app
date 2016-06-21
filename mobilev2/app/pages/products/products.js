@@ -128,23 +128,13 @@ export class ProductsPage {
                     this.nav.present(alert);
                 } else {
 
-                    this.sqlite.getCart(data.cart).then((cart_data) => {
-                        var cart_detail = JSON.stringify(cart_data.res);
+                    if(this.cart == 0) {
+                        this.sqlite.newCart(data);
+                    }
 
-                        if(!cart_detail.id) {
-                            this.sqlite.insertCart(data).then((idata) => {
-                                console.log("Cart Added -> " + JSON.stringify(idata.res));
-                            }, (error) => {
-                                console.log("ERROR -> " + JSON.stringify(error.err));
-                            });
-                        }
-
-                        this.cart = data.cart;
-                        this.sqlite.setKey('Cart', data.cart);
-                        this.nav.push(CartPage);
-                    }, (error) => {
-                        console.log("ERROR -> " + JSON.stringify(error.err));
-                    });
+                    this.cart = data.cart;
+                    this.sqlite.setKey('Cart', data.cart);
+                    this.nav.push(CartPage);
                 }
             });
         });

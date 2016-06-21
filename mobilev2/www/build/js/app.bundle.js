@@ -22,6 +22,10 @@ var _intro = require('./pages/intro/intro');
 
 var _account = require('./pages/account/account');
 
+var _delivery = require('./pages/delivery/delivery');
+
+var _orders = require('./pages/orders/orders');
+
 var _services = require('./providers/services/services');
 
 var _sqlite = require('./providers/sqlite/sqlite');
@@ -44,6 +48,8 @@ var MyApp = exports.MyApp = (_dec = (0, _ionicAngular.App)({
     }]);
 
     function MyApp(platform, app, menu, sqlite) {
+        var _this = this;
+
         _classCallCheck(this, MyApp);
 
         this.sqlite = sqlite;
@@ -58,26 +64,36 @@ var MyApp = exports.MyApp = (_dec = (0, _ionicAngular.App)({
 
         this.pages = [{ title: 'Home', component: _home.HomePage, icon: 'home' }, { title: 'My Account', component: _account.AccountPage, icon: 'user' }, { title: 'Main Page', component: _main.MainPage, icon: 'page' }];
 
-        this.account_pages = [{ title: 'My Account', component: _account.AccountPage, icon: 'user' }, { title: 'Manage Delivery Addresses', component: _main.MainPage, icon: 'page' }, { title: 'My Orders', component: _main.MainPage, icon: 'page' }];
+        this.account_pages = [{ title: 'My Account', component: _account.AccountPage, icon: 'user' }, { title: 'Manage Delivery Addresses', component: _delivery.DeliveryPage, icon: 'page' }, { title: 'My Orders', component: _orders.OrdersPage, icon: 'page' }];
+
+        this.user_image = 'images/profile.jpg';
+        this.sqlite.getUser().then(function (result) {
+            _this.user = result.res.rows.item(0);
+            if (_this.user.strImageName != null) {
+                _this.user_image = _this.user.strImageName;
+            }
+        }, function (error) {
+            console.log(error);
+        });
     }
 
     _createClass(MyApp, [{
         key: 'localStorage',
         value: function localStorage() {
-            var _this = this;
+            var _this2 = this;
 
             this.sqlite.getKey('IntroShown').then(function (result) {
                 if (result) {
-                    _this.sqlite.getKey('UserId').then(function (result) {
+                    _this2.sqlite.getKey('UserId').then(function (result) {
                         if (result) {
-                            _this.rootPage = _home.HomePage;
+                            _this2.rootPage = _home.HomePage;
                         } else {
-                            _this.rootPage = _main.MainPage;
+                            _this2.rootPage = _main.MainPage;
                         }
                     });
                 } else {
-                    _this.sqlite.setKey('IntroShown', true);
-                    _this.rootPage = _intro.IntroPage;
+                    _this2.sqlite.setKey('IntroShown', true);
+                    _this2.rootPage = _intro.IntroPage;
                 }
             });
         }
@@ -103,7 +119,7 @@ var MyApp = exports.MyApp = (_dec = (0, _ionicAngular.App)({
     return MyApp;
 }()) || _class);
 
-},{"./components/loading-modal/loading-modal":2,"./pages/account/account":3,"./pages/home/home":9,"./pages/intro/intro":10,"./pages/main/main":12,"./providers/services/services":17,"./providers/sqlite/sqlite":18,"ionic-angular":352,"ionic-native":374}],2:[function(require,module,exports){
+},{"./components/loading-modal/loading-modal":2,"./pages/account/account":3,"./pages/delivery/delivery":7,"./pages/home/home":9,"./pages/intro/intro":10,"./pages/main/main":12,"./pages/orders/orders":13,"./providers/services/services":19,"./providers/sqlite/sqlite":20,"ionic-angular":354,"ionic-native":376}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -153,7 +169,7 @@ var LoadingModal = exports.LoadingModal = (_dec = (0, _core.Component)({
   return LoadingModal;
 }()) || _class);
 
-},{"angular2/core":21,"ionic-angular":352}],3:[function(require,module,exports){
+},{"angular2/core":23,"ionic-angular":354}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -169,6 +185,10 @@ var _ionicAngular = require('ionic-angular');
 
 var _main = require('../main/main');
 
+var _services = require('../../providers/services/services');
+
+var _sqlite = require('../../providers/sqlite/sqlite');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
@@ -183,22 +203,27 @@ var AccountPage = exports.AccountPage = (_dec = (0, _ionicAngular.Page)({
   _createClass(AccountPage, null, [{
     key: 'parameters',
     get: function get() {
-      return [[_ionicAngular.NavController]];
+      return [[_ionicAngular.NavController], [_sqlite.SQLite], [_services.Services]];
     }
   }]);
 
-  function AccountPage(nav) {
+  function AccountPage(nav, sqlite, services) {
     var _this = this;
 
     _classCallCheck(this, AccountPage);
 
     this.nav = nav;
 
-    this.local = new _ionicAngular.Storage(_ionicAngular.LocalStorage);
+    this.sqlite = sqlite;
 
-    this.local.get('UserId').then(function (result) {
+    this.sqlite.getKey('UserId').then(function (result) {
       if (!result) {
         _this.nav.push(_main.MainPage);
+      } else {
+        _this.sqlite.getUser(result).then(function (response) {
+          _this.profile = response.res.rows.item(0);
+          console.log(_this.profile);
+        });
       }
     });
   }
@@ -206,7 +231,7 @@ var AccountPage = exports.AccountPage = (_dec = (0, _ionicAngular.Page)({
   return AccountPage;
 }()) || _class);
 
-},{"../main/main":12,"ionic-angular":352}],4:[function(require,module,exports){
+},{"../../providers/services/services":19,"../../providers/sqlite/sqlite":20,"../main/main":12,"ionic-angular":354}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -337,7 +362,7 @@ var AddressPage = exports.AddressPage = (_dec = (0, _ionicAngular.Page)({
     return AddressPage;
 }()) || _class);
 
-},{"../../providers/services/services":17,"angular2/common":19,"angular2/core":21,"ionic-angular":352}],5:[function(require,module,exports){
+},{"../../providers/services/services":19,"angular2/common":21,"angular2/core":23,"ionic-angular":354}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -356,6 +381,8 @@ var _services = require('../../providers/services/services');
 var _sqlite = require('../../providers/sqlite/sqlite');
 
 var _delivery = require('../delivery/delivery');
+
+var _detail = require('../detail/detail');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -401,7 +428,6 @@ var CartPage = exports.CartPage = (_dec = (0, _ionicAngular.Page)({
             console.log('Cart: ' + value);
 
             service.loadCart(value).subscribe(function (data) {
-                console.log(data.status);
                 _this.loading.hide();
                 if (data.status == 'false') {
                     var alert = _ionicAngular.Alert.create({
@@ -423,7 +449,7 @@ var CartPage = exports.CartPage = (_dec = (0, _ionicAngular.Page)({
         key: 'itemTapped',
         value: function itemTapped(event, content) {
 
-            this.nav.push(DetailPage, {
+            this.nav.push(_detail.DetailPage, {
                 content: content
             });
         }
@@ -487,7 +513,7 @@ var CartPage = exports.CartPage = (_dec = (0, _ionicAngular.Page)({
     return CartPage;
 }()) || _class);
 
-},{"../../providers/services/services":17,"../../providers/sqlite/sqlite":18,"../delivery/delivery":7,"ionic-angular":352}],6:[function(require,module,exports){
+},{"../../providers/services/services":19,"../../providers/sqlite/sqlite":20,"../delivery/delivery":7,"../detail/detail":8,"ionic-angular":354}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -528,7 +554,7 @@ var ConfirmPage = exports.ConfirmPage = (_dec = (0, _ionicAngular.Page)({
   return ConfirmPage;
 }()) || _class);
 
-},{"ionic-angular":352}],7:[function(require,module,exports){
+},{"ionic-angular":354}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -626,11 +652,11 @@ var DeliveryPage = exports.DeliveryPage = (_dec = (0, _ionicAngular.Page)({
   return DeliveryPage;
 }()) || _class);
 
-},{"../../providers/services/services":17,"../../providers/sqlite/sqlite":18,"../address/address":4,"../slot/slot":16,"ionic-angular":352}],8:[function(require,module,exports){
+},{"../../providers/services/services":19,"../../providers/sqlite/sqlite":20,"../address/address":4,"../slot/slot":18,"ionic-angular":354}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.DetailPage = undefined;
 
@@ -642,6 +668,10 @@ var _ionicAngular = require('ionic-angular');
 
 var _services = require('../../providers/services/services');
 
+var _sqlite = require('../../providers/sqlite/sqlite');
+
+var _cart = require('../cart/cart');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
@@ -651,29 +681,95 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   Ionic pages and navigation.
 */
 var DetailPage = exports.DetailPage = (_dec = (0, _ionicAngular.Page)({
-  templateUrl: 'build/pages/detail/detail.html'
+    templateUrl: 'build/pages/detail/detail.html'
 }), _dec(_class = function () {
-  _createClass(DetailPage, null, [{
-    key: 'parameters',
-    get: function get() {
-      return [[_services.Services], [_ionicAngular.NavController], [_ionicAngular.NavParams]];
+    _createClass(DetailPage, null, [{
+        key: 'parameters',
+        get: function get() {
+            return [[_services.Services], [_ionicAngular.NavController], [_ionicAngular.NavParams], [_sqlite.SQLite]];
+        }
+    }]);
+
+    function DetailPage(service, nav, navParams, sqlite) {
+        var _this = this;
+
+        _classCallCheck(this, DetailPage);
+
+        this.nav = nav;
+
+        this.service = service;
+
+        this.sqlite = sqlite;
+
+        this.content = navParams.get('content');
+
+        this.content.quantity = 1;
+
+        this.quantityUpdated(this.content);
+
+        this.cart = 0;
+        this.sqlite.getKey('Cart').then(function (result) {
+            if (result) {
+                _this.sqlite.getCart(result).then(function (response) {
+                    if (response.res.rows.length > 0) {
+                        _this.cart = result;
+                    } else {
+                        _this.sqlite.removeKey('Cart');
+                    }
+                });
+            }
+        });
     }
-  }]);
 
-  function DetailPage(service, nav, navParams) {
-    _classCallCheck(this, DetailPage);
+    _createClass(DetailPage, [{
+        key: 'quantityUpdated',
+        value: function quantityUpdated(content) {
+            content.quantities.forEach(function (qty) {
+                if (qty.id == content.quantity) {
+                    content.price = qty.price;
+                }
+            });
+        }
+    }, {
+        key: 'saveToCart',
+        value: function saveToCart() {
+            var _this2 = this;
 
-    this.nav = nav;
+            var content = this.content;
 
-    this.service = service;
+            var user_id = 0;
+            this.sqlite.getKey('UserId').then(function (value) {
+                if (value) {
+                    user_id = value;
+                }
 
-    this.content = navParams.get('content');
-  }
+                _this2.service.addToCart(content.id, user_id, _this2.cart, content.quantity).subscribe(function (data) {
+                    console.log(data.status);
+                    if (data.status == 'false') {
+                        var alert = _ionicAngular.Alert.create({
+                            title: 'ERROR!',
+                            message: data.msg,
+                            buttons: ['Ok']
+                        });
+                        _this2.nav.present(alert);
+                    } else {
 
-  return DetailPage;
+                        if (_this2.cart == 0) {
+                            _this2.sqlite.newCart(data);
+                        }
+
+                        _this2.sqlite.setKey('Cart', data.cart);
+                        _this2.nav.push(_cart.CartPage);
+                    }
+                });
+            });
+        }
+    }]);
+
+    return DetailPage;
 }()) || _class);
 
-},{"../../providers/services/services":17,"ionic-angular":352}],9:[function(require,module,exports){
+},{"../../providers/services/services":19,"../../providers/sqlite/sqlite":20,"../cart/cart":5,"ionic-angular":354}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -692,6 +788,8 @@ var _services = require('../../providers/services/services');
 var _sqlite = require('../../providers/sqlite/sqlite');
 
 var _cart = require('../cart/cart');
+
+var _products = require('../products/products');
 
 var _search = require('../search/search');
 
@@ -720,6 +818,13 @@ var HomePage = exports.HomePage = (_dec = (0, _ionicAngular.Page)({
 
         _classCallCheck(this, HomePage);
 
+        this.extraOptions = {
+            pagination: '.swiper-pagination',
+            paginationClickable: true,
+            slidesPerView: 2,
+            spaceBetween: 50
+        };
+
         this.loading = app.getComponent('loading');
 
         this.nav = nav;
@@ -731,118 +836,47 @@ var HomePage = exports.HomePage = (_dec = (0, _ionicAngular.Page)({
 
         this.loading.show();
 
-        service.loadHome().subscribe(function (data) {
-            console.log(data.msg);
+        service.loadHome().subscribe(function (response) {
+            console.log(response.msg);
 
             _this.loading.hide();
 
-            if (data.status == 'false') {
+            if (response.status == 'false') {
                 var alert = _ionicAngular.Alert.create({
                     title: 'ERROR!',
-                    message: data.msg,
+                    message: response.msg,
                     buttons: ['Ok']
                 });
                 _this.nav.present(alert);
             } else {
-                _this.contents = data.data;
-                _this.contents.forEach(function (item) {
-                    item.quantity = !item.quantity ? 1 : item.quantity;
-                    this.quantityUpdated(item);
-                }, _this);
+                _this.categories = response.data.categories;
+                _this.products = response.data.products;
             }
-        });
-
-        this.cart = 0;
-        this.sqlite.getKey('Cart').then(function (result) {
-            if (result) {
-                console.log(result);
-                _this.cart = result;
-
-                /*this.sqlite.getCart(this.cart).then((data) => {
-                    console.log(data.res.rows.item(0));
-                });*/
-            }
-        });
-
-        this.user_image = 'images/profile.jpg';
-        this.sqlite.getUser().then(function (result) {
-            _this.user = result.res.rows.item(0);
-            console.log(_this.user.strName);
-            if (_this.user.strImageName != null) {
-                _this.user_image = _this.service.baseUrl + 'file-manager/customers/' + _this.user.strImageName;
-            }
-        }, function (error) {
-            console.log(error);
         });
     }
 
     _createClass(HomePage, [{
-        key: 'quantityUpdated',
-        value: function quantityUpdated(content) {
-            content.quantities.forEach(function (qty) {
-                if (qty.id == content.quantity) {
-                    content.price = qty.price;
-                }
-            });
-        }
-    }, {
         key: 'viewCart',
         value: function viewCart() {
-            this.nav.push(_cart.CartPage, { cart: this.cart });
+            this.nav.push(_cart.CartPage);
         }
     }, {
         key: 'gotoSearch',
         value: function gotoSearch() {
-            this.nav.setRoot(_search.SearchPage);
+            this.nav.push(_search.SearchPage);
         }
     }, {
-        key: 'itemTapped',
-        value: function itemTapped(event, content) {
-
+        key: 'productTapped',
+        value: function productTapped(event, content) {
             this.nav.push(_detail.DetailPage, {
                 content: content
             });
         }
     }, {
-        key: 'saveToCart',
-        value: function saveToCart(content) {
-            var _this2 = this;
-
-            var user_id = 0;
-            this.sqlite.getKey('UserId').then(function (value) {
-                if (value) {
-                    user_id = value;
-                }
-
-                _this2.service.addToCart(content.id, user_id, _this2.cart, content.quantity).subscribe(function (data) {
-                    console.log(data.status);
-                    if (data.status == 'false') {
-                        var alert = _ionicAngular.Alert.create({
-                            title: 'ERROR!',
-                            message: data.msg,
-                            buttons: ['Ok']
-                        });
-                        _this2.nav.present(alert);
-                    } else {
-
-                        _this2.sqlite.getCart(data.cart).then(function (cart_data) {
-                            var cart_detail = JSON.stringify(cart_data.res);
-
-                            if (!cart_detail.id) {
-                                _this2.sqlite.insertCart(data).then(function (idata) {
-                                    console.log("Cart Added -> " + JSON.stringify(idata.res));
-                                }, function (error) {
-                                    console.log("ERROR -> " + JSON.stringify(error.err));
-                                });
-                            }
-
-                            _this2.sqlite.setKey('Cart', data.cart);
-                            _this2.nav.push(_cart.CartPage);
-                        }, function (error) {
-                            console.log("ERROR -> " + JSON.stringify(error.err));
-                        });
-                    }
-                });
+        key: 'categoryTapped',
+        value: function categoryTapped(event, category) {
+            this.nav.push(_products.ProductsPage, {
+                category: category
             });
         }
     }]);
@@ -850,7 +884,7 @@ var HomePage = exports.HomePage = (_dec = (0, _ionicAngular.Page)({
     return HomePage;
 }()) || _class);
 
-},{"../../providers/services/services":17,"../../providers/sqlite/sqlite":18,"../cart/cart":5,"../detail/detail":8,"../search/search":14,"ionic-angular":352}],10:[function(require,module,exports){
+},{"../../providers/services/services":19,"../../providers/sqlite/sqlite":20,"../cart/cart":5,"../detail/detail":8,"../products/products":15,"../search/search":16,"ionic-angular":354}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -900,7 +934,7 @@ var IntroPage = exports.IntroPage = (_dec = (0, _ionicAngular.Page)({
     return IntroPage;
 }()) || _class);
 
-},{"../main/main":12,"ionic-angular":352}],11:[function(require,module,exports){
+},{"../main/main":12,"ionic-angular":354}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -984,6 +1018,7 @@ var LoginPage = exports.LoginPage = (_dec = (0, _ionicAngular.Page)({
                     _this.nav.present(alert);
                 } else {
                     _this.sqlite.updateUser(data.data.user_details);
+                    _this.sqlite.setKey('UserId', data.data.user_details.id);
                     _this.nav.setRoot(_home.HomePage);
                 }
             });
@@ -993,7 +1028,7 @@ var LoginPage = exports.LoginPage = (_dec = (0, _ionicAngular.Page)({
     return LoginPage;
 }()) || _class);
 
-},{"../../providers/services/services":17,"../../providers/sqlite/sqlite":18,"../home/home":9,"angular2/common":19,"angular2/core":21,"ionic-angular":352}],12:[function(require,module,exports){
+},{"../../providers/services/services":19,"../../providers/sqlite/sqlite":20,"../home/home":9,"angular2/common":21,"angular2/core":23,"ionic-angular":354}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1050,7 +1085,48 @@ var MainPage = exports.MainPage = (_dec = (0, _ionicAngular.Page)({
   return MainPage;
 }()) || _class);
 
-},{"../login/login":11,"../signup/signup":15,"ionic-angular":352}],13:[function(require,module,exports){
+},{"../login/login":11,"../signup/signup":17,"ionic-angular":354}],13:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.OrdersPage = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _dec, _class;
+
+var _ionicAngular = require('ionic-angular');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+  Generated class for the OrdersPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+*/
+var OrdersPage = exports.OrdersPage = (_dec = (0, _ionicAngular.Page)({
+  templateUrl: 'build/pages/orders/orders.html'
+}), _dec(_class = function () {
+  _createClass(OrdersPage, null, [{
+    key: 'parameters',
+    get: function get() {
+      return [[_ionicAngular.NavController]];
+    }
+  }]);
+
+  function OrdersPage(nav) {
+    _classCallCheck(this, OrdersPage);
+
+    this.nav = nav;
+  }
+
+  return OrdersPage;
+}()) || _class);
+
+},{"ionic-angular":354}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1122,6 +1198,7 @@ var PaymentPage = exports.PaymentPage = (_dec = (0, _ionicAngular.Page)({
       var _this2 = this;
 
       this.sqlite.updateCart('tinStatus', 1, this.cart);
+
       this.sqlite.getCart(this.cart).then(function (data) {
         var cart_details = data.res.rows.item(0);
         _this2.service.completeOrder(_this2.user, cart_details).then(function (response) {
@@ -1149,7 +1226,183 @@ var PaymentPage = exports.PaymentPage = (_dec = (0, _ionicAngular.Page)({
   return PaymentPage;
 }()) || _class);
 
-},{"../../providers/services/services":17,"../../providers/sqlite/sqlite":18,"../confirm/confirm":6,"ionic-angular":352}],14:[function(require,module,exports){
+},{"../../providers/services/services":19,"../../providers/sqlite/sqlite":20,"../confirm/confirm":6,"ionic-angular":354}],15:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ProductsPage = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _dec, _class;
+
+var _ionicAngular = require('ionic-angular');
+
+var _services = require('../../providers/services/services');
+
+var _sqlite = require('../../providers/sqlite/sqlite');
+
+var _cart = require('../cart/cart');
+
+var _search = require('../search/search');
+
+var _detail = require('../detail/detail');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+  Generated class for the ProductsPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+*/
+var ProductsPage = exports.ProductsPage = (_dec = (0, _ionicAngular.Page)({
+    templateUrl: 'build/pages/products/products.html'
+}), _dec(_class = function () {
+    _createClass(ProductsPage, null, [{
+        key: 'parameters',
+        get: function get() {
+            return [[_ionicAngular.IonicApp], [_services.Services], [_ionicAngular.NavController], [_sqlite.SQLite], [_ionicAngular.NavParams]];
+        }
+    }]);
+
+    function ProductsPage(app, service, nav, sqlite, params) {
+        var _this = this;
+
+        _classCallCheck(this, ProductsPage);
+
+        this.loading = app.getComponent('loading');
+
+        this.nav = nav;
+        this.service = service;
+
+        this.category = params.get('category');
+
+        this.sqlite = sqlite;
+
+        this.hasProducts = true;
+
+        this.loading.show();
+
+        service.loadProducts(this.category).subscribe(function (data) {
+            console.log(data.msg);
+
+            _this.loading.hide();
+
+            if (data.status == 'false') {
+                var alert = _ionicAngular.Alert.create({
+                    title: 'ERROR!',
+                    message: data.msg,
+                    buttons: ['Ok']
+                });
+                _this.nav.present(alert);
+            } else {
+                _this.contents = data.data;
+
+                if (_this.contents) {
+                    _this.contents.forEach(function (item) {
+                        item.quantity = !item.quantity ? 1 : item.quantity;
+                        this.quantityUpdated(item);
+                    }, _this);
+                } else {
+                    _this.hasProducts = false;
+                }
+            }
+        });
+
+        this.cart = 0;
+        this.sqlite.getKey('Cart').then(function (result) {
+            if (result) {
+                _this.sqlite.getCart(result).then(function (response) {
+                    if (response.res.rows.length > 0) {
+                        _this.cart = result;
+                    } else {
+                        _this.sqlite.removeKey('Cart');
+                    }
+                });
+            }
+        });
+
+        this.user_image = 'images/profile.jpg';
+        this.sqlite.getUser().then(function (result) {
+            _this.user = result.res.rows.item(0);
+            console.log(_this.user.strName);
+            if (_this.user.strImageName != null) {
+                _this.user_image = _this.service.baseUrl + 'file-manager/customers/' + _this.user.strImageName;
+            }
+        }, function (error) {
+            console.log(error);
+        });
+    }
+
+    _createClass(ProductsPage, [{
+        key: 'quantityUpdated',
+        value: function quantityUpdated(content) {
+            content.quantities.forEach(function (qty) {
+                if (qty.id == content.quantity) {
+                    content.price = qty.price;
+                }
+            });
+        }
+    }, {
+        key: 'viewCart',
+        value: function viewCart() {
+            this.nav.push(_cart.CartPage, { cart: this.cart });
+        }
+    }, {
+        key: 'gotoSearch',
+        value: function gotoSearch() {
+            this.nav.setRoot(_search.SearchPage);
+        }
+    }, {
+        key: 'itemTapped',
+        value: function itemTapped(event, content) {
+
+            this.nav.push(_detail.DetailPage, {
+                content: content
+            });
+        }
+    }, {
+        key: 'saveToCart',
+        value: function saveToCart(content) {
+            var _this2 = this;
+
+            var user_id = 0;
+            this.sqlite.getKey('UserId').then(function (value) {
+                if (value) {
+                    user_id = value;
+                }
+
+                _this2.service.addToCart(content.id, user_id, _this2.cart, content.quantity).subscribe(function (data) {
+                    console.log(data.status);
+                    if (data.status == 'false') {
+                        var alert = _ionicAngular.Alert.create({
+                            title: 'ERROR!',
+                            message: data.msg,
+                            buttons: ['Ok']
+                        });
+                        _this2.nav.present(alert);
+                    } else {
+
+                        if (_this2.cart == 0) {
+                            _this2.sqlite.newCart(data);
+                        }
+
+                        _this2.cart = data.cart;
+                        _this2.sqlite.setKey('Cart', data.cart);
+                        _this2.nav.push(_cart.CartPage);
+                    }
+                });
+            });
+        }
+    }]);
+
+    return ProductsPage;
+}()) || _class);
+
+},{"../../providers/services/services":19,"../../providers/sqlite/sqlite":20,"../cart/cart":5,"../detail/detail":8,"../search/search":16,"ionic-angular":354}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1190,7 +1443,7 @@ var SearchPage = exports.SearchPage = (_dec = (0, _ionicAngular.Page)({
   return SearchPage;
 }()) || _class);
 
-},{"ionic-angular":352}],15:[function(require,module,exports){
+},{"ionic-angular":354}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1287,7 +1540,7 @@ var SignupPage = exports.SignupPage = (_dec = (0, _ionicAngular.Page)({
   return SignupPage;
 }()) || _class);
 
-},{"../../providers/services/services":17,"../home/home":9,"angular2/common":19,"angular2/core":21,"ionic-angular":352}],16:[function(require,module,exports){
+},{"../../providers/services/services":19,"../home/home":9,"angular2/common":21,"angular2/core":23,"ionic-angular":354}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1367,7 +1620,7 @@ var SlotPage = exports.SlotPage = (_dec = (0, _ionicAngular.Page)({
   return SlotPage;
 }()) || _class);
 
-},{"../../providers/sqlite/sqlite":18,"../payment/payment":13,"ionic-angular":352}],17:[function(require,module,exports){
+},{"../../providers/sqlite/sqlite":20,"../payment/payment":14,"ionic-angular":354}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1515,8 +1768,18 @@ var Services = exports.Services = (_dec = (0, _core.Injectable)(), _dec(_class =
     }, {
         key: 'loadHome',
         value: function loadHome() {
-            var url = this.baseUrl + 'product/0.1/get-products';
+            var url = this.baseUrl + 'product/0.1/get-home-contents';
             var post_data = JSON.stringify({ key: this.key });
+
+            return this.http.post(url, post_data).map(function (res) {
+                return res.json();
+            });
+        }
+    }, {
+        key: 'loadProducts',
+        value: function loadProducts(category) {
+            var url = this.baseUrl + 'product/0.1/get-products';
+            var post_data = JSON.stringify({ key: this.key, category: category.id });
 
             return this.http.post(url, post_data).map(function (res) {
                 return res.json();
@@ -1547,7 +1810,7 @@ var Services = exports.Services = (_dec = (0, _core.Injectable)(), _dec(_class =
     return Services;
 }()) || _class);
 
-},{"angular2/core":21,"angular2/http":22,"ionic-angular":352,"rxjs/add/operator/map":434}],18:[function(require,module,exports){
+},{"angular2/core":23,"angular2/http":24,"ionic-angular":354,"rxjs/add/operator/map":460}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1591,7 +1854,7 @@ var SQLite = exports.SQLite = (_dec = (0, _core.Injectable)(), _dec(_class = fun
         this.storage = new _ionicAngular.Storage(_ionicAngular.SqlStorage, options);
 
         //this.clearStorage();
-        this.createStorage();
+        //this.createStorage();
     }
 
     _createClass(SQLite, [{
@@ -1603,27 +1866,77 @@ var SQLite = exports.SQLite = (_dec = (0, _core.Injectable)(), _dec(_class = fun
     }, {
         key: 'updateUser',
         value: function updateUser(data) {
-            var cart = 'DROP TABLE IF EXISTS cart';
-            this.storage.query(cart);
 
-            var user = 'CREATE TABLE IF NOT EXISTS user_details (id INTEGER PRIMARY KEY, strName VARCHAR(50) NOT NULL, strImageName VARCHAR(100), strEmail VARCHAR(100) NOT NULL)';
-            this.storage.query(user);
+            var drop_user = 'DROP TABLE IF EXISTS user_details';
+            this.storage.query(drop_user);
+
+            var create_user = 'CREATE TABLE IF NOT EXISTS user_details (id INTEGER PRIMARY KEY, strName VARCHAR(50) NOT NULL, strImageName VARCHAR(100), strEmail VARCHAR(100) NOT NULL)';
+            this.storage.query(create_user);
 
             var sql = "insert into user_details(id, strName, strImageName, strEmail) values (?, ?, ?, ?)";
             return this.storage.query(sql, [data.id, data.strFirstName + ' ' + data.strLastName, data.strImageName, data.strEmail]);
         }
     }, {
-        key: 'createStorage',
-        value: function createStorage() {
-            var cart = 'CREATE TABLE IF NOT EXISTS cart (id INTEGER PRIMARY KEY, idAddress INTEGER NULL, strSlot VARCHAR(50) NULL, strPayment VARCHAR(5) NULL, tinStatus TINYINT(1) DEFAULT "0")';
-            this.storage.query(cart);
+        key: 'updateAreas',
+        value: function updateAreas(data) {
 
-            var area = 'CREATE TABLE IF NOT EXISTS areas (id INTEGER PRIMARY KEY, strArea VARCHAR(50) NOT NULL, strCity VARCHAR(50) NOT NULL, strState VARCHAR(50) NOT NULL, intPinCode INTEGER(6) NOT NULL, tinStatus TINYINT(1) DEFAULT "1")';
-            this.storage.query(area);
+            var drop_area = 'DROP TABLE IF EXISTS areas';
+            this.storage.query(drop_area);
+
+            var create_area = 'CREATE TABLE IF NOT EXISTS areas (id INTEGER PRIMARY KEY, strArea VARCHAR(50) NOT NULL, strCity VARCHAR(50) NOT NULL, strState VARCHAR(50) NOT NULL, intPinCode INTEGER(6) NOT NULL)';
+            this.storage.query(create_area);
+
+            data.forEach(function (row) {
+                var sql = "insert into areas(id, strArea, strCity, strState, intPinCode) values (?, ?, ?, ?, ?)";
+                this.storage.query(sql, [row.id, row.strArea, row.strCity, row.strState, row.intPinCode]);
+            }, this);
         }
     }, {
-        key: 'insertCart',
-        value: function insertCart(data) {
+        key: 'updateSlots',
+        value: function updateSlots(data) {
+
+            var drop_slot = 'DROP TABLE IF EXISTS slots';
+            this.storage.query(drop_slot);
+
+            var create_slot = 'CREATE TABLE IF NOT EXISTS slots (id INTEGER PRIMARY KEY, strSlot VARCHAR(50) NOT NULL)';
+            this.storage.query(create_slot);
+
+            data.forEach(function (row) {
+                var sql = "insert into slots(id, strSlot) values (?, ?)";
+                this.storage.query(sql, [row.id, row.strSlot]);
+            }, this);
+        }
+    }, {
+        key: 'updateCategories',
+        value: function updateCategories(data) {
+
+            var drop_category = 'DROP TABLE IF EXISTS categories';
+            this.storage.query(drop_category);
+
+            var create_category = 'CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY, strCategory VARCHAR(50) NOT NULL, idParent INTEGER DEFAULT 0 NULL)';
+            this.storage.query(create_category);
+
+            data.forEach(function (row) {
+                var sql = "insert into categories(id, strCategory, idParent) values (?, ?, ?)";
+                this.storage.query(sql, [row.id, row.strCategory, 0]);
+
+                if (row.sub_categories) {
+                    row.sub_categories.forEach(function (sub_row) {
+                        var sql = "insert into categories(id, strCategory, idParent) values (?, ?, ?)";
+                        this.storage.query(sql, [sub_row.id, sub_row.strCategory, sub_row.idParent]);
+                    });
+                }
+            }, this);
+        }
+    }, {
+        key: 'newCart',
+        value: function newCart(data) {
+            var drop_cart = 'DROP TABLE IF EXISTS cart';
+            this.storage.query(drop_cart);
+
+            var create_cart = 'CREATE TABLE IF NOT EXISTS cart(id INTEGER PRIMARY KEY, idAddress INTEGER NULL, strSlot VARCHAR(50) NULL, strPayment VARCHAR(5) NULL, tinStatus TINYINT(1) DEFAULT "0")';
+            this.storage.query(create_cart);
+
             var sql = "insert into cart(id) values (?)";
             return this.storage.query(sql, [data.cart]);
         }
@@ -1645,17 +1958,20 @@ var SQLite = exports.SQLite = (_dec = (0, _core.Injectable)(), _dec(_class = fun
             return this.storage.get(key);
         }
     }, {
+        key: 'removeKey',
+        value: function removeKey(key) {
+            return this.storage.remove(key);
+        }
+    }, {
         key: 'getCart',
         value: function getCart(id) {
             var sql = "select * from cart where id = ? and tinStatus = ?";
-            console.log(sql + ' - ' + id);
             return this.storage.query(sql, [id, 0]);
         }
     }, {
         key: 'getUser',
         value: function getUser() {
             var sql = "select * from user_details limit 1";
-            console.log(sql);
             return this.storage.query(sql);
         }
     }]);
@@ -1663,7 +1979,7 @@ var SQLite = exports.SQLite = (_dec = (0, _core.Injectable)(), _dec(_class = fun
     return SQLite;
 }()) || _class);
 
-},{"angular2/core":21,"ionic-angular":352}],19:[function(require,module,exports){
+},{"angular2/core":23,"ionic-angular":354}],21:[function(require,module,exports){
 'use strict';"use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -1672,7 +1988,7 @@ __export(require('./src/common/pipes'));
 __export(require('./src/common/directives'));
 __export(require('./src/common/forms'));
 __export(require('./src/common/common_directives'));
-},{"./src/common/common_directives":32,"./src/common/directives":33,"./src/common/forms":42,"./src/common/pipes":66}],20:[function(require,module,exports){
+},{"./src/common/common_directives":34,"./src/common/directives":35,"./src/common/forms":44,"./src/common/pipes":68}],22:[function(require,module,exports){
 'use strict';"use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -1685,7 +2001,7 @@ function __export(m) {
 __export(require('./src/compiler/url_resolver'));
 __export(require('./src/compiler/xhr'));
 __export(require('./src/compiler/compiler'));
-},{"./src/compiler/compiler":82,"./src/compiler/url_resolver":104,"./src/compiler/xhr":107}],21:[function(require,module,exports){
+},{"./src/compiler/compiler":84,"./src/compiler/url_resolver":106,"./src/compiler/xhr":109}],23:[function(require,module,exports){
 'use strict';"use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -1726,7 +2042,7 @@ __export(require('./src/core/platform_directives_and_pipes'));
 __export(require('./src/core/platform_common_providers'));
 __export(require('./src/core/application_common_providers'));
 __export(require('./src/core/reflection/reflection'));
-},{"./src/core/application_common_providers":109,"./src/core/application_ref":110,"./src/core/application_tokens":111,"./src/core/change_detection":112,"./src/core/debug/debug_node":143,"./src/core/di":145,"./src/core/linker":154,"./src/core/metadata":172,"./src/core/platform_common_providers":178,"./src/core/platform_directives_and_pipes":179,"./src/core/prod_mode":180,"./src/core/reflection/reflection":184,"./src/core/render":188,"./src/core/testability/testability":191,"./src/core/util":192,"./src/core/zone":194,"./src/facade/facade":203,"angular2/src/facade/lang":205}],22:[function(require,module,exports){
+},{"./src/core/application_common_providers":111,"./src/core/application_ref":112,"./src/core/application_tokens":113,"./src/core/change_detection":114,"./src/core/debug/debug_node":145,"./src/core/di":147,"./src/core/linker":156,"./src/core/metadata":174,"./src/core/platform_common_providers":180,"./src/core/platform_directives_and_pipes":181,"./src/core/prod_mode":182,"./src/core/reflection/reflection":186,"./src/core/render":190,"./src/core/testability/testability":193,"./src/core/util":194,"./src/core/zone":196,"./src/facade/facade":205,"angular2/src/facade/lang":207}],24:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * @module
@@ -2038,14 +2354,14 @@ exports.JSONP_PROVIDERS = [
  * @deprecated
  */
 exports.JSON_BINDINGS = exports.JSONP_PROVIDERS;
-},{"./src/http/backends/browser_jsonp":208,"./src/http/backends/browser_xhr":209,"./src/http/backends/jsonp_backend":210,"./src/http/backends/xhr_backend":211,"./src/http/base_request_options":212,"./src/http/base_response_options":213,"./src/http/enums":214,"./src/http/headers":215,"./src/http/http":216,"./src/http/interfaces":218,"./src/http/static_request":219,"./src/http/static_response":220,"./src/http/url_search_params":221,"angular2/core":21}],23:[function(require,module,exports){
+},{"./src/http/backends/browser_jsonp":210,"./src/http/backends/browser_xhr":211,"./src/http/backends/jsonp_backend":212,"./src/http/backends/xhr_backend":213,"./src/http/base_request_options":214,"./src/http/base_response_options":215,"./src/http/enums":216,"./src/http/headers":217,"./src/http/http":218,"./src/http/interfaces":220,"./src/http/static_request":221,"./src/http/static_response":222,"./src/http/url_search_params":223,"angular2/core":23}],25:[function(require,module,exports){
 'use strict';"use strict";
 var profile_1 = require('./src/core/profile/profile');
 exports.wtfCreateScope = profile_1.wtfCreateScope;
 exports.wtfLeave = profile_1.wtfLeave;
 exports.wtfStartTimeRange = profile_1.wtfStartTimeRange;
 exports.wtfEndTimeRange = profile_1.wtfEndTimeRange;
-},{"./src/core/profile/profile":181}],24:[function(require,module,exports){
+},{"./src/core/profile/profile":183}],26:[function(require,module,exports){
 'use strict';"use strict";
 var angular_entrypoint_1 = require('angular2/src/core/angular_entrypoint');
 exports.AngularEntrypoint = angular_entrypoint_1.AngularEntrypoint;
@@ -2151,7 +2467,7 @@ function bootstrap(appComponentType, customProviders) {
     return core_1.platform(browser_common_2.BROWSER_PROVIDERS).application(appProviders).bootstrap(appComponentType);
 }
 exports.bootstrap = bootstrap;
-},{"angular2/compiler":20,"angular2/core":21,"angular2/src/core/angular_entrypoint":108,"angular2/src/core/di":145,"angular2/src/core/reflection/reflection_capabilities":185,"angular2/src/facade/lang":205,"angular2/src/platform/browser/xhr_impl":229,"angular2/src/platform/browser_common":230}],25:[function(require,module,exports){
+},{"angular2/compiler":22,"angular2/core":23,"angular2/src/core/angular_entrypoint":110,"angular2/src/core/di":147,"angular2/src/core/reflection/reflection_capabilities":187,"angular2/src/facade/lang":207,"angular2/src/platform/browser/xhr_impl":231,"angular2/src/platform/browser_common":232}],27:[function(require,module,exports){
 'use strict';"use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -2178,7 +2494,7 @@ exports.EventManager = event_manager_1.EventManager;
 exports.EventManagerPlugin = event_manager_1.EventManagerPlugin;
 __export(require('angular2/src/platform/dom/debug/by'));
 __export(require('angular2/src/platform/dom/debug/ng_probe'));
-},{"angular2/src/platform/dom/debug/by":231,"angular2/src/platform/dom/debug/ng_probe":232,"angular2/src/platform/dom/dom_adapter":233,"angular2/src/platform/dom/dom_renderer":234,"angular2/src/platform/dom/dom_tokens":235,"angular2/src/platform/dom/events/dom_events":236,"angular2/src/platform/dom/events/event_manager":237,"angular2/src/platform/dom/shared_styles_host":241}],26:[function(require,module,exports){
+},{"angular2/src/platform/dom/debug/by":233,"angular2/src/platform/dom/debug/ng_probe":234,"angular2/src/platform/dom/dom_adapter":235,"angular2/src/platform/dom/dom_renderer":236,"angular2/src/platform/dom/dom_tokens":237,"angular2/src/platform/dom/events/dom_events":238,"angular2/src/platform/dom/events/event_manager":239,"angular2/src/platform/dom/shared_styles_host":243}],28:[function(require,module,exports){
 'use strict';/**
  * @module
  * @description
@@ -2250,7 +2566,7 @@ var lang_1 = require('./src/facade/lang');
  * ```
  */
 exports.ROUTER_DIRECTIVES = lang_1.CONST_EXPR([router_outlet_2.RouterOutlet, router_link_2.RouterLink]);
-},{"./src/facade/lang":205,"./src/router/directives/router_link":243,"./src/router/directives/router_outlet":244,"./src/router/instruction":245,"./src/router/lifecycle/lifecycle_annotations":246,"./src/router/location/hash_location_strategy":250,"./src/router/location/location":251,"./src/router/location/location_strategy":252,"./src/router/location/path_location_strategy":253,"./src/router/location/platform_location":254,"./src/router/route_config/route_config_decorator":255,"./src/router/route_registry":258,"./src/router/router":259,"angular2/core":21,"angular2/src/router/router_providers":260,"angular2/src/router/router_providers_common":261}],27:[function(require,module,exports){
+},{"./src/facade/lang":207,"./src/router/directives/router_link":245,"./src/router/directives/router_outlet":246,"./src/router/instruction":247,"./src/router/lifecycle/lifecycle_annotations":248,"./src/router/location/hash_location_strategy":252,"./src/router/location/location":253,"./src/router/location/location_strategy":254,"./src/router/location/path_location_strategy":255,"./src/router/location/platform_location":256,"./src/router/route_config/route_config_decorator":257,"./src/router/route_registry":260,"./src/router/router":261,"angular2/core":23,"angular2/src/router/router_providers":262,"angular2/src/router/router_providers_common":263}],29:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var math_1 = require('angular2/src/facade/math');
@@ -2433,7 +2749,7 @@ var Animation = (function () {
     return Animation;
 }());
 exports.Animation = Animation;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/lang":205,"angular2/src/facade/math":206,"angular2/src/platform/dom/dom_adapter":233,"angular2/src/platform/dom/util":242}],28:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/lang":207,"angular2/src/facade/math":208,"angular2/src/platform/dom/dom_adapter":235,"angular2/src/platform/dom/util":244}],30:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2467,7 +2783,7 @@ var AnimationBuilder = (function () {
     return AnimationBuilder;
 }());
 exports.AnimationBuilder = AnimationBuilder;
-},{"./browser_details":29,"./css_animation_builder":30,"angular2/src/core/di":145}],29:[function(require,module,exports){
+},{"./browser_details":31,"./css_animation_builder":32,"angular2/src/core/di":147}],31:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2542,7 +2858,7 @@ var RafQueue = (function () {
     };
     return RafQueue;
 }());
-},{"angular2/src/core/di":145,"angular2/src/facade/math":206,"angular2/src/platform/dom/dom_adapter":233}],30:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/facade/math":208,"angular2/src/platform/dom/dom_adapter":235}],32:[function(require,module,exports){
 'use strict';"use strict";
 var css_animation_options_1 = require('./css_animation_options');
 var animation_1 = require('./animation');
@@ -2629,7 +2945,7 @@ var CssAnimationBuilder = (function () {
     return CssAnimationBuilder;
 }());
 exports.CssAnimationBuilder = CssAnimationBuilder;
-},{"./animation":27,"./css_animation_options":31}],31:[function(require,module,exports){
+},{"./animation":29,"./css_animation_options":33}],33:[function(require,module,exports){
 'use strict';"use strict";
 var CssAnimationOptions = (function () {
     function CssAnimationOptions() {
@@ -2643,7 +2959,7 @@ var CssAnimationOptions = (function () {
     return CssAnimationOptions;
 }());
 exports.CssAnimationOptions = CssAnimationOptions;
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var forms_1 = require('./forms');
@@ -2692,7 +3008,7 @@ var directives_1 = require('./directives');
  * ```
  */
 exports.COMMON_DIRECTIVES = lang_1.CONST_EXPR([directives_1.CORE_DIRECTIVES, forms_1.FORM_DIRECTIVES]);
-},{"./directives":33,"./forms":42,"angular2/src/facade/lang":205}],33:[function(require,module,exports){
+},{"./directives":35,"./forms":44,"angular2/src/facade/lang":207}],35:[function(require,module,exports){
 'use strict';"use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -2721,7 +3037,7 @@ exports.NgLocalization = ng_plural_1.NgLocalization;
 __export(require('./directives/observable_list_diff'));
 var core_directives_1 = require('./directives/core_directives');
 exports.CORE_DIRECTIVES = core_directives_1.CORE_DIRECTIVES;
-},{"./directives/core_directives":34,"./directives/ng_class":35,"./directives/ng_for":36,"./directives/ng_if":37,"./directives/ng_plural":38,"./directives/ng_style":39,"./directives/ng_switch":40,"./directives/observable_list_diff":41}],34:[function(require,module,exports){
+},{"./directives/core_directives":36,"./directives/ng_class":37,"./directives/ng_for":38,"./directives/ng_if":39,"./directives/ng_plural":40,"./directives/ng_style":41,"./directives/ng_switch":42,"./directives/observable_list_diff":43}],36:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var ng_class_1 = require('./ng_class');
@@ -2781,7 +3097,7 @@ exports.CORE_DIRECTIVES = lang_1.CONST_EXPR([
     ng_plural_1.NgPlural,
     ng_plural_1.NgPluralCase
 ]);
-},{"./ng_class":35,"./ng_for":36,"./ng_if":37,"./ng_plural":38,"./ng_style":39,"./ng_switch":40,"angular2/src/facade/lang":205}],35:[function(require,module,exports){
+},{"./ng_class":37,"./ng_for":38,"./ng_if":39,"./ng_plural":40,"./ng_style":41,"./ng_switch":42,"angular2/src/facade/lang":207}],37:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2969,7 +3285,7 @@ var NgClass = (function () {
     return NgClass;
 }());
 exports.NgClass = NgClass;
-},{"angular2/core":21,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],36:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],38:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3158,7 +3474,7 @@ var RecordViewTuple = (function () {
     }
     return RecordViewTuple;
 }());
-},{"../../facade/exceptions":202,"angular2/core":21,"angular2/src/facade/lang":205}],37:[function(require,module,exports){
+},{"../../facade/exceptions":204,"angular2/core":23,"angular2/src/facade/lang":207}],39:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3220,7 +3536,7 @@ var NgIf = (function () {
     return NgIf;
 }());
 exports.NgIf = NgIf;
-},{"angular2/core":21,"angular2/src/facade/lang":205}],38:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/lang":207}],40:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3384,7 +3700,7 @@ var NgPlural = (function () {
     return NgPlural;
 }());
 exports.NgPlural = NgPlural;
-},{"./ng_switch":40,"angular2/core":21,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],39:[function(require,module,exports){
+},{"./ng_switch":42,"angular2/core":23,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],41:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3488,7 +3804,7 @@ var NgStyle = (function () {
     return NgStyle;
 }());
 exports.NgStyle = NgStyle;
-},{"angular2/core":21,"angular2/src/facade/lang":205}],40:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/lang":207}],42:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3714,10 +4030,10 @@ var NgSwitchDefault = (function () {
     return NgSwitchDefault;
 }());
 exports.NgSwitchDefault = NgSwitchDefault;
-},{"angular2/core":21,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],41:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],43:[function(require,module,exports){
 'use strict';// TS does not have Observables
 "use strict";
-},{}],42:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * @module
@@ -3799,7 +4115,7 @@ exports.FORM_PROVIDERS = lang_1.CONST_EXPR([form_builder_2.FormBuilder, radio_co
  * @deprecated
  */
 exports.FORM_BINDINGS = exports.FORM_PROVIDERS;
-},{"./forms/directives":43,"./forms/directives/abstract_control_directive":44,"./forms/directives/checkbox_value_accessor":45,"./forms/directives/control_container":46,"./forms/directives/control_value_accessor":47,"./forms/directives/default_value_accessor":48,"./forms/directives/ng_control":49,"./forms/directives/ng_control_group":50,"./forms/directives/ng_control_name":51,"./forms/directives/ng_control_status":52,"./forms/directives/ng_form":53,"./forms/directives/ng_form_control":54,"./forms/directives/ng_form_model":55,"./forms/directives/ng_model":56,"./forms/directives/radio_control_value_accessor":59,"./forms/directives/select_control_value_accessor":60,"./forms/directives/validators":62,"./forms/form_builder":63,"./forms/model":64,"./forms/validators":65,"angular2/src/facade/lang":205}],43:[function(require,module,exports){
+},{"./forms/directives":45,"./forms/directives/abstract_control_directive":46,"./forms/directives/checkbox_value_accessor":47,"./forms/directives/control_container":48,"./forms/directives/control_value_accessor":49,"./forms/directives/default_value_accessor":50,"./forms/directives/ng_control":51,"./forms/directives/ng_control_group":52,"./forms/directives/ng_control_name":53,"./forms/directives/ng_control_status":54,"./forms/directives/ng_form":55,"./forms/directives/ng_form_control":56,"./forms/directives/ng_form_model":57,"./forms/directives/ng_model":58,"./forms/directives/radio_control_value_accessor":61,"./forms/directives/select_control_value_accessor":62,"./forms/directives/validators":64,"./forms/form_builder":65,"./forms/model":66,"./forms/validators":67,"angular2/src/facade/lang":207}],45:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var ng_control_name_1 = require('./directives/ng_control_name');
@@ -3883,7 +4199,7 @@ exports.FORM_DIRECTIVES = lang_1.CONST_EXPR([
     validators_1.MaxLengthValidator,
     validators_1.PatternValidator
 ]);
-},{"./directives/checkbox_value_accessor":45,"./directives/default_value_accessor":48,"./directives/ng_control":49,"./directives/ng_control_group":50,"./directives/ng_control_name":51,"./directives/ng_control_status":52,"./directives/ng_form":53,"./directives/ng_form_control":54,"./directives/ng_form_model":55,"./directives/ng_model":56,"./directives/number_value_accessor":58,"./directives/radio_control_value_accessor":59,"./directives/select_control_value_accessor":60,"./directives/validators":62,"angular2/src/facade/lang":205}],44:[function(require,module,exports){
+},{"./directives/checkbox_value_accessor":47,"./directives/default_value_accessor":50,"./directives/ng_control":51,"./directives/ng_control_group":52,"./directives/ng_control_name":53,"./directives/ng_control_status":54,"./directives/ng_form":55,"./directives/ng_form_control":56,"./directives/ng_form_model":57,"./directives/ng_model":58,"./directives/number_value_accessor":60,"./directives/radio_control_value_accessor":61,"./directives/select_control_value_accessor":62,"./directives/validators":64,"angular2/src/facade/lang":207}],46:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -3945,7 +4261,7 @@ var AbstractControlDirective = (function () {
     return AbstractControlDirective;
 }());
 exports.AbstractControlDirective = AbstractControlDirective;
-},{"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],45:[function(require,module,exports){
+},{"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],47:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -3991,7 +4307,7 @@ var CheckboxControlValueAccessor = (function () {
     return CheckboxControlValueAccessor;
 }());
 exports.CheckboxControlValueAccessor = CheckboxControlValueAccessor;
-},{"./control_value_accessor":47,"angular2/core":21,"angular2/src/facade/lang":205}],46:[function(require,module,exports){
+},{"./control_value_accessor":49,"angular2/core":23,"angular2/src/facade/lang":207}],48:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -4028,7 +4344,7 @@ var ControlContainer = (function (_super) {
     return ControlContainer;
 }(abstract_control_directive_1.AbstractControlDirective));
 exports.ControlContainer = ControlContainer;
-},{"./abstract_control_directive":44}],47:[function(require,module,exports){
+},{"./abstract_control_directive":46}],49:[function(require,module,exports){
 'use strict';"use strict";
 var core_1 = require('angular2/core');
 var lang_1 = require('angular2/src/facade/lang');
@@ -4038,7 +4354,7 @@ var lang_1 = require('angular2/src/facade/lang');
  * See {@link DefaultValueAccessor} for how to implement one.
  */
 exports.NG_VALUE_ACCESSOR = lang_1.CONST_EXPR(new core_1.OpaqueToken("NgValueAccessor"));
-},{"angular2/core":21,"angular2/src/facade/lang":205}],48:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/lang":207}],50:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -4089,7 +4405,7 @@ var DefaultValueAccessor = (function () {
     return DefaultValueAccessor;
 }());
 exports.DefaultValueAccessor = DefaultValueAccessor;
-},{"./control_value_accessor":47,"angular2/core":21,"angular2/src/facade/lang":205}],49:[function(require,module,exports){
+},{"./control_value_accessor":49,"angular2/core":23,"angular2/src/facade/lang":207}],51:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -4124,7 +4440,7 @@ var NgControl = (function (_super) {
     return NgControl;
 }(abstract_control_directive_1.AbstractControlDirective));
 exports.NgControl = NgControl;
-},{"./abstract_control_directive":44,"angular2/src/facade/exceptions":202}],50:[function(require,module,exports){
+},{"./abstract_control_directive":46,"angular2/src/facade/exceptions":204}],52:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -4258,7 +4574,7 @@ var NgControlGroup = (function (_super) {
     return NgControlGroup;
 }(control_container_1.ControlContainer));
 exports.NgControlGroup = NgControlGroup;
-},{"../validators":65,"./control_container":46,"./shared":61,"angular2/core":21,"angular2/src/facade/lang":205}],51:[function(require,module,exports){
+},{"../validators":67,"./control_container":48,"./shared":63,"angular2/core":23,"angular2/src/facade/lang":207}],53:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -4417,7 +4733,7 @@ var NgControlName = (function (_super) {
     return NgControlName;
 }(ng_control_1.NgControl));
 exports.NgControlName = NgControlName;
-},{"../validators":65,"./control_container":46,"./control_value_accessor":47,"./ng_control":49,"./shared":61,"angular2/core":21,"angular2/src/facade/async":197,"angular2/src/facade/lang":205}],52:[function(require,module,exports){
+},{"../validators":67,"./control_container":48,"./control_value_accessor":49,"./ng_control":51,"./shared":63,"angular2/core":23,"angular2/src/facade/async":199,"angular2/src/facade/lang":207}],54:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -4502,7 +4818,7 @@ var NgControlStatus = (function () {
     return NgControlStatus;
 }());
 exports.NgControlStatus = NgControlStatus;
-},{"./ng_control":49,"angular2/core":21,"angular2/src/facade/lang":205}],53:[function(require,module,exports){
+},{"./ng_control":51,"angular2/core":23,"angular2/src/facade/lang":207}],55:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -4697,7 +5013,7 @@ var NgForm = (function (_super) {
     return NgForm;
 }(control_container_1.ControlContainer));
 exports.NgForm = NgForm;
-},{"../model":64,"../validators":65,"./control_container":46,"./shared":61,"angular2/core":21,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],54:[function(require,module,exports){
+},{"../model":66,"../validators":67,"./control_container":48,"./shared":63,"angular2/core":23,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],56:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -4840,7 +5156,7 @@ var NgFormControl = (function (_super) {
     return NgFormControl;
 }(ng_control_1.NgControl));
 exports.NgFormControl = NgFormControl;
-},{"../validators":65,"./control_value_accessor":47,"./ng_control":49,"./shared":61,"angular2/core":21,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],55:[function(require,module,exports){
+},{"../validators":67,"./control_value_accessor":49,"./ng_control":51,"./shared":63,"angular2/core":23,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],57:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -5027,7 +5343,7 @@ var NgFormModel = (function (_super) {
     return NgFormModel;
 }(control_container_1.ControlContainer));
 exports.NgFormModel = NgFormModel;
-},{"../validators":65,"./control_container":46,"./shared":61,"angular2/core":21,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],56:[function(require,module,exports){
+},{"../validators":67,"./control_container":48,"./shared":63,"angular2/core":23,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],58:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -5146,7 +5462,7 @@ var NgModel = (function (_super) {
     return NgModel;
 }(ng_control_1.NgControl));
 exports.NgModel = NgModel;
-},{"../model":64,"../validators":65,"./control_value_accessor":47,"./ng_control":49,"./shared":61,"angular2/core":21,"angular2/src/facade/async":197,"angular2/src/facade/lang":205}],57:[function(require,module,exports){
+},{"../model":66,"../validators":67,"./control_value_accessor":49,"./ng_control":51,"./shared":63,"angular2/core":23,"angular2/src/facade/async":199,"angular2/src/facade/lang":207}],59:[function(require,module,exports){
 'use strict';"use strict";
 function normalizeValidator(validator) {
     if (validator.validate !== undefined) {
@@ -5166,7 +5482,7 @@ function normalizeAsyncValidator(validator) {
     }
 }
 exports.normalizeAsyncValidator = normalizeAsyncValidator;
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -5219,7 +5535,7 @@ var NumberValueAccessor = (function () {
     return NumberValueAccessor;
 }());
 exports.NumberValueAccessor = NumberValueAccessor;
-},{"./control_value_accessor":47,"angular2/core":21,"angular2/src/facade/lang":205}],59:[function(require,module,exports){
+},{"./control_value_accessor":49,"angular2/core":23,"angular2/src/facade/lang":207}],61:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -5343,7 +5659,7 @@ var RadioControlValueAccessor = (function () {
     return RadioControlValueAccessor;
 }());
 exports.RadioControlValueAccessor = RadioControlValueAccessor;
-},{"angular2/core":21,"angular2/src/common/forms/directives/control_value_accessor":47,"angular2/src/common/forms/directives/ng_control":49,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],60:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/common/forms/directives/control_value_accessor":49,"angular2/src/common/forms/directives/ng_control":51,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],62:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -5491,7 +5807,7 @@ var NgSelectOption = (function () {
     return NgSelectOption;
 }());
 exports.NgSelectOption = NgSelectOption;
-},{"./control_value_accessor":47,"angular2/core":21,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],61:[function(require,module,exports){
+},{"./control_value_accessor":49,"angular2/core":23,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],63:[function(require,module,exports){
 'use strict';"use strict";
 var collection_1 = require('angular2/src/facade/collection');
 var lang_1 = require('angular2/src/facade/lang');
@@ -5593,7 +5909,7 @@ function selectValueAccessor(dir, valueAccessors) {
     return null;
 }
 exports.selectValueAccessor = selectValueAccessor;
-},{"../validators":65,"./checkbox_value_accessor":45,"./default_value_accessor":48,"./normalize_validator":57,"./number_value_accessor":58,"./radio_control_value_accessor":59,"./select_control_value_accessor":60,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],62:[function(require,module,exports){
+},{"../validators":67,"./checkbox_value_accessor":47,"./default_value_accessor":50,"./normalize_validator":59,"./number_value_accessor":60,"./radio_control_value_accessor":61,"./select_control_value_accessor":62,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],64:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -5721,7 +6037,7 @@ var PatternValidator = (function () {
     return PatternValidator;
 }());
 exports.PatternValidator = PatternValidator;
-},{"../validators":65,"angular2/core":21,"angular2/src/facade/lang":205}],63:[function(require,module,exports){
+},{"../validators":67,"angular2/core":23,"angular2/src/facade/lang":207}],65:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -5846,7 +6162,7 @@ var FormBuilder = (function () {
     return FormBuilder;
 }());
 exports.FormBuilder = FormBuilder;
-},{"./model":64,"angular2/core":21,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],64:[function(require,module,exports){
+},{"./model":66,"angular2/core":23,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],66:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -6350,7 +6666,7 @@ var ControlArray = (function (_super) {
     return ControlArray;
 }(AbstractControl));
 exports.ControlArray = ControlArray;
-},{"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205,"angular2/src/facade/promise":207}],65:[function(require,module,exports){
+},{"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207,"angular2/src/facade/promise":209}],67:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var promise_1 = require('angular2/src/facade/promise');
@@ -6485,7 +6801,7 @@ function _mergeErrors(arrayOfErrors) {
     }, {});
     return collection_1.StringMapWrapper.isEmpty(res) ? null : res;
 }
-},{"angular2/core":21,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205,"angular2/src/facade/promise":207}],66:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207,"angular2/src/facade/promise":209}],68:[function(require,module,exports){
 'use strict';/**
  * @module
  * @description
@@ -6517,7 +6833,7 @@ var i18n_select_pipe_1 = require('./pipes/i18n_select_pipe');
 exports.I18nSelectPipe = i18n_select_pipe_1.I18nSelectPipe;
 var common_pipes_1 = require('./pipes/common_pipes');
 exports.COMMON_PIPES = common_pipes_1.COMMON_PIPES;
-},{"./pipes/async_pipe":67,"./pipes/common_pipes":68,"./pipes/date_pipe":69,"./pipes/i18n_plural_pipe":70,"./pipes/i18n_select_pipe":71,"./pipes/json_pipe":73,"./pipes/lowercase_pipe":74,"./pipes/number_pipe":75,"./pipes/replace_pipe":76,"./pipes/slice_pipe":77,"./pipes/uppercase_pipe":78}],67:[function(require,module,exports){
+},{"./pipes/async_pipe":69,"./pipes/common_pipes":70,"./pipes/date_pipe":71,"./pipes/i18n_plural_pipe":72,"./pipes/i18n_select_pipe":73,"./pipes/json_pipe":75,"./pipes/lowercase_pipe":76,"./pipes/number_pipe":77,"./pipes/replace_pipe":78,"./pipes/slice_pipe":79,"./pipes/uppercase_pipe":80}],69:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6654,7 +6970,7 @@ var AsyncPipe = (function () {
     return AsyncPipe;
 }());
 exports.AsyncPipe = AsyncPipe;
-},{"./invalid_pipe_argument_exception":72,"angular2/core":21,"angular2/src/facade/async":197,"angular2/src/facade/lang":205}],68:[function(require,module,exports){
+},{"./invalid_pipe_argument_exception":74,"angular2/core":23,"angular2/src/facade/async":199,"angular2/src/facade/lang":207}],70:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * @module
@@ -6693,7 +7009,7 @@ exports.COMMON_PIPES = lang_1.CONST_EXPR([
     i18n_plural_pipe_1.I18nPluralPipe,
     i18n_select_pipe_1.I18nSelectPipe
 ]);
-},{"./async_pipe":67,"./date_pipe":69,"./i18n_plural_pipe":70,"./i18n_select_pipe":71,"./json_pipe":73,"./lowercase_pipe":74,"./number_pipe":75,"./replace_pipe":76,"./slice_pipe":77,"./uppercase_pipe":78,"angular2/src/facade/lang":205}],69:[function(require,module,exports){
+},{"./async_pipe":69,"./date_pipe":71,"./i18n_plural_pipe":72,"./i18n_select_pipe":73,"./json_pipe":75,"./lowercase_pipe":76,"./number_pipe":77,"./replace_pipe":78,"./slice_pipe":79,"./uppercase_pipe":80,"angular2/src/facade/lang":207}],71:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6816,7 +7132,7 @@ var DatePipe = (function () {
     return DatePipe;
 }());
 exports.DatePipe = DatePipe;
-},{"./invalid_pipe_argument_exception":72,"angular2/core":21,"angular2/src/facade/collection":200,"angular2/src/facade/intl":204,"angular2/src/facade/lang":205}],70:[function(require,module,exports){
+},{"./invalid_pipe_argument_exception":74,"angular2/core":23,"angular2/src/facade/collection":202,"angular2/src/facade/intl":206,"angular2/src/facade/lang":207}],72:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6886,7 +7202,7 @@ var I18nPluralPipe = (function () {
     return I18nPluralPipe;
 }());
 exports.I18nPluralPipe = I18nPluralPipe;
-},{"./invalid_pipe_argument_exception":72,"angular2/core":21,"angular2/src/facade/lang":205}],71:[function(require,module,exports){
+},{"./invalid_pipe_argument_exception":74,"angular2/core":23,"angular2/src/facade/lang":207}],73:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6950,7 +7266,7 @@ var I18nSelectPipe = (function () {
     return I18nSelectPipe;
 }());
 exports.I18nSelectPipe = I18nSelectPipe;
-},{"./invalid_pipe_argument_exception":72,"angular2/core":21,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],72:[function(require,module,exports){
+},{"./invalid_pipe_argument_exception":74,"angular2/core":23,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],74:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -6967,7 +7283,7 @@ var InvalidPipeArgumentException = (function (_super) {
     return InvalidPipeArgumentException;
 }(exceptions_1.BaseException));
 exports.InvalidPipeArgumentException = InvalidPipeArgumentException;
-},{"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],73:[function(require,module,exports){
+},{"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],75:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7002,7 +7318,7 @@ var JsonPipe = (function () {
     return JsonPipe;
 }());
 exports.JsonPipe = JsonPipe;
-},{"angular2/core":21,"angular2/src/facade/lang":205}],74:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/lang":207}],76:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7044,7 +7360,7 @@ var LowerCasePipe = (function () {
     return LowerCasePipe;
 }());
 exports.LowerCasePipe = LowerCasePipe;
-},{"./invalid_pipe_argument_exception":72,"angular2/core":21,"angular2/src/facade/lang":205}],75:[function(require,module,exports){
+},{"./invalid_pipe_argument_exception":74,"angular2/core":23,"angular2/src/facade/lang":207}],77:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -7233,7 +7549,7 @@ var CurrencyPipe = (function (_super) {
     return CurrencyPipe;
 }(NumberPipe));
 exports.CurrencyPipe = CurrencyPipe;
-},{"./invalid_pipe_argument_exception":72,"angular2/core":21,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/intl":204,"angular2/src/facade/lang":205}],76:[function(require,module,exports){
+},{"./invalid_pipe_argument_exception":74,"angular2/core":23,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/intl":206,"angular2/src/facade/lang":207}],78:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7322,7 +7638,7 @@ var ReplacePipe = (function () {
     return ReplacePipe;
 }());
 exports.ReplacePipe = ReplacePipe;
-},{"./invalid_pipe_argument_exception":72,"angular2/core":21,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],77:[function(require,module,exports){
+},{"./invalid_pipe_argument_exception":74,"angular2/core":23,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],79:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7418,7 +7734,7 @@ var SlicePipe = (function () {
     return SlicePipe;
 }());
 exports.SlicePipe = SlicePipe;
-},{"./invalid_pipe_argument_exception":72,"angular2/core":21,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],78:[function(require,module,exports){
+},{"./invalid_pipe_argument_exception":74,"angular2/core":23,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],80:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7460,7 +7776,7 @@ var UpperCasePipe = (function () {
     return UpperCasePipe;
 }());
 exports.UpperCasePipe = UpperCasePipe;
-},{"./invalid_pipe_argument_exception":72,"angular2/core":21,"angular2/src/facade/lang":205}],79:[function(require,module,exports){
+},{"./invalid_pipe_argument_exception":74,"angular2/core":23,"angular2/src/facade/lang":207}],81:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('../facade/lang');
 var exceptions_1 = require('../facade/exceptions');
@@ -7478,7 +7794,7 @@ function assertArrayOfStrings(identifier, value) {
     }
 }
 exports.assertArrayOfStrings = assertArrayOfStrings;
-},{"../facade/exceptions":202,"../facade/lang":205}],80:[function(require,module,exports){
+},{"../facade/exceptions":204,"../facade/lang":207}],82:[function(require,module,exports){
 'use strict';"use strict";
 var collection_1 = require('angular2/src/facade/collection');
 var lang_1 = require('angular2/src/facade/lang');
@@ -7647,7 +7963,7 @@ function _collectNestedProtoViewsVariableNames(pvVisitors) {
     });
     return nestedPvVariableNames;
 }
-},{"./template_ast":99,"angular2/src/core/change_detection/change_detection":115,"angular2/src/core/linker/interfaces":161,"angular2/src/core/reflection/reflection":184,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],81:[function(require,module,exports){
+},{"./template_ast":101,"angular2/src/core/change_detection/change_detection":117,"angular2/src/core/linker/interfaces":163,"angular2/src/core/reflection/reflection":186,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],83:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7733,7 +8049,7 @@ var ChangeDetectionCompiler = (function () {
     return ChangeDetectionCompiler;
 }());
 exports.ChangeDetectionCompiler = ChangeDetectionCompiler;
-},{"./change_definition_factory":80,"./source_module":96,"./util":105,"angular2/src/core/change_detection/abstract_change_detector":113,"angular2/src/core/change_detection/change_detection":115,"angular2/src/core/change_detection/change_detection_jit_generator":116,"angular2/src/core/change_detection/change_detection_util":117,"angular2/src/core/change_detection/constants":123,"angular2/src/core/di":145,"angular2/src/facade/lang":205,"angular2/src/transform/template_compiler/change_detector_codegen":271}],82:[function(require,module,exports){
+},{"./change_definition_factory":82,"./source_module":98,"./util":107,"angular2/src/core/change_detection/abstract_change_detector":115,"angular2/src/core/change_detection/change_detection":117,"angular2/src/core/change_detection/change_detection_jit_generator":118,"angular2/src/core/change_detection/change_detection_util":119,"angular2/src/core/change_detection/constants":125,"angular2/src/core/di":147,"angular2/src/facade/lang":207,"angular2/src/transform/template_compiler/change_detector_codegen":273}],84:[function(require,module,exports){
 'use strict';"use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -7799,7 +8115,7 @@ exports.COMPILER_PROVIDERS = lang_1.CONST_EXPR([
     new di_1.Provider(element_schema_registry_1.ElementSchemaRegistry, { useExisting: dom_element_schema_registry_1.DomElementSchemaRegistry }),
     url_resolver_1.UrlResolver
 ]);
-},{"./directive_metadata":83,"./runtime_compiler":90,"./source_module":96,"./template_compiler":100,"angular2/src/compiler/change_detector_compiler":81,"angular2/src/compiler/html_parser":86,"angular2/src/compiler/proto_view_compiler":89,"angular2/src/compiler/runtime_compiler":90,"angular2/src/compiler/runtime_metadata":91,"angular2/src/compiler/schema/dom_element_schema_registry":92,"angular2/src/compiler/schema/element_schema_registry":93,"angular2/src/compiler/style_compiler":97,"angular2/src/compiler/template_ast":99,"angular2/src/compiler/template_compiler":100,"angular2/src/compiler/template_normalizer":101,"angular2/src/compiler/template_parser":102,"angular2/src/compiler/url_resolver":104,"angular2/src/compiler/view_compiler":106,"angular2/src/core/change_detection/change_detection":115,"angular2/src/core/di":145,"angular2/src/core/linker/compiler":155,"angular2/src/core/platform_directives_and_pipes":179,"angular2/src/facade/lang":205}],83:[function(require,module,exports){
+},{"./directive_metadata":85,"./runtime_compiler":92,"./source_module":98,"./template_compiler":102,"angular2/src/compiler/change_detector_compiler":83,"angular2/src/compiler/html_parser":88,"angular2/src/compiler/proto_view_compiler":91,"angular2/src/compiler/runtime_compiler":92,"angular2/src/compiler/runtime_metadata":93,"angular2/src/compiler/schema/dom_element_schema_registry":94,"angular2/src/compiler/schema/element_schema_registry":95,"angular2/src/compiler/style_compiler":99,"angular2/src/compiler/template_ast":101,"angular2/src/compiler/template_compiler":102,"angular2/src/compiler/template_normalizer":103,"angular2/src/compiler/template_parser":104,"angular2/src/compiler/url_resolver":106,"angular2/src/compiler/view_compiler":108,"angular2/src/core/change_detection/change_detection":117,"angular2/src/core/di":147,"angular2/src/core/linker/compiler":157,"angular2/src/core/platform_directives_and_pipes":181,"angular2/src/facade/lang":207}],85:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -8345,7 +8661,7 @@ function objToJson(obj) {
         return obj;
     return obj.toJson();
 }
-},{"./util":105,"angular2/src/compiler/selector":94,"angular2/src/core/change_detection/change_detection":115,"angular2/src/core/linker/interfaces":161,"angular2/src/core/metadata/view":175,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],84:[function(require,module,exports){
+},{"./util":107,"angular2/src/compiler/selector":96,"angular2/src/core/change_detection/change_detection":117,"angular2/src/core/linker/interfaces":163,"angular2/src/core/metadata/view":177,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],86:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var HtmlTextAst = (function () {
@@ -8401,7 +8717,7 @@ function htmlVisitAll(visitor, asts, context) {
     return result;
 }
 exports.htmlVisitAll = htmlVisitAll;
-},{"angular2/src/facade/lang":205}],85:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],87:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -8967,7 +9283,7 @@ function mergeTextTokens(srcTokens) {
     }
     return dstTokens;
 }
-},{"./html_tags":87,"./parse_util":88,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],86:[function(require,module,exports){
+},{"./html_tags":89,"./parse_util":90,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],88:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -9218,7 +9534,7 @@ function getElementFullName(prefix, localName, parentElement) {
     }
     return html_tags_1.mergeNsAndName(prefix, localName);
 }
-},{"./html_ast":84,"./html_lexer":85,"./html_tags":87,"./parse_util":88,"angular2/src/core/di":145,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],87:[function(require,module,exports){
+},{"./html_ast":86,"./html_lexer":87,"./html_tags":89,"./parse_util":90,"angular2/src/core/di":147,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],89:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 // see http://www.w3.org/TR/html51/syntax.html#named-character-references
@@ -9620,7 +9936,7 @@ function mergeNsAndName(prefix, localName) {
     return lang_1.isPresent(prefix) ? "@" + prefix + ":" + localName : localName;
 }
 exports.mergeNsAndName = mergeNsAndName;
-},{"angular2/src/facade/lang":205}],88:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],90:[function(require,module,exports){
 'use strict';"use strict";
 var ParseLocation = (function () {
     function ParseLocation(file, offset, line, col) {
@@ -9693,7 +10009,7 @@ var ParseError = (function () {
     return ParseError;
 }());
 exports.ParseError = ParseError;
-},{}],89:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -10007,7 +10323,7 @@ function getViewType(component, embeddedTemplateIndex) {
         return view_type_1.ViewType.COMPONENT;
     }
 }
-},{"./source_module":96,"./template_ast":99,"./util":105,"angular2/src/core/di":145,"angular2/src/core/linker/element":159,"angular2/src/core/linker/view":166,"angular2/src/core/linker/view_type":171,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],90:[function(require,module,exports){
+},{"./source_module":98,"./template_ast":101,"./util":107,"angular2/src/core/di":147,"angular2/src/core/linker/element":161,"angular2/src/core/linker/view":168,"angular2/src/core/linker/view_type":173,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],92:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -10056,7 +10372,7 @@ var RuntimeCompiler_ = (function (_super) {
     return RuntimeCompiler_;
 }(compiler_1.Compiler_));
 exports.RuntimeCompiler_ = RuntimeCompiler_;
-},{"./template_compiler":100,"angular2/src/core/di":145,"angular2/src/core/linker/compiler":155,"angular2/src/core/linker/view_ref":169}],91:[function(require,module,exports){
+},{"./template_compiler":102,"angular2/src/core/di":147,"angular2/src/core/linker/compiler":157,"angular2/src/core/linker/view_ref":171}],93:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10244,7 +10560,7 @@ function calcModuleUrl(type, cmpMetadata) {
         return reflection_1.reflector.importUri(type);
     }
 }
-},{"./assertions":79,"./directive_metadata":83,"./util":105,"angular2/src/compiler/url_resolver":104,"angular2/src/core/di":145,"angular2/src/core/linker/directive_lifecycle_reflector":156,"angular2/src/core/linker/directive_resolver":157,"angular2/src/core/linker/interfaces":161,"angular2/src/core/linker/pipe_resolver":162,"angular2/src/core/linker/view_resolver":170,"angular2/src/core/metadata/directives":174,"angular2/src/core/platform_directives_and_pipes":179,"angular2/src/core/reflection/reflection":184,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],92:[function(require,module,exports){
+},{"./assertions":81,"./directive_metadata":85,"./util":107,"angular2/src/compiler/url_resolver":106,"angular2/src/core/di":147,"angular2/src/core/linker/directive_lifecycle_reflector":158,"angular2/src/core/linker/directive_resolver":159,"angular2/src/core/linker/interfaces":163,"angular2/src/core/linker/pipe_resolver":164,"angular2/src/core/linker/view_resolver":172,"angular2/src/core/metadata/directives":176,"angular2/src/core/platform_directives_and_pipes":181,"angular2/src/core/reflection/reflection":186,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],94:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -10306,7 +10622,7 @@ var DomElementSchemaRegistry = (function (_super) {
     return DomElementSchemaRegistry;
 }(element_schema_registry_1.ElementSchemaRegistry));
 exports.DomElementSchemaRegistry = DomElementSchemaRegistry;
-},{"./element_schema_registry":93,"angular2/src/compiler/html_tags":87,"angular2/src/core/di":145,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205,"angular2/src/platform/dom/dom_adapter":233}],93:[function(require,module,exports){
+},{"./element_schema_registry":95,"angular2/src/compiler/html_tags":89,"angular2/src/core/di":147,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207,"angular2/src/platform/dom/dom_adapter":235}],95:[function(require,module,exports){
 'use strict';"use strict";
 var ElementSchemaRegistry = (function () {
     function ElementSchemaRegistry() {
@@ -10316,7 +10632,7 @@ var ElementSchemaRegistry = (function () {
     return ElementSchemaRegistry;
 }());
 exports.ElementSchemaRegistry = ElementSchemaRegistry;
-},{}],94:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 'use strict';"use strict";
 var collection_1 = require('angular2/src/facade/collection');
 var lang_1 = require('angular2/src/facade/lang');
@@ -10674,7 +10990,7 @@ var SelectorContext = (function () {
     return SelectorContext;
 }());
 exports.SelectorContext = SelectorContext;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],95:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],97:[function(require,module,exports){
 'use strict';"use strict";
 var collection_1 = require('angular2/src/facade/collection');
 var lang_1 = require('angular2/src/facade/lang');
@@ -11173,7 +11489,7 @@ function escapeBlocks(input) {
     }
     return new StringWithEscapedBlocks(resultParts.join(''), escapedBlocks);
 }
-},{"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],96:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],98:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var MODULE_REGEXP = /#MODULE\[([^\]]*)\]/g;
@@ -11243,7 +11559,7 @@ var SourceWithImports = (function () {
     return SourceWithImports;
 }());
 exports.SourceWithImports = SourceWithImports;
-},{"angular2/src/facade/lang":205}],97:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],99:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -11339,7 +11655,7 @@ var StyleCompiler = (function () {
     return StyleCompiler;
 }());
 exports.StyleCompiler = StyleCompiler;
-},{"./source_module":96,"./style_url_resolver":98,"./util":105,"angular2/src/compiler/shadow_css":95,"angular2/src/compiler/url_resolver":104,"angular2/src/compiler/xhr":107,"angular2/src/core/di":145,"angular2/src/core/metadata/view":175,"angular2/src/facade/async":197,"angular2/src/facade/lang":205}],98:[function(require,module,exports){
+},{"./source_module":98,"./style_url_resolver":100,"./util":107,"angular2/src/compiler/shadow_css":97,"angular2/src/compiler/url_resolver":106,"angular2/src/compiler/xhr":109,"angular2/src/core/di":147,"angular2/src/core/metadata/view":177,"angular2/src/facade/async":199,"angular2/src/facade/lang":207}],100:[function(require,module,exports){
 'use strict';// Some of the code comes from WebComponents.JS
 // https://github.com/webcomponents/webcomponentsjs/blob/master/src/HTMLImports/path.js
 "use strict";
@@ -11381,7 +11697,7 @@ var _cssImportRe = /@import\s+(?:url\()?\s*(?:(?:['"]([^'"]*))|([^;\)\s]*))[^;]*
 // TODO: can't use /^[^:/?#.]+:/g due to clang-format bug:
 //       https://github.com/angular/angular/issues/4596
 var _urlWithSchemaRe = /^([a-zA-Z\-\+\.]+):/g;
-},{"angular2/src/facade/lang":205}],99:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],101:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 /**
@@ -11626,7 +11942,7 @@ function templateVisitAll(visitor, asts, context) {
     return result;
 }
 exports.templateVisitAll = templateVisitAll;
-},{"angular2/src/facade/lang":205}],100:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],102:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -11977,7 +12293,7 @@ var PipeVisitor = (function () {
     };
     return PipeVisitor;
 }());
-},{"./change_detector_compiler":81,"./directive_metadata":83,"./proto_view_compiler":89,"./runtime_metadata":91,"./source_module":96,"./style_compiler":97,"./template_ast":99,"./template_normalizer":101,"./template_parser":102,"./util":105,"./view_compiler":106,"angular2/src/core/change_detection/change_detection":115,"angular2/src/core/di":145,"angular2/src/core/linker/resolved_metadata_cache":164,"angular2/src/core/linker/view":166,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],101:[function(require,module,exports){
+},{"./change_detector_compiler":83,"./directive_metadata":85,"./proto_view_compiler":91,"./runtime_metadata":93,"./source_module":98,"./style_compiler":99,"./template_ast":101,"./template_normalizer":103,"./template_parser":104,"./util":107,"./view_compiler":108,"angular2/src/core/change_detection/change_detection":117,"angular2/src/core/di":147,"angular2/src/core/linker/resolved_metadata_cache":166,"angular2/src/core/linker/view":168,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],103:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -12106,7 +12422,7 @@ var TemplatePreparseVisitor = (function () {
     TemplatePreparseVisitor.prototype.visitText = function (ast, context) { return null; };
     return TemplatePreparseVisitor;
 }());
-},{"./directive_metadata":83,"./html_ast":84,"./html_parser":86,"./style_url_resolver":98,"./template_preparser":103,"angular2/src/compiler/url_resolver":104,"angular2/src/compiler/xhr":107,"angular2/src/core/di":145,"angular2/src/core/metadata/view":175,"angular2/src/facade/async":197,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],102:[function(require,module,exports){
+},{"./directive_metadata":85,"./html_ast":86,"./html_parser":88,"./style_url_resolver":100,"./template_preparser":105,"angular2/src/compiler/url_resolver":106,"angular2/src/compiler/xhr":109,"angular2/src/core/di":147,"angular2/src/core/metadata/view":177,"angular2/src/facade/async":199,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],104:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -12797,7 +13113,7 @@ var PipeCollector = (function (_super) {
     return PipeCollector;
 }(ast_1.RecursiveAstVisitor));
 exports.PipeCollector = PipeCollector;
-},{"./html_ast":84,"./html_parser":86,"./html_tags":87,"./parse_util":88,"./style_url_resolver":98,"./template_ast":99,"./template_preparser":103,"./util":105,"angular2/core":21,"angular2/src/compiler/schema/element_schema_registry":93,"angular2/src/compiler/selector":94,"angular2/src/core/change_detection/change_detection":115,"angular2/src/core/change_detection/parser/ast":134,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],103:[function(require,module,exports){
+},{"./html_ast":86,"./html_parser":88,"./html_tags":89,"./parse_util":90,"./style_url_resolver":100,"./template_ast":101,"./template_preparser":105,"./util":107,"angular2/core":23,"angular2/src/compiler/schema/element_schema_registry":95,"angular2/src/compiler/selector":96,"angular2/src/core/change_detection/change_detection":117,"angular2/src/core/change_detection/parser/ast":136,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],105:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var html_tags_1 = require('./html_tags');
@@ -12880,7 +13196,7 @@ function normalizeNgContentSelect(selectAttr) {
     }
     return selectAttr;
 }
-},{"./html_tags":87,"angular2/src/facade/lang":205}],104:[function(require,module,exports){
+},{"./html_tags":89,"angular2/src/facade/lang":207}],106:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13206,7 +13522,7 @@ function _resolveUrl(base, url) {
     parts[_ComponentIndex.Path] = path;
     return _joinAndCanonicalizePath(parts);
 }
-},{"angular2/src/core/application_tokens":111,"angular2/src/core/di":145,"angular2/src/facade/lang":205}],105:[function(require,module,exports){
+},{"angular2/src/core/application_tokens":113,"angular2/src/core/di":147,"angular2/src/facade/lang":207}],107:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var CAMEL_CASE_REGEXP = /([A-Z])/g;
@@ -13396,7 +13712,7 @@ function flattenArray(source, target) {
     return target;
 }
 exports.flattenArray = flattenArray;
-},{"angular2/src/facade/lang":205}],106:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],108:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13796,7 +14112,7 @@ function codeGenViewEncapsulation(value) {
         return "" + value;
     }
 }
-},{"./proto_view_compiler":89,"./source_module":96,"./template_ast":99,"./util":105,"angular2/src/core/di":145,"angular2/src/core/linker/element":159,"angular2/src/core/linker/view":166,"angular2/src/core/linker/view_type":171,"angular2/src/core/metadata/view":175,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],107:[function(require,module,exports){
+},{"./proto_view_compiler":91,"./source_module":98,"./template_ast":101,"./util":107,"angular2/src/core/di":147,"angular2/src/core/linker/element":161,"angular2/src/core/linker/view":168,"angular2/src/core/linker/view_type":173,"angular2/src/core/metadata/view":177,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],109:[function(require,module,exports){
 'use strict';"use strict";
 // TODO: vsavkin rename it into TemplateLoader
 /**
@@ -13810,7 +14126,7 @@ var XHR = (function () {
     return XHR;
 }());
 exports.XHR = XHR;
-},{}],108:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13850,7 +14166,7 @@ var AngularEntrypoint = (function () {
     return AngularEntrypoint;
 }());
 exports.AngularEntrypoint = AngularEntrypoint;
-},{"angular2/src/facade/lang":205}],109:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],111:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var di_1 = require('angular2/src/core/di');
@@ -13882,7 +14198,7 @@ exports.APPLICATION_COMMON_PROVIDERS = lang_1.CONST_EXPR([
     pipe_resolver_1.PipeResolver,
     new di_1.Provider(dynamic_component_loader_1.DynamicComponentLoader, { useClass: dynamic_component_loader_2.DynamicComponentLoader_ })
 ]);
-},{"./application_tokens":111,"./change_detection/change_detection":115,"./linker/compiler":155,"./linker/directive_resolver":157,"./linker/dynamic_component_loader":158,"./linker/pipe_resolver":162,"./linker/view_manager":168,"./linker/view_resolver":170,"angular2/src/core/di":145,"angular2/src/core/linker/resolved_metadata_cache":164,"angular2/src/facade/lang":205}],110:[function(require,module,exports){
+},{"./application_tokens":113,"./change_detection/change_detection":117,"./linker/compiler":157,"./linker/directive_resolver":159,"./linker/dynamic_component_loader":160,"./linker/pipe_resolver":164,"./linker/view_manager":170,"./linker/view_resolver":172,"angular2/src/core/di":147,"angular2/src/core/linker/resolved_metadata_cache":166,"angular2/src/facade/lang":207}],112:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -14296,7 +14612,7 @@ var ApplicationRef_ = (function (_super) {
     return ApplicationRef_;
 }(ApplicationRef));
 exports.ApplicationRef_ = ApplicationRef_;
-},{"./application_tokens":111,"./profile/profile":181,"angular2/src/core/console":142,"angular2/src/core/di":145,"angular2/src/core/linker/dynamic_component_loader":158,"angular2/src/core/testability/testability":191,"angular2/src/core/zone/ng_zone":195,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],111:[function(require,module,exports){
+},{"./application_tokens":113,"./profile/profile":183,"angular2/src/core/console":144,"angular2/src/core/di":147,"angular2/src/core/linker/dynamic_component_loader":160,"angular2/src/core/testability/testability":193,"angular2/src/core/zone/ng_zone":197,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],113:[function(require,module,exports){
 'use strict';"use strict";
 var di_1 = require('angular2/src/core/di');
 var lang_1 = require('angular2/src/facade/lang');
@@ -14353,7 +14669,7 @@ exports.APP_INITIALIZER = lang_1.CONST_EXPR(new di_1.OpaqueToken("Application In
  * A token which indicates the root directory of the application
  */
 exports.PACKAGE_ROOT_URL = lang_1.CONST_EXPR(new di_1.OpaqueToken("Application Packages Root URL"));
-},{"angular2/src/core/di":145,"angular2/src/facade/lang":205}],112:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/facade/lang":207}],114:[function(require,module,exports){
 'use strict';/**
  * @module
  * @description
@@ -14371,7 +14687,7 @@ exports.IterableDiffers = change_detection_1.IterableDiffers;
 exports.KeyValueDiffers = change_detection_1.KeyValueDiffers;
 exports.CollectionChangeRecord = change_detection_1.CollectionChangeRecord;
 exports.KeyValueChangeRecord = change_detection_1.KeyValueChangeRecord;
-},{"./change_detection/change_detection":115}],113:[function(require,module,exports){
+},{"./change_detection/change_detection":117}],115:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var collection_1 = require('angular2/src/facade/collection');
@@ -14617,7 +14933,7 @@ var AbstractChangeDetector = (function () {
     return AbstractChangeDetector;
 }());
 exports.AbstractChangeDetector = AbstractChangeDetector;
-},{"../profile/profile":181,"./change_detection_util":117,"./change_detector_ref":118,"./constants":123,"./exceptions":131,"./parser/locals":136,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],114:[function(require,module,exports){
+},{"../profile/profile":183,"./change_detection_util":119,"./change_detector_ref":120,"./constants":125,"./exceptions":133,"./parser/locals":138,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],116:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var DIRECTIVE_LIFECYCLE = "directiveLifecycle";
@@ -14726,7 +15042,7 @@ var BindingRecord = (function () {
     return BindingRecord;
 }());
 exports.BindingRecord = BindingRecord;
-},{"angular2/src/facade/lang":205}],115:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],117:[function(require,module,exports){
 'use strict';"use strict";
 var iterable_differs_1 = require('./differs/iterable_differs');
 var default_iterable_differ_1 = require('./differs/default_iterable_differ');
@@ -14794,7 +15110,7 @@ exports.keyValDiff = lang_1.CONST_EXPR([lang_1.CONST_EXPR(new default_keyvalue_d
 exports.iterableDiff = lang_1.CONST_EXPR([lang_1.CONST_EXPR(new default_iterable_differ_1.DefaultIterableDifferFactory())]);
 exports.defaultIterableDiffers = lang_1.CONST_EXPR(new iterable_differs_1.IterableDiffers(exports.iterableDiff));
 exports.defaultKeyValueDiffers = lang_1.CONST_EXPR(new keyvalue_differs_1.KeyValueDiffers(exports.keyValDiff));
-},{"./binding_record":114,"./change_detection_util":117,"./change_detector_ref":118,"./constants":123,"./differs/default_iterable_differ":124,"./differs/default_keyvalue_differ":125,"./differs/iterable_differs":126,"./differs/keyvalue_differs":127,"./directive_record":128,"./dynamic_change_detector":129,"./exceptions":131,"./interfaces":132,"./jit_proto_change_detector":133,"./parser/ast":134,"./parser/lexer":135,"./parser/locals":136,"./parser/parser":137,"./proto_change_detector":140,"angular2/src/facade/lang":205}],116:[function(require,module,exports){
+},{"./binding_record":116,"./change_detection_util":119,"./change_detector_ref":120,"./constants":125,"./differs/default_iterable_differ":126,"./differs/default_keyvalue_differ":127,"./differs/iterable_differs":128,"./differs/keyvalue_differs":129,"./directive_record":130,"./dynamic_change_detector":131,"./exceptions":133,"./interfaces":134,"./jit_proto_change_detector":135,"./parser/ast":136,"./parser/lexer":137,"./parser/locals":138,"./parser/parser":139,"./proto_change_detector":142,"angular2/src/facade/lang":207}],118:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -15137,7 +15453,7 @@ var ChangeDetectorJITGenerator = (function () {
     return ChangeDetectorJITGenerator;
 }());
 exports.ChangeDetectorJITGenerator = ChangeDetectorJITGenerator;
-},{"./abstract_change_detector":113,"./change_detection_util":117,"./codegen_facade":120,"./codegen_logic_util":121,"./codegen_name_util":122,"./constants":123,"./proto_change_detector":140,"./proto_record":141,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],117:[function(require,module,exports){
+},{"./abstract_change_detector":115,"./change_detection_util":119,"./codegen_facade":122,"./codegen_logic_util":123,"./codegen_name_util":124,"./constants":125,"./proto_change_detector":142,"./proto_record":143,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],119:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -15321,7 +15637,7 @@ var ChangeDetectionUtil = (function () {
     return ChangeDetectionUtil;
 }());
 exports.ChangeDetectionUtil = ChangeDetectionUtil;
-},{"./binding_record":114,"./constants":123,"./directive_record":128,"./pipe_lifecycle_reflector":138,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],118:[function(require,module,exports){
+},{"./binding_record":116,"./constants":125,"./directive_record":130,"./pipe_lifecycle_reflector":140,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],120:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -15352,7 +15668,7 @@ var ChangeDetectorRef_ = (function (_super) {
     return ChangeDetectorRef_;
 }(ChangeDetectorRef));
 exports.ChangeDetectorRef_ = ChangeDetectorRef_;
-},{"./constants":123}],119:[function(require,module,exports){
+},{"./constants":125}],121:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var collection_1 = require('angular2/src/facade/collection');
@@ -15498,7 +15814,7 @@ function _haveSameDirIndex(a, b) {
     var ei2 = lang_1.isBlank(b.directiveIndex) ? null : b.directiveIndex.elementIndex;
     return di1 === di2 && ei1 === ei2;
 }
-},{"./proto_record":141,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],120:[function(require,module,exports){
+},{"./proto_record":143,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],122:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * Converts `funcOrValue` to a string which can be used in generated code.
@@ -15520,7 +15836,7 @@ function combineGeneratedStrings(vals) {
     return vals.join(' + ');
 }
 exports.combineGeneratedStrings = combineGeneratedStrings;
-},{}],121:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var codegen_facade_1 = require('./codegen_facade');
@@ -15732,7 +16048,7 @@ var CodegenLogicUtil = (function () {
     return CodegenLogicUtil;
 }());
 exports.CodegenLogicUtil = CodegenLogicUtil;
-},{"./codegen_facade":120,"./proto_record":141,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],122:[function(require,module,exports){
+},{"./codegen_facade":122,"./proto_record":143,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],124:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var collection_1 = require('angular2/src/facade/collection');
@@ -15897,7 +16213,7 @@ var CodegenNameUtil = (function () {
     return CodegenNameUtil;
 }());
 exports.CodegenNameUtil = CodegenNameUtil;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],123:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],125:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 /**
@@ -15981,7 +16297,7 @@ function isDefaultChangeDetectionStrategy(changeDetectionStrategy) {
         changeDetectionStrategy === ChangeDetectionStrategy.Default;
 }
 exports.isDefaultChangeDetectionStrategy = isDefaultChangeDetectionStrategy;
-},{"angular2/src/facade/lang":205}],124:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],126:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -16647,7 +16963,7 @@ var _DuplicateMap = (function () {
     _DuplicateMap.prototype.toString = function () { return '_DuplicateMap(' + lang_2.stringify(this.map) + ')'; };
     return _DuplicateMap;
 }());
-},{"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],125:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],127:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -17014,7 +17330,7 @@ var KeyValueChangeRecord = (function () {
     return KeyValueChangeRecord;
 }());
 exports.KeyValueChangeRecord = KeyValueChangeRecord;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],126:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],128:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -17096,7 +17412,7 @@ var IterableDiffers = (function () {
     return IterableDiffers;
 }());
 exports.IterableDiffers = IterableDiffers;
-},{"angular2/src/core/di":145,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],127:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],129:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -17178,7 +17494,7 @@ var KeyValueDiffers = (function () {
     return KeyValueDiffers;
 }());
 exports.KeyValueDiffers = KeyValueDiffers;
-},{"angular2/src/core/di":145,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],128:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],130:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var constants_1 = require('./constants');
@@ -17216,7 +17532,7 @@ var DirectiveRecord = (function () {
     return DirectiveRecord;
 }());
 exports.DirectiveRecord = DirectiveRecord;
-},{"./constants":123,"angular2/src/facade/lang":205}],129:[function(require,module,exports){
+},{"./constants":125,"angular2/src/facade/lang":207}],131:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -17646,7 +17962,7 @@ var DynamicChangeDetector = (function (_super) {
     return DynamicChangeDetector;
 }(abstract_change_detector_1.AbstractChangeDetector));
 exports.DynamicChangeDetector = DynamicChangeDetector;
-},{"./abstract_change_detector":113,"./change_detection_util":117,"./constants":123,"./proto_record":141,"angular2/src/core/reflection/reflection":184,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],130:[function(require,module,exports){
+},{"./abstract_change_detector":115,"./change_detection_util":119,"./constants":125,"./proto_record":143,"angular2/src/core/reflection/reflection":186,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],132:[function(require,module,exports){
 'use strict';"use strict";
 var EventBinding = (function () {
     function EventBinding(eventName, elIndex, dirIndex, records) {
@@ -17658,7 +17974,7 @@ var EventBinding = (function () {
     return EventBinding;
 }());
 exports.EventBinding = EventBinding;
-},{}],131:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -17788,7 +18104,7 @@ var EventEvaluationErrorContext = (function () {
     return EventEvaluationErrorContext;
 }());
 exports.EventEvaluationErrorContext = EventEvaluationErrorContext;
-},{"angular2/src/facade/exceptions":202}],132:[function(require,module,exports){
+},{"angular2/src/facade/exceptions":204}],134:[function(require,module,exports){
 'use strict';"use strict";
 var DebugContext = (function () {
     function DebugContext(element, componentElement, directive, context, locals, injector) {
@@ -17824,7 +18140,7 @@ var ChangeDetectorDefinition = (function () {
     return ChangeDetectorDefinition;
 }());
 exports.ChangeDetectorDefinition = ChangeDetectorDefinition;
-},{}],133:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 'use strict';"use strict";
 var change_detection_jit_generator_1 = require('./change_detection_jit_generator');
 var JitProtoChangeDetector = (function () {
@@ -17842,7 +18158,7 @@ var JitProtoChangeDetector = (function () {
     return JitProtoChangeDetector;
 }());
 exports.JitProtoChangeDetector = JitProtoChangeDetector;
-},{"./change_detection_jit_generator":116}],134:[function(require,module,exports){
+},{"./change_detection_jit_generator":118}],136:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -18262,7 +18578,7 @@ var AstTransformer = (function () {
     return AstTransformer;
 }());
 exports.AstTransformer = AstTransformer;
-},{"angular2/src/facade/collection":200}],135:[function(require,module,exports){
+},{"angular2/src/facade/collection":202}],137:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -18711,7 +19027,7 @@ var OPERATORS = collection_1.SetWrapper.createFromList([
     '?.'
 ]);
 var KEYWORDS = collection_1.SetWrapper.createFromList(['var', 'null', 'undefined', 'true', 'false', 'if', 'else']);
-},{"angular2/src/core/di/decorators":146,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],136:[function(require,module,exports){
+},{"angular2/src/core/di/decorators":148,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],138:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -18754,7 +19070,7 @@ var Locals = (function () {
     return Locals;
 }());
 exports.Locals = Locals;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],137:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],139:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -19409,13 +19725,13 @@ var SimpleExpressionChecker = (function () {
     SimpleExpressionChecker.prototype.visitQuote = function (ast) { this.simple = false; };
     return SimpleExpressionChecker;
 }());
-},{"./ast":134,"./lexer":135,"angular2/src/core/di/decorators":146,"angular2/src/core/reflection/reflection":184,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],138:[function(require,module,exports){
+},{"./ast":136,"./lexer":137,"angular2/src/core/di/decorators":148,"angular2/src/core/reflection/reflection":186,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],140:[function(require,module,exports){
 'use strict';"use strict";
 function implementsOnDestroy(pipe) {
     return pipe.constructor.prototype.ngOnDestroy;
 }
 exports.implementsOnDestroy = implementsOnDestroy;
-},{}],139:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 'use strict';"use strict";
 var SelectedPipe = (function () {
     function SelectedPipe(pipe, pure) {
@@ -19425,7 +19741,7 @@ var SelectedPipe = (function () {
     return SelectedPipe;
 }());
 exports.SelectedPipe = SelectedPipe;
-},{}],140:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -19815,7 +20131,7 @@ function _interpolationFn(strings) {
             throw new exceptions_1.BaseException("Does not support more than 9 expressions");
     }
 }
-},{"./change_detection_util":117,"./coalesce":119,"./directive_record":128,"./dynamic_change_detector":129,"./event_binding":130,"./parser/ast":134,"./proto_record":141,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],141:[function(require,module,exports){
+},{"./change_detection_util":119,"./coalesce":121,"./directive_record":130,"./dynamic_change_detector":131,"./event_binding":132,"./parser/ast":136,"./proto_record":143,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],143:[function(require,module,exports){
 'use strict';"use strict";
 (function (RecordType) {
     RecordType[RecordType["Self"] = 0] = "Self";
@@ -19877,7 +20193,7 @@ var ProtoRecord = (function () {
     return ProtoRecord;
 }());
 exports.ProtoRecord = ProtoRecord;
-},{}],142:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -19901,7 +20217,7 @@ var Console = (function () {
     return Console;
 }());
 exports.Console = Console;
-},{"angular2/src/core/di":145,"angular2/src/facade/lang":205}],143:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/facade/lang":207}],145:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -20061,7 +20377,7 @@ function removeDebugNodeFromIndex(node) {
     _nativeNodeToDebugNode.delete(node.nativeNode);
 }
 exports.removeDebugNodeFromIndex = removeDebugNodeFromIndex;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],144:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],146:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var debug_node_1 = require('angular2/src/core/debug/debug_node');
@@ -20194,7 +20510,7 @@ var DebugDomRenderer = (function () {
     return DebugDomRenderer;
 }());
 exports.DebugDomRenderer = DebugDomRenderer;
-},{"angular2/src/core/debug/debug_node":143,"angular2/src/facade/lang":205}],145:[function(require,module,exports){
+},{"angular2/src/core/debug/debug_node":145,"angular2/src/facade/lang":207}],147:[function(require,module,exports){
 'use strict';/**
  * @module
  * @description
@@ -20239,7 +20555,7 @@ exports.NoAnnotationError = exceptions_1.NoAnnotationError;
 exports.OutOfBoundsError = exceptions_1.OutOfBoundsError;
 var opaque_token_1 = require('./di/opaque_token');
 exports.OpaqueToken = opaque_token_1.OpaqueToken;
-},{"./di/decorators":146,"./di/exceptions":147,"./di/forward_ref":148,"./di/injector":149,"./di/key":150,"./di/metadata":151,"./di/opaque_token":152,"./di/provider":153}],146:[function(require,module,exports){
+},{"./di/decorators":148,"./di/exceptions":149,"./di/forward_ref":150,"./di/injector":151,"./di/key":152,"./di/metadata":153,"./di/opaque_token":154,"./di/provider":155}],148:[function(require,module,exports){
 'use strict';"use strict";
 var metadata_1 = require('./metadata');
 var decorators_1 = require('../util/decorators');
@@ -20267,7 +20583,7 @@ exports.Host = decorators_1.makeParamDecorator(metadata_1.HostMetadata);
  * Factory for creating {@link SkipSelfMetadata}.
  */
 exports.SkipSelf = decorators_1.makeParamDecorator(metadata_1.SkipSelfMetadata);
-},{"../util/decorators":193,"./metadata":151}],147:[function(require,module,exports){
+},{"../util/decorators":195,"./metadata":153}],149:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -20548,7 +20864,7 @@ var MixingMultiProvidersWithRegularProvidersError = (function (_super) {
     return MixingMultiProvidersWithRegularProvidersError;
 }(exceptions_1.BaseException));
 exports.MixingMultiProvidersWithRegularProvidersError = MixingMultiProvidersWithRegularProvidersError;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],148:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],150:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 /**
@@ -20593,7 +20909,7 @@ function resolveForwardRef(type) {
     }
 }
 exports.resolveForwardRef = resolveForwardRef;
-},{"angular2/src/facade/lang":205}],149:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],151:[function(require,module,exports){
 'use strict';"use strict";
 var collection_1 = require('angular2/src/facade/collection');
 var provider_1 = require('./provider');
@@ -21542,7 +21858,7 @@ function _mapProviders(injector, fn) {
     }
     return res;
 }
-},{"./exceptions":147,"./key":150,"./metadata":151,"./provider":153,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],150:[function(require,module,exports){
+},{"./exceptions":149,"./key":152,"./metadata":153,"./provider":155,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],152:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -21620,7 +21936,7 @@ var KeyRegistry = (function () {
 }());
 exports.KeyRegistry = KeyRegistry;
 var _globalKeyRegistry = new KeyRegistry();
-},{"./forward_ref":148,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],151:[function(require,module,exports){
+},{"./forward_ref":150,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],153:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -21915,7 +22231,7 @@ var HostMetadata = (function () {
     return HostMetadata;
 }());
 exports.HostMetadata = HostMetadata;
-},{"angular2/src/facade/lang":205}],152:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],154:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -21960,7 +22276,7 @@ var OpaqueToken = (function () {
     return OpaqueToken;
 }());
 exports.OpaqueToken = OpaqueToken;
-},{"angular2/src/facade/lang":205}],153:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],155:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -22483,7 +22799,7 @@ function _extractToken(typeOrFunc, metadata /*any[] | any*/, params) {
 function _createDependency(token, optional, lowerBoundVisibility, upperBoundVisibility, depProps) {
     return new Dependency(key_1.Key.get(token), optional, lowerBoundVisibility, upperBoundVisibility, depProps);
 }
-},{"./exceptions":147,"./forward_ref":148,"./key":150,"./metadata":151,"angular2/src/core/reflection/reflection":184,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],154:[function(require,module,exports){
+},{"./exceptions":149,"./forward_ref":150,"./key":152,"./metadata":153,"angular2/src/core/reflection/reflection":186,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],156:[function(require,module,exports){
 'use strict';"use strict";
 // Public API for compiler
 var directive_resolver_1 = require('./linker/directive_resolver');
@@ -22511,7 +22827,7 @@ var view_container_ref_1 = require('./linker/view_container_ref');
 exports.ViewContainerRef = view_container_ref_1.ViewContainerRef;
 var dynamic_component_loader_2 = require('./linker/dynamic_component_loader');
 exports.ComponentRef = dynamic_component_loader_2.ComponentRef;
-},{"./linker/compiler":155,"./linker/directive_resolver":157,"./linker/dynamic_component_loader":158,"./linker/element_ref":160,"./linker/query_list":163,"./linker/template_ref":165,"./linker/view_container_ref":167,"./linker/view_manager":168,"./linker/view_ref":169,"./linker/view_resolver":170}],155:[function(require,module,exports){
+},{"./linker/compiler":157,"./linker/directive_resolver":159,"./linker/dynamic_component_loader":160,"./linker/element_ref":162,"./linker/query_list":165,"./linker/template_ref":167,"./linker/view_container_ref":169,"./linker/view_manager":170,"./linker/view_ref":171,"./linker/view_resolver":172}],157:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -22571,7 +22887,7 @@ var Compiler_ = (function (_super) {
     return Compiler_;
 }(Compiler));
 exports.Compiler_ = Compiler_;
-},{"angular2/src/core/di":145,"angular2/src/core/linker/view":166,"angular2/src/core/linker/view_ref":169,"angular2/src/core/reflection/reflection":184,"angular2/src/facade/async":197,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],156:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/core/linker/view":168,"angular2/src/core/linker/view_ref":171,"angular2/src/core/reflection/reflection":186,"angular2/src/facade/async":199,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],158:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var interfaces_1 = require('./interfaces');
@@ -22601,7 +22917,7 @@ function hasLifecycleHook(lcInterface, token) {
     }
 }
 exports.hasLifecycleHook = hasLifecycleHook;
-},{"./interfaces":161,"angular2/src/facade/lang":205}],157:[function(require,module,exports){
+},{"./interfaces":163,"angular2/src/facade/lang":207}],159:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -22753,7 +23069,7 @@ var DirectiveResolver = (function () {
 }());
 exports.DirectiveResolver = DirectiveResolver;
 exports.CODEGEN_DIRECTIVE_RESOLVER = new DirectiveResolver(reflection_1.reflector);
-},{"angular2/src/core/di":145,"angular2/src/core/metadata":172,"angular2/src/core/reflection/reflection":184,"angular2/src/core/reflection/reflector_reader":187,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],158:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/core/metadata":174,"angular2/src/core/reflection/reflection":186,"angular2/src/core/reflection/reflector_reader":189,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],160:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -22898,7 +23214,7 @@ var DynamicComponentLoader_ = (function (_super) {
     return DynamicComponentLoader_;
 }(DynamicComponentLoader));
 exports.DynamicComponentLoader_ = DynamicComponentLoader_;
-},{"./compiler":155,"angular2/src/core/di":145,"angular2/src/core/linker/view_manager":168,"angular2/src/facade/lang":205}],159:[function(require,module,exports){
+},{"./compiler":157,"angular2/src/core/di":147,"angular2/src/core/linker/view_manager":170,"angular2/src/facade/lang":207}],161:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -23704,7 +24020,7 @@ var _ComponentViewChangeDetectorRef = (function (_super) {
     _ComponentViewChangeDetectorRef.prototype.reattach = function () { this._appElement.componentView.changeDetector.ref.reattach(); };
     return _ComponentViewChangeDetectorRef;
 }(change_detection_1.ChangeDetectorRef));
-},{"../metadata/di":173,"../metadata/directives":174,"./element_ref":160,"./query_list":163,"./template_ref":165,"./view_container_ref":167,"./view_type":171,"angular2/src/core/change_detection/change_detection":115,"angular2/src/core/di":145,"angular2/src/core/di/injector":149,"angular2/src/core/di/provider":153,"angular2/src/core/pipes/pipe_provider":176,"angular2/src/core/reflection/reflection":184,"angular2/src/core/render/api":189,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],160:[function(require,module,exports){
+},{"../metadata/di":175,"../metadata/directives":176,"./element_ref":162,"./query_list":165,"./template_ref":167,"./view_container_ref":169,"./view_type":173,"angular2/src/core/change_detection/change_detection":117,"angular2/src/core/di":147,"angular2/src/core/di/injector":151,"angular2/src/core/di/provider":155,"angular2/src/core/pipes/pipe_provider":178,"angular2/src/core/reflection/reflection":186,"angular2/src/core/render/api":191,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],162:[function(require,module,exports){
 'use strict';"use strict";
 var exceptions_1 = require('angular2/src/facade/exceptions');
 /**
@@ -23764,7 +24080,7 @@ var ElementRef_ = (function () {
     return ElementRef_;
 }());
 exports.ElementRef_ = ElementRef_;
-},{"angular2/src/facade/exceptions":202}],161:[function(require,module,exports){
+},{"angular2/src/facade/exceptions":204}],163:[function(require,module,exports){
 'use strict';"use strict";
 (function (LifecycleHooks) {
     LifecycleHooks[LifecycleHooks["OnInit"] = 0] = "OnInit";
@@ -23790,7 +24106,7 @@ exports.LIFECYCLE_HOOKS_VALUES = [
     LifecycleHooks.AfterViewInit,
     LifecycleHooks.AfterViewChecked
 ];
-},{}],162:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -23847,7 +24163,7 @@ var PipeResolver = (function () {
 }());
 exports.PipeResolver = PipeResolver;
 exports.CODEGEN_PIPE_RESOLVER = new PipeResolver(reflection_1.reflector);
-},{"angular2/src/core/di":145,"angular2/src/core/metadata":172,"angular2/src/core/reflection/reflection":184,"angular2/src/core/reflection/reflector_reader":187,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],163:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/core/metadata":174,"angular2/src/core/reflection/reflection":186,"angular2/src/core/reflection/reflector_reader":189,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],165:[function(require,module,exports){
 'use strict';"use strict";
 var collection_1 = require('angular2/src/facade/collection');
 var lang_1 = require('angular2/src/facade/lang');
@@ -23932,7 +24248,7 @@ var QueryList = (function () {
     return QueryList;
 }());
 exports.QueryList = QueryList;
-},{"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],164:[function(require,module,exports){
+},{"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],166:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -23980,7 +24296,7 @@ var ResolvedMetadataCache = (function () {
 }());
 exports.ResolvedMetadataCache = ResolvedMetadataCache;
 exports.CODEGEN_RESOLVED_METADATA_CACHE = new ResolvedMetadataCache(directive_resolver_1.CODEGEN_DIRECTIVE_RESOLVER, pipe_resolver_1.CODEGEN_PIPE_RESOLVER);
-},{"../di":145,"../pipes/pipe_provider":176,"./directive_resolver":157,"./element":159,"./pipe_resolver":162,"angular2/src/facade/lang":205}],165:[function(require,module,exports){
+},{"../di":147,"../pipes/pipe_provider":178,"./directive_resolver":159,"./element":161,"./pipe_resolver":164,"angular2/src/facade/lang":207}],167:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -24036,7 +24352,7 @@ var TemplateRef_ = (function (_super) {
     return TemplateRef_;
 }(TemplateRef));
 exports.TemplateRef_ = TemplateRef_;
-},{}],166:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -24358,7 +24674,7 @@ function checkSlotCount(componentName, expectedSlotCount, projectableNodes) {
     }
 }
 exports.checkSlotCount = checkSlotCount;
-},{"./element":159,"./view_ref":169,"./view_type":171,"angular2/src/core/change_detection/change_detection":115,"angular2/src/core/change_detection/interfaces":132,"angular2/src/core/pipes/pipes":177,"angular2/src/core/render/api":189,"angular2/src/core/render/util":190,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],167:[function(require,module,exports){
+},{"./element":161,"./view_ref":171,"./view_type":173,"angular2/src/core/change_detection/change_detection":117,"angular2/src/core/change_detection/interfaces":134,"angular2/src/core/pipes/pipes":179,"angular2/src/core/render/api":191,"angular2/src/core/render/util":192,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],169:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -24489,7 +24805,7 @@ var ViewContainerRef_ = (function (_super) {
     return ViewContainerRef_;
 }(ViewContainerRef));
 exports.ViewContainerRef_ = ViewContainerRef_;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],168:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],170:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -24686,7 +25002,7 @@ var AppViewManager_ = (function (_super) {
     return AppViewManager_;
 }(AppViewManager));
 exports.AppViewManager_ = AppViewManager_;
-},{"../profile/profile":181,"./view":166,"./view_type":171,"angular2/src/core/application_tokens":111,"angular2/src/core/di":145,"angular2/src/core/render/api":189,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],169:[function(require,module,exports){
+},{"../profile/profile":183,"./view":168,"./view_type":173,"angular2/src/core/application_tokens":113,"angular2/src/core/di":147,"angular2/src/core/render/api":191,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],171:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -24855,7 +25171,7 @@ var HostViewFactoryRef_ = (function () {
     return HostViewFactoryRef_;
 }());
 exports.HostViewFactoryRef_ = HostViewFactoryRef_;
-},{"angular2/src/facade/exceptions":202}],170:[function(require,module,exports){
+},{"angular2/src/facade/exceptions":204}],172:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -24969,7 +25285,7 @@ var ViewResolver = (function () {
     return ViewResolver;
 }());
 exports.ViewResolver = ViewResolver;
-},{"../metadata/directives":174,"../metadata/view":175,"angular2/src/core/di":145,"angular2/src/core/reflection/reflection":184,"angular2/src/core/reflection/reflector_reader":187,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],171:[function(require,module,exports){
+},{"../metadata/directives":176,"../metadata/view":177,"angular2/src/core/di":147,"angular2/src/core/reflection/reflection":186,"angular2/src/core/reflection/reflector_reader":189,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],173:[function(require,module,exports){
 'use strict';"use strict";
 (function (ViewType) {
     // A view that contains the host element with bound component directive.
@@ -24983,7 +25299,7 @@ exports.ViewResolver = ViewResolver;
     ViewType[ViewType["EMBEDDED"] = 2] = "EMBEDDED";
 })(exports.ViewType || (exports.ViewType = {}));
 var ViewType = exports.ViewType;
-},{}],172:[function(require,module,exports){
+},{}],174:[function(require,module,exports){
 'use strict';/**
  * This indirection is needed to free up Component, etc symbols in the public API
  * to be used by the decorator versions of these annotations.
@@ -25872,7 +26188,7 @@ exports.HostBinding = decorators_1.makePropDecorator(directives_2.HostBindingMet
  * ```
  */
 exports.HostListener = decorators_1.makePropDecorator(directives_2.HostListenerMetadata);
-},{"./metadata/di":173,"./metadata/directives":174,"./metadata/view":175,"./util/decorators":193}],173:[function(require,module,exports){
+},{"./metadata/di":175,"./metadata/directives":176,"./metadata/view":177,"./util/decorators":195}],175:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -26283,7 +26599,7 @@ var ViewChildMetadata = (function (_super) {
     return ViewChildMetadata;
 }(ViewQueryMetadata));
 exports.ViewChildMetadata = ViewChildMetadata;
-},{"angular2/src/core/di":145,"angular2/src/core/di/metadata":151,"angular2/src/facade/lang":205}],174:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/core/di/metadata":153,"angular2/src/facade/lang":207}],176:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -27207,7 +27523,7 @@ var HostListenerMetadata = (function () {
     return HostListenerMetadata;
 }());
 exports.HostListenerMetadata = HostListenerMetadata;
-},{"angular2/src/core/change_detection":112,"angular2/src/core/di/metadata":151,"angular2/src/facade/lang":205}],175:[function(require,module,exports){
+},{"angular2/src/core/change_detection":114,"angular2/src/core/di/metadata":153,"angular2/src/facade/lang":207}],177:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -27295,7 +27611,7 @@ var ViewMetadata = (function () {
     return ViewMetadata;
 }());
 exports.ViewMetadata = ViewMetadata;
-},{"angular2/src/facade/lang":205}],176:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],178:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -27319,7 +27635,7 @@ var PipeProvider = (function (_super) {
     return PipeProvider;
 }(provider_1.ResolvedProvider_));
 exports.PipeProvider = PipeProvider;
-},{"angular2/src/core/di":145,"angular2/src/core/di/provider":153}],177:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/core/di/provider":155}],179:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -27370,7 +27686,7 @@ var Pipes = (function () {
     return Pipes;
 }());
 exports.Pipes = Pipes;
-},{"angular2/src/core/change_detection/pipes":139,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],178:[function(require,module,exports){
+},{"angular2/src/core/change_detection/pipes":141,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],180:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var di_1 = require('angular2/src/core/di');
@@ -27390,7 +27706,7 @@ exports.PLATFORM_COMMON_PROVIDERS = lang_1.CONST_EXPR([
     testability_1.TestabilityRegistry,
     console_1.Console
 ]);
-},{"./reflection/reflection":184,"./reflection/reflector_reader":187,"angular2/src/core/console":142,"angular2/src/core/di":145,"angular2/src/core/testability/testability":191,"angular2/src/facade/lang":205}],179:[function(require,module,exports){
+},{"./reflection/reflection":186,"./reflection/reflector_reader":189,"angular2/src/core/console":144,"angular2/src/core/di":147,"angular2/src/core/testability/testability":193,"angular2/src/facade/lang":207}],181:[function(require,module,exports){
 'use strict';"use strict";
 var di_1 = require("angular2/src/core/di");
 var lang_1 = require("angular2/src/facade/lang");
@@ -27443,11 +27759,11 @@ exports.PLATFORM_DIRECTIVES = lang_1.CONST_EXPR(new di_1.OpaqueToken("Platform D
  * ```
  */
 exports.PLATFORM_PIPES = lang_1.CONST_EXPR(new di_1.OpaqueToken("Platform Pipes"));
-},{"angular2/src/core/di":145,"angular2/src/facade/lang":205}],180:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/facade/lang":207}],182:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 exports.enableProdMode = lang_1.enableProdMode;
-},{"angular2/src/facade/lang":205}],181:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],183:[function(require,module,exports){
 'use strict';"use strict";
 var impl = require("./wtf_impl");
 // Change exports to const once https://github.com/angular/ts2dart/issues/150
@@ -27518,7 +27834,7 @@ exports.wtfStartTimeRange = exports.wtfEnabled ? impl.startTimeRange : function 
 exports.wtfEndTimeRange = exports.wtfEnabled ? impl.endTimeRange : function (r) {
     return null;
 };
-},{"./wtf_impl":182}],182:[function(require,module,exports){
+},{"./wtf_impl":184}],184:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var trace;
@@ -27553,14 +27869,14 @@ function endTimeRange(range) {
     trace.endTimeRange(range);
 }
 exports.endTimeRange = endTimeRange;
-},{"angular2/src/facade/lang":205}],183:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],185:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * This is here because DART requires it. It is noop in JS.
  */
 function wtfInit() { }
 exports.wtfInit = wtfInit;
-},{}],184:[function(require,module,exports){
+},{}],186:[function(require,module,exports){
 'use strict';"use strict";
 var reflector_1 = require('./reflector');
 var reflector_2 = require('./reflector');
@@ -27572,7 +27888,7 @@ var reflection_capabilities_1 = require('./reflection_capabilities');
  * about symbols.
  */
 exports.reflector = new reflector_1.Reflector(new reflection_capabilities_1.ReflectionCapabilities());
-},{"./reflection_capabilities":185,"./reflector":186}],185:[function(require,module,exports){
+},{"./reflection_capabilities":187,"./reflector":188}],187:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -27752,7 +28068,7 @@ var ReflectionCapabilities = (function () {
     return ReflectionCapabilities;
 }());
 exports.ReflectionCapabilities = ReflectionCapabilities;
-},{"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],186:[function(require,module,exports){
+},{"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],188:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -27909,7 +28225,7 @@ exports.Reflector = Reflector;
 function _mergeMaps(target, config) {
     collection_1.StringMapWrapper.forEach(config, function (v, k) { return target.set(k, v); });
 }
-},{"./reflector_reader":187,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],187:[function(require,module,exports){
+},{"./reflector_reader":189,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],189:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * Provides read-only access to reflection data about symbols. Used internally by Angular
@@ -27921,14 +28237,14 @@ var ReflectorReader = (function () {
     return ReflectorReader;
 }());
 exports.ReflectorReader = ReflectorReader;
-},{}],188:[function(require,module,exports){
+},{}],190:[function(require,module,exports){
 'use strict';"use strict";
 // Public API for render
 var api_1 = require('./render/api');
 exports.RootRenderer = api_1.RootRenderer;
 exports.Renderer = api_1.Renderer;
 exports.RenderComponentType = api_1.RenderComponentType;
-},{"./render/api":189}],189:[function(require,module,exports){
+},{"./render/api":191}],191:[function(require,module,exports){
 'use strict';"use strict";
 var RenderComponentType = (function () {
     function RenderComponentType(id, encapsulation, styles) {
@@ -27973,7 +28289,7 @@ var RootRenderer = (function () {
     return RootRenderer;
 }());
 exports.RootRenderer = RootRenderer;
-},{}],190:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var CAMEL_CASE_REGEXP = /([A-Z])/g;
@@ -27986,7 +28302,7 @@ function dashCaseToCamelCase(input) {
     return lang_1.StringWrapper.replaceAllMapped(input, DASH_CASE_REGEXP, function (m) { return m[1].toUpperCase(); });
 }
 exports.dashCaseToCamelCase = dashCaseToCamelCase;
-},{"angular2/src/facade/lang":205}],191:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],193:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -28143,12 +28459,12 @@ function setTestabilityGetter(getter) {
 }
 exports.setTestabilityGetter = setTestabilityGetter;
 var _testabilityGetter = lang_1.CONST_EXPR(new _NoopGetTestability());
-},{"../zone/ng_zone":195,"angular2/src/core/di":145,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],192:[function(require,module,exports){
+},{"../zone/ng_zone":197,"angular2/src/core/di":147,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],194:[function(require,module,exports){
 'use strict';"use strict";
 // Public API for util
 var decorators_1 = require('./util/decorators');
 exports.Class = decorators_1.Class;
-},{"./util/decorators":193}],193:[function(require,module,exports){
+},{"./util/decorators":195}],195:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var _nextClassId = 0;
@@ -28403,13 +28719,13 @@ function makePropDecorator(decoratorCls) {
     return PropDecoratorFactory;
 }
 exports.makePropDecorator = makePropDecorator;
-},{"angular2/src/facade/lang":205}],194:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],196:[function(require,module,exports){
 'use strict';"use strict";
 // Public API for Zone
 var ng_zone_1 = require('./zone/ng_zone');
 exports.NgZone = ng_zone_1.NgZone;
 exports.NgZoneError = ng_zone_1.NgZoneError;
-},{"./zone/ng_zone":195}],195:[function(require,module,exports){
+},{"./zone/ng_zone":197}],197:[function(require,module,exports){
 'use strict';"use strict";
 var async_1 = require('angular2/src/facade/async');
 var ng_zone_impl_1 = require('./ng_zone_impl');
@@ -28647,7 +28963,7 @@ var NgZone = (function () {
     return NgZone;
 }());
 exports.NgZone = NgZone;
-},{"../../facade/exceptions":202,"./ng_zone_impl":196,"angular2/src/facade/async":197}],196:[function(require,module,exports){
+},{"../../facade/exceptions":204,"./ng_zone_impl":198,"angular2/src/facade/async":199}],198:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * Stores error information; delivered via [NgZone.onError] stream.
@@ -28730,7 +29046,7 @@ var NgZoneImpl = (function () {
     return NgZoneImpl;
 }());
 exports.NgZoneImpl = NgZoneImpl;
-},{}],197:[function(require,module,exports){
+},{}],199:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28880,7 +29196,7 @@ var EventEmitter = (function (_super) {
     return EventEmitter;
 }(Subject_1.Subject));
 exports.EventEmitter = EventEmitter;
-},{"angular2/src/facade/lang":205,"angular2/src/facade/promise":207,"rxjs/Observable":429,"rxjs/Subject":431,"rxjs/observable/PromiseObservable":435,"rxjs/operator/toPromise":437}],198:[function(require,module,exports){
+},{"angular2/src/facade/lang":207,"angular2/src/facade/promise":209,"rxjs/Observable":455,"rxjs/Subject":457,"rxjs/observable/PromiseObservable":461,"rxjs/operator/toPromise":463}],200:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28930,7 +29246,7 @@ var BaseWrappedException = (function (_super) {
     return BaseWrappedException;
 }(Error));
 exports.BaseWrappedException = BaseWrappedException;
-},{}],199:[function(require,module,exports){
+},{}],201:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * JS version of browser APIs. This library can only run in the browser.
@@ -28948,7 +29264,7 @@ exports.EventTarget = window['EventTarget'];
 exports.History = window['History'];
 exports.Location = window['Location'];
 exports.EventListener = window['EventListener'];
-},{}],200:[function(require,module,exports){
+},{}],202:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 exports.Map = lang_1.global.Map;
@@ -29297,7 +29613,7 @@ var SetWrapper = (function () {
     return SetWrapper;
 }());
 exports.SetWrapper = SetWrapper;
-},{"angular2/src/facade/lang":205}],201:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],203:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var base_wrapped_exception_1 = require('angular2/src/facade/base_wrapped_exception');
@@ -29429,7 +29745,7 @@ var ExceptionHandler = (function () {
     return ExceptionHandler;
 }());
 exports.ExceptionHandler = ExceptionHandler;
-},{"angular2/src/facade/base_wrapped_exception":198,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],202:[function(require,module,exports){
+},{"angular2/src/facade/base_wrapped_exception":200,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],204:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -29507,7 +29823,7 @@ function unimplemented() {
     throw new BaseException('unimplemented');
 }
 exports.unimplemented = unimplemented;
-},{"./base_wrapped_exception":198,"./exception_handler":201}],203:[function(require,module,exports){
+},{"./base_wrapped_exception":200,"./exception_handler":203}],205:[function(require,module,exports){
 'use strict';"use strict";
 // Public API for Facade
 var lang_1 = require('./lang');
@@ -29518,7 +29834,7 @@ var exceptions_1 = require('./exceptions');
 exports.WrappedException = exceptions_1.WrappedException;
 var exception_handler_1 = require('./exception_handler');
 exports.ExceptionHandler = exception_handler_1.ExceptionHandler;
-},{"./async":197,"./exception_handler":201,"./exceptions":202,"./lang":205}],204:[function(require,module,exports){
+},{"./async":199,"./exception_handler":203,"./exceptions":204,"./lang":207}],206:[function(require,module,exports){
 'use strict';"use strict";
 (function (NumberFormatStyle) {
     NumberFormatStyle[NumberFormatStyle["Decimal"] = 0] = "Decimal";
@@ -29623,7 +29939,7 @@ var DateFormatter = (function () {
     return DateFormatter;
 }());
 exports.DateFormatter = DateFormatter;
-},{}],205:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 (function (global){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -30106,12 +30422,12 @@ function escape(s) {
 exports.escape = escape;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],206:[function(require,module,exports){
+},{}],208:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 exports.Math = lang_1.global.Math;
 exports.NaN = typeof exports.NaN;
-},{"angular2/src/facade/lang":205}],207:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],209:[function(require,module,exports){
 'use strict';"use strict";
 var PromiseCompleter = (function () {
     function PromiseCompleter() {
@@ -30160,7 +30476,7 @@ var PromiseWrapper = (function () {
     return PromiseWrapper;
 }());
 exports.PromiseWrapper = PromiseWrapper;
-},{}],208:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30217,7 +30533,7 @@ var BrowserJsonp = (function () {
     return BrowserJsonp;
 }());
 exports.BrowserJsonp = BrowserJsonp;
-},{"angular2/core":21,"angular2/src/facade/lang":205}],209:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/lang":207}],211:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30245,7 +30561,7 @@ var BrowserXhr = (function () {
     return BrowserXhr;
 }());
 exports.BrowserXhr = BrowserXhr;
-},{"angular2/core":21}],210:[function(require,module,exports){
+},{"angular2/core":23}],212:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30391,7 +30707,7 @@ var JSONPBackend_ = (function (_super) {
     return JSONPBackend_;
 }(JSONPBackend));
 exports.JSONPBackend_ = JSONPBackend_;
-},{"../base_response_options":213,"../enums":214,"../interfaces":218,"../static_response":220,"./browser_jsonp":208,"angular2/core":21,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205,"rxjs/Observable":429}],211:[function(require,module,exports){
+},{"../base_response_options":215,"../enums":216,"../interfaces":220,"../static_response":222,"./browser_jsonp":210,"angular2/core":23,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207,"rxjs/Observable":455}],213:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30520,7 +30836,7 @@ var XHRBackend = (function () {
     return XHRBackend;
 }());
 exports.XHRBackend = XHRBackend;
-},{"../base_response_options":213,"../enums":214,"../headers":215,"../http_utils":217,"../static_response":220,"./browser_xhr":209,"angular2/core":21,"angular2/src/facade/lang":205,"rxjs/Observable":429}],212:[function(require,module,exports){
+},{"../base_response_options":215,"../enums":216,"../headers":217,"../http_utils":219,"../static_response":222,"./browser_xhr":211,"angular2/core":23,"angular2/src/facade/lang":207,"rxjs/Observable":455}],214:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30673,7 +30989,7 @@ var BaseRequestOptions = (function (_super) {
     return BaseRequestOptions;
 }(RequestOptions));
 exports.BaseRequestOptions = BaseRequestOptions;
-},{"./enums":214,"./headers":215,"./http_utils":217,"./url_search_params":221,"angular2/core":21,"angular2/src/facade/lang":205}],213:[function(require,module,exports){
+},{"./enums":216,"./headers":217,"./http_utils":219,"./url_search_params":223,"angular2/core":23,"angular2/src/facade/lang":207}],215:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30824,7 +31140,7 @@ var BaseResponseOptions = (function (_super) {
     return BaseResponseOptions;
 }(ResponseOptions));
 exports.BaseResponseOptions = BaseResponseOptions;
-},{"./enums":214,"./headers":215,"angular2/core":21,"angular2/src/facade/lang":205}],214:[function(require,module,exports){
+},{"./enums":216,"./headers":217,"angular2/core":23,"angular2/src/facade/lang":207}],216:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * Supported http methods.
@@ -30865,7 +31181,7 @@ var ReadyState = exports.ReadyState;
     ResponseType[ResponseType["Opaque"] = 4] = "Opaque";
 })(exports.ResponseType || (exports.ResponseType = {}));
 var ResponseType = exports.ResponseType;
-},{}],215:[function(require,module,exports){
+},{}],217:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -31000,7 +31316,7 @@ var Headers = (function () {
     return Headers;
 }());
 exports.Headers = Headers;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],216:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],218:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31205,7 +31521,7 @@ var Jsonp = (function (_super) {
     return Jsonp;
 }(Http));
 exports.Jsonp = Jsonp;
-},{"./base_request_options":212,"./enums":214,"./interfaces":218,"./static_request":219,"angular2/core":21,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],217:[function(require,module,exports){
+},{"./base_request_options":214,"./enums":216,"./interfaces":220,"./static_request":221,"angular2/core":23,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],219:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var enums_1 = require('./enums');
@@ -31237,7 +31553,7 @@ function getResponseURL(xhr) {
 exports.getResponseURL = getResponseURL;
 var lang_2 = require('angular2/src/facade/lang');
 exports.isJsObject = lang_2.isJsObject;
-},{"./enums":214,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],218:[function(require,module,exports){
+},{"./enums":216,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],220:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * Abstract class from which real backends are derived.
@@ -31260,7 +31576,7 @@ var Connection = (function () {
     return Connection;
 }());
 exports.Connection = Connection;
-},{}],219:[function(require,module,exports){
+},{}],221:[function(require,module,exports){
 'use strict';"use strict";
 var headers_1 = require('./headers');
 var http_utils_1 = require('./http_utils');
@@ -31335,7 +31651,7 @@ var Request = (function () {
     return Request;
 }());
 exports.Request = Request;
-},{"./headers":215,"./http_utils":217,"angular2/src/facade/lang":205}],220:[function(require,module,exports){
+},{"./headers":217,"./http_utils":219,"angular2/src/facade/lang":207}],222:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -31399,7 +31715,7 @@ var Response = (function () {
     return Response;
 }());
 exports.Response = Response;
-},{"./http_utils":217,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],221:[function(require,module,exports){
+},{"./http_utils":219,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],223:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var collection_1 = require('angular2/src/facade/collection');
@@ -31527,7 +31843,7 @@ var URLSearchParams = (function () {
     return URLSearchParams;
 }());
 exports.URLSearchParams = URLSearchParams;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],222:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],224:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31923,7 +32239,7 @@ function relativePath(url) {
     return (urlParsingNode.pathname.charAt(0) === '/') ? urlParsingNode.pathname :
         '/' + urlParsingNode.pathname;
 }
-},{"./generic_browser_adapter":223,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205,"angular2/src/platform/dom/dom_adapter":233}],223:[function(require,module,exports){
+},{"./generic_browser_adapter":225,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207,"angular2/src/platform/dom/dom_adapter":235}],225:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31994,7 +32310,7 @@ var GenericBrowserDomAdapter = (function (_super) {
     return GenericBrowserDomAdapter;
 }(dom_adapter_1.DomAdapter));
 exports.GenericBrowserDomAdapter = GenericBrowserDomAdapter;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/lang":205,"angular2/src/platform/browser/xhr_impl":229,"angular2/src/platform/dom/dom_adapter":233}],224:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/lang":207,"angular2/src/platform/browser/xhr_impl":231,"angular2/src/platform/dom/dom_adapter":235}],226:[function(require,module,exports){
 'use strict';"use strict";
 var collection_1 = require('angular2/src/facade/collection');
 var lang_1 = require('angular2/src/facade/lang');
@@ -32069,7 +32385,7 @@ var BrowserGetTestability = (function () {
     return BrowserGetTestability;
 }());
 exports.BrowserGetTestability = BrowserGetTestability;
-},{"angular2/core":21,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205,"angular2/src/platform/dom/dom_adapter":233}],225:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207,"angular2/src/platform/dom/dom_adapter":235}],227:[function(require,module,exports){
 'use strict';"use strict";
 var dom_adapter_1 = require('angular2/src/platform/dom/dom_adapter');
 /**
@@ -32096,7 +32412,7 @@ var Title = (function () {
     return Title;
 }());
 exports.Title = Title;
-},{"angular2/src/platform/dom/dom_adapter":233}],226:[function(require,module,exports){
+},{"angular2/src/platform/dom/dom_adapter":235}],228:[function(require,module,exports){
 'use strict';"use strict";
 var application_ref_1 = require('angular2/src/core/application_ref');
 var lang_1 = require('angular2/src/facade/lang');
@@ -32166,7 +32482,7 @@ var AngularProfiler = (function () {
     return AngularProfiler;
 }());
 exports.AngularProfiler = AngularProfiler;
-},{"angular2/src/core/application_ref":110,"angular2/src/facade/browser":199,"angular2/src/facade/lang":205,"angular2/src/platform/dom/dom_adapter":233}],227:[function(require,module,exports){
+},{"angular2/src/core/application_ref":112,"angular2/src/facade/browser":201,"angular2/src/facade/lang":207,"angular2/src/platform/dom/dom_adapter":235}],229:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var common_tools_1 = require('./common_tools');
@@ -32193,7 +32509,7 @@ function disableDebugTools() {
     delete context.ng;
 }
 exports.disableDebugTools = disableDebugTools;
-},{"./common_tools":226,"angular2/src/facade/lang":205}],228:[function(require,module,exports){
+},{"./common_tools":228,"angular2/src/facade/lang":207}],230:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32231,7 +32547,7 @@ var CachedXHR = (function (_super) {
     return CachedXHR;
 }(xhr_1.XHR));
 exports.CachedXHR = CachedXHR;
-},{"angular2/src/compiler/xhr":107,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205,"angular2/src/facade/promise":207}],229:[function(require,module,exports){
+},{"angular2/src/compiler/xhr":109,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207,"angular2/src/facade/promise":209}],231:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32277,7 +32593,7 @@ var XHRImpl = (function (_super) {
     return XHRImpl;
 }(xhr_1.XHR));
 exports.XHRImpl = XHRImpl;
-},{"angular2/src/compiler/xhr":107,"angular2/src/facade/lang":205,"angular2/src/facade/promise":207}],230:[function(require,module,exports){
+},{"angular2/src/compiler/xhr":109,"angular2/src/facade/lang":207,"angular2/src/facade/promise":209}],232:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var di_1 = require('angular2/src/core/di');
@@ -32369,7 +32685,7 @@ function initDomAdapter() {
     testability_2.BrowserGetTestability.init();
 }
 exports.initDomAdapter = initDomAdapter;
-},{"./browser/browser_adapter":222,"./dom/events/hammer_gestures":239,"angular2/common":19,"angular2/core":21,"angular2/platform/common_dom":25,"angular2/src/animate/animation_builder":28,"angular2/src/animate/browser_details":29,"angular2/src/compiler/xhr":107,"angular2/src/core/di":145,"angular2/src/core/profile/wtf_init":183,"angular2/src/core/testability/testability":191,"angular2/src/facade/lang":205,"angular2/src/platform/browser/testability":224,"angular2/src/platform/browser/title":225,"angular2/src/platform/browser/tools/tools":227,"angular2/src/platform/browser/xhr_cache":228,"angular2/src/platform/dom/dom_adapter":233,"angular2/src/platform/dom/dom_renderer":234,"angular2/src/platform/dom/dom_tokens":235,"angular2/src/platform/dom/events/dom_events":236,"angular2/src/platform/dom/events/event_manager":237,"angular2/src/platform/dom/events/hammer_gestures":239,"angular2/src/platform/dom/events/key_events":240,"angular2/src/platform/dom/shared_styles_host":241}],231:[function(require,module,exports){
+},{"./browser/browser_adapter":224,"./dom/events/hammer_gestures":241,"angular2/common":21,"angular2/core":23,"angular2/platform/common_dom":27,"angular2/src/animate/animation_builder":30,"angular2/src/animate/browser_details":31,"angular2/src/compiler/xhr":109,"angular2/src/core/di":147,"angular2/src/core/profile/wtf_init":185,"angular2/src/core/testability/testability":193,"angular2/src/facade/lang":207,"angular2/src/platform/browser/testability":226,"angular2/src/platform/browser/title":227,"angular2/src/platform/browser/tools/tools":229,"angular2/src/platform/browser/xhr_cache":230,"angular2/src/platform/dom/dom_adapter":235,"angular2/src/platform/dom/dom_renderer":236,"angular2/src/platform/dom/dom_tokens":237,"angular2/src/platform/dom/events/dom_events":238,"angular2/src/platform/dom/events/event_manager":239,"angular2/src/platform/dom/events/hammer_gestures":241,"angular2/src/platform/dom/events/key_events":242,"angular2/src/platform/dom/shared_styles_host":243}],233:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var dom_adapter_1 = require('angular2/src/platform/dom/dom_adapter');
@@ -32414,7 +32730,7 @@ var By = (function () {
     return By;
 }());
 exports.By = By;
-},{"angular2/src/facade/lang":205,"angular2/src/platform/dom/dom_adapter":233}],232:[function(require,module,exports){
+},{"angular2/src/facade/lang":207,"angular2/src/platform/dom/dom_adapter":235}],234:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var di_1 = require('angular2/src/core/di');
@@ -32453,7 +32769,7 @@ exports.ELEMENT_PROBE_PROVIDERS = lang_1.CONST_EXPR([
     new di_1.Provider(core_1.RootRenderer, { useFactory: _createConditionalRootRenderer, deps: [dom_renderer_1.DomRootRenderer] })
 ]);
 exports.ELEMENT_PROBE_PROVIDERS_PROD_MODE = lang_1.CONST_EXPR([new di_1.Provider(core_1.RootRenderer, { useFactory: _createRootRenderer, deps: [dom_renderer_1.DomRootRenderer] })]);
-},{"angular2/core":21,"angular2/src/core/debug/debug_node":143,"angular2/src/core/debug/debug_renderer":144,"angular2/src/core/di":145,"angular2/src/facade/lang":205,"angular2/src/platform/dom/dom_adapter":233,"angular2/src/platform/dom/dom_renderer":234}],233:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/core/debug/debug_node":145,"angular2/src/core/debug/debug_renderer":146,"angular2/src/core/di":147,"angular2/src/facade/lang":207,"angular2/src/platform/dom/dom_adapter":235,"angular2/src/platform/dom/dom_renderer":236}],235:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 exports.DOM = null;
@@ -32485,7 +32801,7 @@ var DomAdapter = (function () {
     return DomAdapter;
 }());
 exports.DomAdapter = DomAdapter;
-},{"angular2/src/facade/lang":205}],234:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],236:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32806,7 +33122,7 @@ function splitNamespace(name) {
     var match = lang_1.RegExpWrapper.firstMatch(NS_PREFIX_RE, name);
     return [match[1], match[2]];
 }
-},{"./dom_tokens":235,"./events/event_manager":237,"./shared_styles_host":241,"./util":242,"angular2/src/animate/animation_builder":28,"angular2/src/core/di":145,"angular2/src/core/metadata":172,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205,"angular2/src/platform/dom/dom_adapter":233}],235:[function(require,module,exports){
+},{"./dom_tokens":237,"./events/event_manager":239,"./shared_styles_host":243,"./util":244,"angular2/src/animate/animation_builder":30,"angular2/src/core/di":147,"angular2/src/core/metadata":174,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207,"angular2/src/platform/dom/dom_adapter":235}],237:[function(require,module,exports){
 'use strict';"use strict";
 var di_1 = require('angular2/src/core/di');
 var lang_1 = require('angular2/src/facade/lang');
@@ -32817,7 +33133,7 @@ var lang_1 = require('angular2/src/facade/lang');
  * Contexts are not the same (e.g. when running the application into a Web Worker).
  */
 exports.DOCUMENT = lang_1.CONST_EXPR(new di_1.OpaqueToken('DocumentToken'));
-},{"angular2/src/core/di":145,"angular2/src/facade/lang":205}],236:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/facade/lang":207}],238:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32862,7 +33178,7 @@ var DomEventsPlugin = (function (_super) {
     return DomEventsPlugin;
 }(event_manager_1.EventManagerPlugin));
 exports.DomEventsPlugin = DomEventsPlugin;
-},{"./event_manager":237,"angular2/core":21,"angular2/src/platform/dom/dom_adapter":233}],237:[function(require,module,exports){
+},{"./event_manager":239,"angular2/core":23,"angular2/src/platform/dom/dom_adapter":235}],239:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -32931,7 +33247,7 @@ var EventManagerPlugin = (function () {
     return EventManagerPlugin;
 }());
 exports.EventManagerPlugin = EventManagerPlugin;
-},{"angular2/src/core/di":145,"angular2/src/core/zone/ng_zone":195,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],238:[function(require,module,exports){
+},{"angular2/src/core/di":147,"angular2/src/core/zone/ng_zone":197,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],240:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32989,7 +33305,7 @@ var HammerGesturesPluginCommon = (function (_super) {
     return HammerGesturesPluginCommon;
 }(event_manager_1.EventManagerPlugin));
 exports.HammerGesturesPluginCommon = HammerGesturesPluginCommon;
-},{"./event_manager":237,"angular2/src/facade/collection":200}],239:[function(require,module,exports){
+},{"./event_manager":239,"angular2/src/facade/collection":202}],241:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33069,7 +33385,7 @@ var HammerGesturesPlugin = (function (_super) {
     return HammerGesturesPlugin;
 }(hammer_common_1.HammerGesturesPluginCommon));
 exports.HammerGesturesPlugin = HammerGesturesPlugin;
-},{"./hammer_common":238,"angular2/core":21,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],240:[function(require,module,exports){
+},{"./hammer_common":240,"angular2/core":23,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],242:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33183,7 +33499,7 @@ var KeyEventsPlugin = (function (_super) {
     return KeyEventsPlugin;
 }(event_manager_1.EventManagerPlugin));
 exports.KeyEventsPlugin = KeyEventsPlugin;
-},{"./event_manager":237,"angular2/src/core/di":145,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205,"angular2/src/platform/dom/dom_adapter":233}],241:[function(require,module,exports){
+},{"./event_manager":239,"angular2/src/core/di":147,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207,"angular2/src/platform/dom/dom_adapter":235}],243:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33265,7 +33581,7 @@ var DomSharedStylesHost = (function (_super) {
     return DomSharedStylesHost;
 }(SharedStylesHost));
 exports.DomSharedStylesHost = DomSharedStylesHost;
-},{"./dom_tokens":235,"angular2/src/core/di":145,"angular2/src/facade/collection":200,"angular2/src/platform/dom/dom_adapter":233}],242:[function(require,module,exports){
+},{"./dom_tokens":237,"angular2/src/core/di":147,"angular2/src/facade/collection":202,"angular2/src/platform/dom/dom_adapter":235}],244:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var CAMEL_CASE_REGEXP = /([A-Z])/g;
@@ -33278,7 +33594,7 @@ function dashCaseToCamelCase(input) {
     return lang_1.StringWrapper.replaceAllMapped(input, DASH_CASE_REGEXP, function (m) { return m[1].toUpperCase(); });
 }
 exports.dashCaseToCamelCase = dashCaseToCamelCase;
-},{"angular2/src/facade/lang":205}],243:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],245:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -33373,7 +33689,7 @@ var RouterLink = (function () {
     return RouterLink;
 }());
 exports.RouterLink = RouterLink;
-},{"../location/location":251,"../router":259,"angular2/core":21,"angular2/src/facade/lang":205}],244:[function(require,module,exports){
+},{"../location/location":253,"../router":261,"angular2/core":23,"angular2/src/facade/lang":207}],246:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -33554,7 +33870,7 @@ var RouterOutlet = (function () {
     return RouterOutlet;
 }());
 exports.RouterOutlet = RouterOutlet;
-},{"../instruction":245,"../lifecycle/lifecycle_annotations":246,"../lifecycle/route_lifecycle_reflector":248,"../router":259,"angular2/core":21,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],245:[function(require,module,exports){
+},{"../instruction":247,"../lifecycle/lifecycle_annotations":248,"../lifecycle/route_lifecycle_reflector":250,"../router":261,"angular2/core":23,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],247:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33897,7 +34213,7 @@ var ComponentInstruction = (function () {
     return ComponentInstruction;
 }());
 exports.ComponentInstruction = ComponentInstruction;
-},{"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],246:[function(require,module,exports){
+},{"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],248:[function(require,module,exports){
 'use strict';/**
  * This indirection is needed to free up Component, etc symbols in the public API
  * to be used by the decorator versions of these annotations.
@@ -33938,7 +34254,7 @@ exports.routerOnDeactivate = lifecycle_annotations_impl_2.routerOnDeactivate;
  * {@example router/ts/can_activate/can_activate_example.ts region='canActivate' }
  */
 exports.CanActivate = decorators_1.makeDecorator(lifecycle_annotations_impl_1.CanActivate);
-},{"./lifecycle_annotations_impl":247,"angular2/src/core/util/decorators":193}],247:[function(require,module,exports){
+},{"./lifecycle_annotations_impl":249,"angular2/src/core/util/decorators":195}],249:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -33977,7 +34293,7 @@ exports.routerCanDeactivate = lang_1.CONST_EXPR(new RouteLifecycleHook("routerCa
 exports.routerOnActivate = lang_1.CONST_EXPR(new RouteLifecycleHook("routerOnActivate"));
 exports.routerOnReuse = lang_1.CONST_EXPR(new RouteLifecycleHook("routerOnReuse"));
 exports.routerOnDeactivate = lang_1.CONST_EXPR(new RouteLifecycleHook("routerOnDeactivate"));
-},{"angular2/src/facade/lang":205}],248:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],250:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var lifecycle_annotations_impl_1 = require('./lifecycle_annotations_impl');
@@ -33999,7 +34315,7 @@ function getCanActivateHook(type) {
     return null;
 }
 exports.getCanActivateHook = getCanActivateHook;
-},{"./lifecycle_annotations_impl":247,"angular2/src/core/reflection/reflection":184,"angular2/src/facade/lang":205}],249:[function(require,module,exports){
+},{"./lifecycle_annotations_impl":249,"angular2/src/core/reflection/reflection":186,"angular2/src/facade/lang":207}],251:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34079,7 +34395,7 @@ var BrowserPlatformLocation = (function (_super) {
     return BrowserPlatformLocation;
 }(platform_location_1.PlatformLocation));
 exports.BrowserPlatformLocation = BrowserPlatformLocation;
-},{"./platform_location":254,"angular2/core":21,"angular2/src/platform/dom/dom_adapter":233}],250:[function(require,module,exports){
+},{"./platform_location":256,"angular2/core":23,"angular2/src/platform/dom/dom_adapter":235}],252:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34195,7 +34511,7 @@ var HashLocationStrategy = (function (_super) {
     return HashLocationStrategy;
 }(location_strategy_1.LocationStrategy));
 exports.HashLocationStrategy = HashLocationStrategy;
-},{"./location_strategy":252,"./platform_location":254,"angular2/core":21,"angular2/src/facade/lang":205}],251:[function(require,module,exports){
+},{"./location_strategy":254,"./platform_location":256,"angular2/core":23,"angular2/src/facade/lang":207}],253:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34343,7 +34659,7 @@ function stripTrailingSlash(url) {
     }
     return url;
 }
-},{"./location_strategy":252,"angular2/core":21,"angular2/src/facade/async":197}],252:[function(require,module,exports){
+},{"./location_strategy":254,"angular2/core":23,"angular2/src/facade/async":199}],254:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var core_1 = require('angular2/core');
@@ -34425,7 +34741,7 @@ function joinWithSlash(start, end) {
     return start + '/' + end;
 }
 exports.joinWithSlash = joinWithSlash;
-},{"angular2/core":21,"angular2/src/facade/lang":205}],253:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/lang":207}],255:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34535,7 +34851,7 @@ var PathLocationStrategy = (function (_super) {
     return PathLocationStrategy;
 }(location_strategy_1.LocationStrategy));
 exports.PathLocationStrategy = PathLocationStrategy;
-},{"./location_strategy":252,"./platform_location":254,"angular2/core":21,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],254:[function(require,module,exports){
+},{"./location_strategy":254,"./platform_location":256,"angular2/core":23,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],256:[function(require,module,exports){
 'use strict';"use strict";
 /**
  * This class should not be used directly by an application developer. Instead, use
@@ -34582,7 +34898,7 @@ var PlatformLocation = (function () {
     return PlatformLocation;
 }());
 exports.PlatformLocation = PlatformLocation;
-},{}],255:[function(require,module,exports){
+},{}],257:[function(require,module,exports){
 'use strict';"use strict";
 var route_config_impl_1 = require('./route_config_impl');
 var decorators_1 = require('angular2/src/core/util/decorators');
@@ -34598,7 +34914,7 @@ exports.AsyncRoute = route_config_impl_2.AsyncRoute;
  * It takes an array of {@link RouteDefinition}s.
  */
 exports.RouteConfig = decorators_1.makeDecorator(route_config_impl_1.RouteConfig);
-},{"./route_config_impl":256,"angular2/src/core/util/decorators":193}],256:[function(require,module,exports){
+},{"./route_config_impl":258,"angular2/src/core/util/decorators":195}],258:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34822,7 +35138,7 @@ var Redirect = (function (_super) {
     return Redirect;
 }(AbstractRoute));
 exports.Redirect = Redirect;
-},{"angular2/src/facade/lang":205}],257:[function(require,module,exports){
+},{"angular2/src/facade/lang":207}],259:[function(require,module,exports){
 'use strict';"use strict";
 var route_config_decorator_1 = require('./route_config_decorator');
 var lang_1 = require('angular2/src/facade/lang');
@@ -34917,7 +35233,7 @@ function assertComponentExists(component, path) {
     }
 }
 exports.assertComponentExists = assertComponentExists;
-},{"./route_config_decorator":255,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],258:[function(require,module,exports){
+},{"./route_config_decorator":257,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],260:[function(require,module,exports){
 'use strict';"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -35383,7 +35699,7 @@ function assertTerminalComponent(component, path) {
         }
     }
 }
-},{"./instruction":245,"./route_config/route_config_impl":256,"./route_config/route_config_normalizer":257,"./rules/rule_set":267,"./rules/rules":268,"./url_parser":269,"angular2/core":21,"angular2/src/core/reflection/reflection":184,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],259:[function(require,module,exports){
+},{"./instruction":247,"./route_config/route_config_impl":258,"./route_config/route_config_normalizer":259,"./rules/rule_set":269,"./rules/rules":270,"./url_parser":271,"angular2/core":23,"angular2/src/core/reflection/reflection":186,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],261:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35928,7 +36244,7 @@ function canActivateOne(nextInstruction, prevInstruction) {
         return true;
     });
 }
-},{"./lifecycle/route_lifecycle_reflector":248,"./location/location":251,"./route_registry":258,"angular2/core":21,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],260:[function(require,module,exports){
+},{"./lifecycle/route_lifecycle_reflector":250,"./location/location":253,"./route_registry":260,"angular2/core":23,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],262:[function(require,module,exports){
 'use strict';"use strict";
 var router_providers_common_1 = require('./router_providers_common');
 var core_1 = require('angular2/core');
@@ -35969,7 +36285,7 @@ exports.ROUTER_PROVIDERS = lang_1.CONST_EXPR([
  * @deprecated
  */
 exports.ROUTER_BINDINGS = exports.ROUTER_PROVIDERS;
-},{"./location/browser_platform_location":249,"./location/platform_location":254,"./router_providers_common":261,"angular2/core":21,"angular2/src/facade/lang":205}],261:[function(require,module,exports){
+},{"./location/browser_platform_location":251,"./location/platform_location":256,"./router_providers_common":263,"angular2/core":23,"angular2/src/facade/lang":207}],263:[function(require,module,exports){
 'use strict';"use strict";
 var location_strategy_1 = require('angular2/src/router/location/location_strategy');
 var path_location_strategy_1 = require('angular2/src/router/location/path_location_strategy');
@@ -36003,7 +36319,7 @@ function routerPrimaryComponentFactory(app) {
     }
     return app.componentTypes[0];
 }
-},{"angular2/core":21,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205,"angular2/src/router/location/location":251,"angular2/src/router/location/location_strategy":252,"angular2/src/router/location/path_location_strategy":253,"angular2/src/router/route_registry":258,"angular2/src/router/router":259}],262:[function(require,module,exports){
+},{"angular2/core":23,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207,"angular2/src/router/location/location":253,"angular2/src/router/location/location_strategy":254,"angular2/src/router/location/path_location_strategy":255,"angular2/src/router/route_registry":260,"angular2/src/router/router":261}],264:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var instruction_1 = require('../../instruction');
@@ -36028,7 +36344,7 @@ var AsyncRouteHandler = (function () {
     return AsyncRouteHandler;
 }());
 exports.AsyncRouteHandler = AsyncRouteHandler;
-},{"../../instruction":245,"angular2/src/facade/lang":205}],263:[function(require,module,exports){
+},{"../../instruction":247,"angular2/src/facade/lang":207}],265:[function(require,module,exports){
 'use strict';"use strict";
 var async_1 = require('angular2/src/facade/async');
 var lang_1 = require('angular2/src/facade/lang');
@@ -36045,7 +36361,7 @@ var SyncRouteHandler = (function () {
     return SyncRouteHandler;
 }());
 exports.SyncRouteHandler = SyncRouteHandler;
-},{"../../instruction":245,"angular2/src/facade/async":197,"angular2/src/facade/lang":205}],264:[function(require,module,exports){
+},{"../../instruction":247,"angular2/src/facade/async":199,"angular2/src/facade/lang":207}],266:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -36312,7 +36628,7 @@ function decodeDynamicSegment(value) {
     value = lang_1.StringWrapper.replaceAll(value, REGEXP_ENC_PERCENT, '%');
     return value;
 }
-},{"../../url_parser":269,"../../utils":270,"./route_path":266,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],265:[function(require,module,exports){
+},{"../../url_parser":271,"../../utils":272,"./route_path":268,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],267:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var route_path_1 = require('./route_path');
@@ -36343,7 +36659,7 @@ var RegexRoutePath = (function () {
     return RegexRoutePath;
 }());
 exports.RegexRoutePath = RegexRoutePath;
-},{"./route_path":266,"angular2/src/facade/lang":205}],266:[function(require,module,exports){
+},{"./route_path":268,"angular2/src/facade/lang":207}],268:[function(require,module,exports){
 'use strict';"use strict";
 var MatchedUrl = (function () {
     function MatchedUrl(urlPath, urlParams, allParams, auxiliary, rest) {
@@ -36364,7 +36680,7 @@ var GeneratedUrl = (function () {
     return GeneratedUrl;
 }());
 exports.GeneratedUrl = GeneratedUrl;
-},{}],267:[function(require,module,exports){
+},{}],269:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var exceptions_1 = require('angular2/src/facade/exceptions');
@@ -36517,7 +36833,7 @@ var RuleSet = (function () {
     return RuleSet;
 }());
 exports.RuleSet = RuleSet;
-},{"../route_config/route_config_impl":256,"./route_handlers/async_route_handler":262,"./route_handlers/sync_route_handler":263,"./route_paths/param_route_path":264,"./route_paths/regex_route_path":265,"./rules":268,"angular2/src/facade/async":197,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],268:[function(require,module,exports){
+},{"../route_config/route_config_impl":258,"./route_handlers/async_route_handler":264,"./route_handlers/sync_route_handler":265,"./route_paths/param_route_path":266,"./route_paths/regex_route_path":267,"./rules":270,"angular2/src/facade/async":199,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],270:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36639,7 +36955,7 @@ var RouteRule = (function () {
     return RouteRule;
 }());
 exports.RouteRule = RouteRule;
-},{"../instruction":245,"../url_parser":269,"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205,"angular2/src/facade/promise":207}],269:[function(require,module,exports){
+},{"../instruction":247,"../url_parser":271,"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207,"angular2/src/facade/promise":209}],271:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36874,7 +37190,7 @@ var UrlParser = (function () {
 }());
 exports.UrlParser = UrlParser;
 exports.parser = new UrlParser();
-},{"angular2/src/facade/collection":200,"angular2/src/facade/exceptions":202,"angular2/src/facade/lang":205}],270:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/exceptions":204,"angular2/src/facade/lang":207}],272:[function(require,module,exports){
 'use strict';"use strict";
 var lang_1 = require('angular2/src/facade/lang');
 var collection_1 = require('angular2/src/facade/collection');
@@ -36913,7 +37229,7 @@ function normalizeString(obj) {
     }
 }
 exports.normalizeString = normalizeString;
-},{"angular2/src/facade/collection":200,"angular2/src/facade/lang":205}],271:[function(require,module,exports){
+},{"angular2/src/facade/collection":202,"angular2/src/facade/lang":207}],273:[function(require,module,exports){
 'use strict';"use strict";
 // Note: This class is only here so that we can reference it from TypeScript code.
 // The actual implementation lives under modules_dart.
@@ -36929,7 +37245,7 @@ var Codegen = (function () {
     return Codegen;
 }());
 exports.Codegen = Codegen;
-},{}],272:[function(require,module,exports){
+},{}],274:[function(require,module,exports){
 "use strict";
 var dom_1 = require('../util/dom');
 var util_1 = require('../util/util');
@@ -37589,7 +37905,7 @@ var TRANSFORMS = {
 var CSS_VALUE_REGEX = /(^-?\d*\.?\d*)(.*)/;
 var AnimationRegistry = {};
 
-},{"../util/dom":367,"../util/util":373}],273:[function(require,module,exports){
+},{"../util/dom":369,"../util/util":375}],275:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -37646,7 +37962,7 @@ var FadeOut = (function (_super) {
 }(animation_1.Animation));
 animation_1.Animation.register('fade-out', FadeOut);
 
-},{"./animation":272}],274:[function(require,module,exports){
+},{"./animation":274}],276:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -37703,7 +38019,7 @@ __export(require('./components/toast/toast'));
 __export(require('./components/toolbar/toolbar'));
 __export(require('./components/virtual-scroll/virtual-scroll'));
 
-},{"./components/action-sheet/action-sheet":275,"./components/alert/alert":276,"./components/app/app":277,"./components/app/id":278,"./components/badge/badge":279,"./components/blur/blur":280,"./components/button/button":281,"./components/checkbox/checkbox":282,"./components/content/content":283,"./components/icon/icon":284,"./components/img/img":285,"./components/infinite-scroll/infinite-scroll":287,"./components/infinite-scroll/infinite-scroll-content":286,"./components/input/input":289,"./components/item/item":294,"./components/item/item-sliding":293,"./components/label/label":295,"./components/list/list":296,"./components/loading/loading":297,"./components/menu/menu":303,"./components/menu/menu-close":298,"./components/menu/menu-controller":299,"./components/menu/menu-toggle":301,"./components/menu/menu-types":302,"./components/modal/modal":304,"./components/nav/nav":311,"./components/nav/nav-controller":305,"./components/nav/nav-params":306,"./components/nav/nav-push":308,"./components/nav/nav-router":310,"./components/nav/view-controller":313,"./components/navbar/navbar":314,"./components/option/option":315,"./components/radio/radio-button":316,"./components/radio/radio-group":317,"./components/refresher/refresher":319,"./components/refresher/refresher-content":318,"./components/scroll/scroll":320,"./components/searchbar/searchbar":321,"./components/segment/segment":322,"./components/select/select":323,"./components/show-hide-when/show-hide-when":324,"./components/slides/slides":325,"./components/spinner/spinner":327,"./components/tabs/tab":330,"./components/tabs/tabs":331,"./components/tap-click/tap-click":334,"./components/toast/toast":335,"./components/toggle/toggle":336,"./components/toolbar/toolbar":337,"./components/virtual-scroll/virtual-scroll":339}],275:[function(require,module,exports){
+},{"./components/action-sheet/action-sheet":277,"./components/alert/alert":278,"./components/app/app":279,"./components/app/id":280,"./components/badge/badge":281,"./components/blur/blur":282,"./components/button/button":283,"./components/checkbox/checkbox":284,"./components/content/content":285,"./components/icon/icon":286,"./components/img/img":287,"./components/infinite-scroll/infinite-scroll":289,"./components/infinite-scroll/infinite-scroll-content":288,"./components/input/input":291,"./components/item/item":296,"./components/item/item-sliding":295,"./components/label/label":297,"./components/list/list":298,"./components/loading/loading":299,"./components/menu/menu":305,"./components/menu/menu-close":300,"./components/menu/menu-controller":301,"./components/menu/menu-toggle":303,"./components/menu/menu-types":304,"./components/modal/modal":306,"./components/nav/nav":313,"./components/nav/nav-controller":307,"./components/nav/nav-params":308,"./components/nav/nav-push":310,"./components/nav/nav-router":312,"./components/nav/view-controller":315,"./components/navbar/navbar":316,"./components/option/option":317,"./components/radio/radio-button":318,"./components/radio/radio-group":319,"./components/refresher/refresher":321,"./components/refresher/refresher-content":320,"./components/scroll/scroll":322,"./components/searchbar/searchbar":323,"./components/segment/segment":324,"./components/select/select":325,"./components/show-hide-when/show-hide-when":326,"./components/slides/slides":327,"./components/spinner/spinner":329,"./components/tabs/tab":332,"./components/tabs/tabs":333,"./components/tap-click/tap-click":336,"./components/toast/toast":337,"./components/toggle/toggle":338,"./components/toolbar/toolbar":339,"./components/virtual-scroll/virtual-scroll":341}],277:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38158,7 +38474,7 @@ var ActionSheetWpSlideOut = (function (_super) {
 transition_1.Transition.register('action-sheet-wp-slide-out', ActionSheetWpSlideOut);
 var actionSheetIds = -1;
 
-},{"../../animations/animation":272,"../../config/config":342,"../../transitions/transition":362,"../../util/util":373,"../icon/icon":284,"../nav/nav-params":306,"../nav/view-controller":313,"angular2/common":19,"angular2/core":21}],276:[function(require,module,exports){
+},{"../../animations/animation":274,"../../config/config":344,"../../transitions/transition":364,"../../util/util":375,"../icon/icon":286,"../nav/nav-params":308,"../nav/view-controller":315,"angular2/common":21,"angular2/core":23}],278:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38825,7 +39141,7 @@ var AlertWpPopOut = (function (_super) {
 transition_1.Transition.register('alert-wp-pop-out', AlertWpPopOut);
 var alertIds = -1;
 
-},{"../../animations/animation":272,"../../config/config":342,"../../transitions/transition":362,"../../util/util":373,"../nav/nav-params":306,"../nav/view-controller":313,"angular2/common":19,"angular2/core":21}],277:[function(require,module,exports){
+},{"../../animations/animation":274,"../../config/config":344,"../../transitions/transition":364,"../../util/util":375,"../nav/nav-params":308,"../nav/view-controller":315,"angular2/common":21,"angular2/core":23}],279:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39025,7 +39341,7 @@ var IonicApp = (function () {
 }());
 exports.IonicApp = IonicApp;
 
-},{"../../config/config":342,"../../platform/platform":353,"../../util/click-block":366,"angular2/core":21,"angular2/platform/browser":24}],278:[function(require,module,exports){
+},{"../../config/config":344,"../../platform/platform":355,"../../util/click-block":368,"angular2/core":23,"angular2/platform/browser":26}],280:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39132,7 +39448,7 @@ var Attr = (function () {
 }());
 exports.Attr = Attr;
 
-},{"./app":277,"angular2/core":21}],279:[function(require,module,exports){
+},{"./app":279,"angular2/core":23}],281:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39192,7 +39508,7 @@ var Badge = (function () {
 }());
 exports.Badge = Badge;
 
-},{"../../config/config":342,"angular2/core":21}],280:[function(require,module,exports){
+},{"../../config/config":344,"angular2/core":23}],282:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39235,7 +39551,7 @@ var Blur = (function () {
 }());
 exports.Blur = Blur;
 
-},{"angular2/core":21}],281:[function(require,module,exports){
+},{"angular2/core":23}],283:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39630,7 +39946,7 @@ var IGNORE_ATTRS = /_ng|button|left|right/;
 var TEXT = 1;
 var ICON = 2;
 
-},{"../../config/config":342,"../../util/util":373,"angular2/core":21}],282:[function(require,module,exports){
+},{"../../config/config":344,"../../util/util":375,"angular2/core":23}],284:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39840,7 +40156,7 @@ var Checkbox = (function () {
 }());
 exports.Checkbox = Checkbox;
 
-},{"../../util/form":370,"../../util/util":373,"../item/item":294,"angular2/common":19,"angular2/core":21}],283:[function(require,module,exports){
+},{"../../util/form":372,"../../util/util":375,"../item/item":296,"angular2/common":21,"angular2/core":23}],285:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -40219,7 +40535,7 @@ var Content = (function (_super) {
 }(ion_1.Ion));
 exports.Content = Content;
 
-},{"../../config/config":342,"../../util/dom":367,"../../util/keyboard":371,"../../util/scroll-view":372,"../app/app":277,"../ion":291,"../nav/view-controller":313,"angular2/core":21}],284:[function(require,module,exports){
+},{"../../config/config":344,"../../util/dom":369,"../../util/keyboard":373,"../../util/scroll-view":374,"../app/app":279,"../ion":293,"../nav/view-controller":315,"angular2/core":23}],286:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -40404,7 +40720,7 @@ var Icon = (function () {
 }());
 exports.Icon = Icon;
 
-},{"../../config/config":342,"angular2/core":21}],285:[function(require,module,exports){
+},{"../../config/config":344,"angular2/core":23}],287:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -40538,7 +40854,7 @@ var Img = (function () {
 }());
 exports.Img = Img;
 
-},{"../../platform/platform":353,"../../util/dom":367,"../../util/util":373,"angular2/core":21}],286:[function(require,module,exports){
+},{"../../platform/platform":355,"../../util/dom":369,"../../util/util":375,"angular2/core":23}],288:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -40599,7 +40915,7 @@ var InfiniteScrollContent = (function () {
 }());
 exports.InfiniteScrollContent = InfiniteScrollContent;
 
-},{"../../config/config":342,"../spinner/spinner":327,"./infinite-scroll":287,"angular2/common":19,"angular2/core":21}],287:[function(require,module,exports){
+},{"../../config/config":344,"../spinner/spinner":329,"./infinite-scroll":289,"angular2/common":21,"angular2/core":23}],289:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -40863,7 +41179,7 @@ var STATE_ENABLED = 'enabled';
 var STATE_DISABLED = 'disabled';
 var STATE_LOADING = 'loading';
 
-},{"../content/content":283,"angular2/core":21}],288:[function(require,module,exports){
+},{"../content/content":285,"angular2/core":23}],290:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -41408,7 +41724,7 @@ function getScrollAssistDuration(distanceToScroll) {
     return Math.min(400, Math.max(150, duration));
 }
 
-},{"../../util/dom":367,"../../util/util":373,"./native-input":290,"angular2/core":21}],289:[function(require,module,exports){
+},{"../../util/dom":369,"../../util/util":375,"./native-input":292,"angular2/core":23}],291:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -41614,7 +41930,7 @@ var TextArea = (function (_super) {
 }(input_base_1.InputBase));
 exports.TextArea = TextArea;
 
-},{"../../config/config":342,"../../platform/platform":353,"../../util/form":370,"../app/app":277,"../button/button":281,"../content/content":283,"../item/item":294,"../nav/nav-controller":305,"./input-base":288,"./native-input":290,"angular2/common":19,"angular2/core":21}],290:[function(require,module,exports){
+},{"../../config/config":344,"../../platform/platform":355,"../../util/form":372,"../app/app":279,"../button/button":283,"../content/content":285,"../item/item":296,"../nav/nav-controller":307,"./input-base":290,"./native-input":292,"angular2/common":21,"angular2/core":23}],292:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -41840,7 +42156,7 @@ var NextInput = (function () {
 }());
 exports.NextInput = NextInput;
 
-},{"../../config/config":342,"../../util/dom":367,"angular2/common":19,"angular2/core":21}],291:[function(require,module,exports){
+},{"../../config/config":344,"../../util/dom":369,"angular2/common":21,"angular2/core":23}],293:[function(require,module,exports){
 "use strict";
 var dom = require('../util/dom');
 var ids = 0;
@@ -41876,7 +42192,7 @@ var Ion = (function () {
 }());
 exports.Ion = Ion;
 
-},{"../util/dom":367}],292:[function(require,module,exports){
+},{"../util/dom":369}],294:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -42095,7 +42411,7 @@ function isActive(itemContainerEle) {
 }
 var DRAG_THRESHOLD = 20;
 
-},{"../../gestures/drag-gesture":347,"../../gestures/hammer":349,"../../util/dom":367}],293:[function(require,module,exports){
+},{"../../gestures/drag-gesture":349,"../../gestures/hammer":351,"../../util/dom":369}],295:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -42163,7 +42479,7 @@ var ItemSliding = (function () {
 exports.ItemSliding = ItemSliding;
 var slideIds = 0;
 
-},{"../list/list":296,"angular2/core":21}],294:[function(require,module,exports){
+},{"../list/list":298,"angular2/core":23}],296:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -42361,7 +42677,7 @@ var Item = (function () {
 }());
 exports.Item = Item;
 
-},{"../../util/form":370,"../button/button":281,"../icon/icon":284,"../label/label":295,"angular2/common":19,"angular2/core":21}],295:[function(require,module,exports){
+},{"../../util/form":372,"../button/button":283,"../icon/icon":286,"../label/label":297,"angular2/common":21,"angular2/core":23}],297:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -42482,7 +42798,7 @@ var Label = (function () {
 }());
 exports.Label = Label;
 
-},{"angular2/core":21}],296:[function(require,module,exports){
+},{"angular2/core":23}],298:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -42628,7 +42944,7 @@ var ListHeader = (function () {
 }());
 exports.ListHeader = ListHeader;
 
-},{"../ion":291,"../item/item-sliding-gesture":292,"angular2/core":21}],297:[function(require,module,exports){
+},{"../ion":293,"../item/item-sliding-gesture":294,"angular2/core":23}],299:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -42962,7 +43278,7 @@ var LoadingWpPopOut = (function (_super) {
 transition_1.Transition.register('loading-wp-pop-out', LoadingWpPopOut);
 var loadingIds = -1;
 
-},{"../../animations/animation":272,"../../config/config":342,"../../transitions/transition":362,"../../util/util":373,"../nav/nav-params":306,"../nav/view-controller":313,"../spinner/spinner":327,"angular2/common":19,"angular2/core":21}],298:[function(require,module,exports){
+},{"../../animations/animation":274,"../../config/config":344,"../../transitions/transition":364,"../../util/util":375,"../nav/nav-params":308,"../nav/view-controller":315,"../spinner/spinner":329,"angular2/common":21,"angular2/core":23}],300:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -43028,7 +43344,7 @@ var MenuClose = (function () {
 }());
 exports.MenuClose = MenuClose;
 
-},{"./menu-controller":299,"angular2/core":21}],299:[function(require,module,exports){
+},{"./menu-controller":301,"angular2/core":23}],301:[function(require,module,exports){
 "use strict";
 /**
  * @name Menu
@@ -43335,7 +43651,7 @@ var MenuController = (function () {
 exports.MenuController = MenuController;
 var menuTypes = {};
 
-},{}],300:[function(require,module,exports){
+},{}],302:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -43458,7 +43774,7 @@ var MenuTargetGesture = (function (_super) {
 }(MenuContentGesture));
 exports.MenuTargetGesture = MenuTargetGesture;
 
-},{"../../gestures/slide-edge-gesture":350,"../../util/util":373}],301:[function(require,module,exports){
+},{"../../gestures/slide-edge-gesture":352,"../../util/util":375}],303:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -43560,7 +43876,7 @@ var MenuToggle = (function () {
 }());
 exports.MenuToggle = MenuToggle;
 
-},{"../nav/view-controller":313,"../navbar/navbar":314,"./menu-controller":299,"angular2/core":21}],302:[function(require,module,exports){
+},{"../nav/view-controller":315,"../navbar/navbar":316,"./menu-controller":301,"angular2/core":23}],304:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -43705,7 +44021,7 @@ var MenuOverlayType = (function (_super) {
 }(MenuType));
 menu_controller_1.MenuController.registerType('overlay', MenuOverlayType);
 
-},{"../../animations/animation":272,"./menu-controller":299}],303:[function(require,module,exports){
+},{"../../animations/animation":274,"./menu-controller":301}],305:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -44157,7 +44473,7 @@ var MenuBackdrop = (function () {
 }());
 exports.MenuBackdrop = MenuBackdrop;
 
-},{"../../config/config":342,"../../platform/platform":353,"../../util/keyboard":371,"../../util/util":373,"../ion":291,"./menu-controller":299,"./menu-gestures":300,"angular2/core":21}],304:[function(require,module,exports){
+},{"../../config/config":344,"../../platform/platform":355,"../../util/keyboard":373,"../../util/util":375,"../ion":293,"./menu-controller":301,"./menu-gestures":302,"angular2/core":23}],306:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -44364,7 +44680,7 @@ var ModalMDSlideOut = (function (_super) {
 }(transition_1.Transition));
 transition_1.Transition.register('modal-md-slide-out', ModalMDSlideOut);
 
-},{"../../animations/animation":272,"../../transitions/transition":362,"../nav/view-controller":313}],305:[function(require,module,exports){
+},{"../../animations/animation":274,"../../transitions/transition":364,"../nav/view-controller":315}],307:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -45919,7 +46235,7 @@ var INIT_ZINDEX = 100;
 var PORTAL_ZINDEX = 9999;
 var ctrlIds = -1;
 
-},{"../../transitions/transition":362,"../../util/util":373,"../ion":291,"./nav-params":306,"./swipe-back":312,"./view-controller":313,"angular2/core":21,"angular2/instrumentation":23}],306:[function(require,module,exports){
+},{"../../transitions/transition":364,"../../util/util":375,"../ion":293,"./nav-params":308,"./swipe-back":314,"./view-controller":315,"angular2/core":23,"angular2/instrumentation":25}],308:[function(require,module,exports){
 "use strict";
 /**
  * @name NavParams
@@ -45976,7 +46292,7 @@ var NavParams = (function () {
 }());
 exports.NavParams = NavParams;
 
-},{}],307:[function(require,module,exports){
+},{}],309:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -46022,7 +46338,7 @@ var Portal = (function (_super) {
 }(nav_controller_1.NavController));
 exports.Portal = Portal;
 
-},{"../../config/config":342,"../../util/keyboard":371,"../app/app":277,"./nav-controller":305,"./view-controller":313,"angular2/core":21}],308:[function(require,module,exports){
+},{"../../config/config":344,"../../util/keyboard":373,"../app/app":279,"./nav-controller":307,"./view-controller":315,"angular2/core":23}],310:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -46180,7 +46496,7 @@ var NavPop = (function () {
 }());
 exports.NavPop = NavPop;
 
-},{"./nav-controller":305,"./nav-registry":309,"angular2/core":21}],309:[function(require,module,exports){
+},{"./nav-controller":307,"./nav-registry":311,"angular2/core":23}],311:[function(require,module,exports){
 "use strict";
 /**
  * @private
@@ -46206,7 +46522,7 @@ var NavRegistry = (function () {
 }());
 exports.NavRegistry = NavRegistry;
 
-},{}],310:[function(require,module,exports){
+},{}],312:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -46327,7 +46643,7 @@ var ResolvedInstruction = (function (_super) {
     return ResolvedInstruction;
 }(router_1.Instruction));
 
-},{"./nav":311,"angular2/core":21,"angular2/router":26}],311:[function(require,module,exports){
+},{"./nav":313,"angular2/core":23,"angular2/router":28}],313:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -46545,7 +46861,7 @@ var Nav = (function (_super) {
 }(nav_controller_1.NavController));
 exports.Nav = Nav;
 
-},{"../../config/config":342,"../../util/keyboard":371,"../../util/util":373,"../app/app":277,"./nav-controller":305,"./nav-portal":307,"./view-controller":313,"angular2/core":21}],312:[function(require,module,exports){
+},{"../../config/config":344,"../../util/keyboard":373,"../../util/util":375,"../app/app":279,"./nav-controller":307,"./nav-portal":309,"./view-controller":315,"angular2/core":23}],314:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -46596,7 +46912,7 @@ var SwipeBackGesture = (function (_super) {
 }(slide_edge_gesture_1.SlideEdgeGesture));
 exports.SwipeBackGesture = SwipeBackGesture;
 
-},{"../../gestures/slide-edge-gesture":350,"../../util/util":373}],313:[function(require,module,exports){
+},{"../../gestures/slide-edge-gesture":352,"../../util/util":375}],315:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47085,7 +47401,7 @@ function ctrlFn(viewCtrl, fnName) {
     }
 }
 
-},{"../../util/util":373,"./nav-params":306,"angular2/core":21}],314:[function(require,module,exports){
+},{"../../util/util":375,"./nav-params":308,"angular2/core":23}],316:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -47339,7 +47655,7 @@ var NavbarTemplate = (function () {
 }());
 exports.NavbarTemplate = NavbarTemplate;
 
-},{"../../config/config":342,"../../util/util":373,"../app/app":277,"../icon/icon":284,"../ion":291,"../nav/nav-controller":305,"../nav/view-controller":313,"../toolbar/toolbar":337,"angular2/core":21}],315:[function(require,module,exports){
+},{"../../config/config":344,"../../util/util":375,"../app/app":279,"../icon/icon":286,"../ion":293,"../nav/nav-controller":307,"../nav/view-controller":315,"../toolbar/toolbar":339,"angular2/core":23}],317:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47429,7 +47745,7 @@ var Option = (function () {
 }());
 exports.Option = Option;
 
-},{"../../util/util":373,"angular2/core":21}],316:[function(require,module,exports){
+},{"../../util/util":375,"angular2/core":23}],318:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47614,7 +47930,7 @@ var RadioButton = (function () {
 }());
 exports.RadioButton = RadioButton;
 
-},{"../../util/form":370,"../../util/util":373,"../item/item":294,"./radio-group":317,"angular2/core":21}],317:[function(require,module,exports){
+},{"../../util/form":372,"../../util/util":375,"../item/item":296,"./radio-group":319,"angular2/core":23}],319:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47836,7 +48152,7 @@ var RadioGroup = (function () {
 exports.RadioGroup = RadioGroup;
 var radioGroupIds = -1;
 
-},{"../../util/util":373,"../list/list":296,"angular2/common":19,"angular2/core":21}],318:[function(require,module,exports){
+},{"../../util/util":375,"../list/list":298,"angular2/common":21,"angular2/core":23}],320:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47916,7 +48232,7 @@ var RefresherContent = (function () {
 }());
 exports.RefresherContent = RefresherContent;
 
-},{"../../config/config":342,"../icon/icon":284,"../spinner/spinner":327,"./refresher":319,"angular2/common":19,"angular2/core":21}],319:[function(require,module,exports){
+},{"../../config/config":344,"../icon/icon":286,"../spinner/spinner":329,"./refresher":321,"angular2/common":21,"angular2/core":23}],321:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -48433,7 +48749,7 @@ var STATE_REFRESHING = 'refreshing';
 var STATE_CANCELLING = 'cancelling';
 var STATE_COMPLETING = 'completing';
 
-},{"../../util/dom":367,"../../util/util":373,"../content/content":283,"angular2/core":21}],320:[function(require,module,exports){
+},{"../../util/dom":369,"../../util/util":375,"../content/content":285,"angular2/core":23}],322:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -48532,7 +48848,7 @@ var Scroll = (function (_super) {
 }(ion_1.Ion));
 exports.Scroll = Scroll;
 
-},{"../ion":291,"angular2/core":21}],321:[function(require,module,exports){
+},{"../ion":293,"angular2/core":23}],323:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -48887,7 +49203,7 @@ var Searchbar = (function (_super) {
 }(ion_1.Ion));
 exports.Searchbar = Searchbar;
 
-},{"../../config/config":342,"../../util/util":373,"../button/button":281,"../icon/icon":284,"../ion":291,"angular2/common":19,"angular2/core":21}],322:[function(require,module,exports){
+},{"../../config/config":344,"../../util/util":375,"../button/button":283,"../icon/icon":286,"../ion":293,"angular2/common":21,"angular2/core":23}],324:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -49132,7 +49448,7 @@ var Segment = (function () {
 }());
 exports.Segment = Segment;
 
-},{"../../util/util":373,"angular2/common":19,"angular2/core":21}],323:[function(require,module,exports){
+},{"../../util/util":375,"angular2/common":21,"angular2/core":23}],325:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -49596,7 +49912,7 @@ var Select = (function () {
 }());
 exports.Select = Select;
 
-},{"../../util/form":370,"../../util/util":373,"../action-sheet/action-sheet":275,"../alert/alert":276,"../item/item":294,"../nav/nav-controller":305,"../option/option":315,"angular2/common":19,"angular2/core":21}],324:[function(require,module,exports){
+},{"../../util/form":372,"../../util/util":375,"../action-sheet/action-sheet":277,"../alert/alert":278,"../item/item":296,"../nav/nav-controller":307,"../option/option":317,"angular2/common":21,"angular2/core":23}],326:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -49780,7 +50096,7 @@ var HideWhen = (function (_super) {
 }(DisplayWhen));
 exports.HideWhen = HideWhen;
 
-},{"../../platform/platform":353,"angular2/core":21}],325:[function(require,module,exports){
+},{"../../platform/platform":355,"angular2/core":23}],327:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -50565,7 +50881,7 @@ var SlideLazy = (function () {
 exports.SlideLazy = SlideLazy;
 var slidesId = -1;
 
-},{"../../animations/animation":272,"../../gestures/gesture":348,"../../util":365,"../../util/dom":367,"../../util/util":373,"../ion":291,"./swiper-widget":326,"angular2/common":19,"angular2/core":21}],326:[function(require,module,exports){
+},{"../../animations/animation":274,"../../gestures/gesture":350,"../../util":367,"../../util/dom":369,"../../util/util":375,"../ion":293,"./swiper-widget":328,"angular2/common":21,"angular2/core":23}],328:[function(require,module,exports){
 /**
  * Swiper 3.1.2
  * Most modern mobile touch slider and framework with hardware accelerated transitions
@@ -54521,7 +54837,7 @@ function Swiper(container, params) {
       }
   }
 
-},{}],327:[function(require,module,exports){
+},{}],329:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -54812,7 +55128,7 @@ var SPINNERS = {
     }
 };
 
-},{"../../config/config":342,"angular2/common":19,"angular2/core":21}],328:[function(require,module,exports){
+},{"../../config/config":344,"angular2/common":21,"angular2/core":23}],330:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -54890,7 +55206,7 @@ var TabButton = (function (_super) {
 }(ion_1.Ion));
 exports.TabButton = TabButton;
 
-},{"../../config/config":342,"../ion":291,"./tab":330,"angular2/core":21}],329:[function(require,module,exports){
+},{"../../config/config":344,"../ion":293,"./tab":332,"angular2/core":23}],331:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -54934,7 +55250,7 @@ var TabHighlight = (function () {
 }());
 exports.TabHighlight = TabHighlight;
 
-},{"../../util/dom":367,"angular2/core":21}],330:[function(require,module,exports){
+},{"../../util/dom":369,"angular2/core":23}],332:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -55266,7 +55582,7 @@ var Tab = (function (_super) {
 }(nav_controller_1.NavController));
 exports.Tab = Tab;
 
-},{"../../config/config":342,"../../util/keyboard":371,"../../util/util":373,"../app/app":277,"../nav/nav-controller":305,"./tabs":331,"angular2/core":21}],331:[function(require,module,exports){
+},{"../../config/config":344,"../../util/keyboard":373,"../../util/util":375,"../app/app":279,"../nav/nav-controller":307,"./tabs":333,"angular2/core":23}],333:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -55733,7 +56049,7 @@ var TabNavBarAnchor = (function () {
     return TabNavBarAnchor;
 }());
 
-},{"../../config/config":342,"../../platform/platform":353,"../../util/util":373,"../app/app":277,"../icon/icon":284,"../ion":291,"../nav/nav-controller":305,"../nav/view-controller":313,"./tab-button":328,"./tab-highlight":329,"angular2/common":19,"angular2/core":21}],332:[function(require,module,exports){
+},{"../../config/config":344,"../../platform/platform":355,"../../util/util":375,"../app/app":279,"../icon/icon":286,"../ion":293,"../nav/nav-controller":307,"../nav/view-controller":315,"./tab-button":330,"./tab-highlight":331,"angular2/common":21,"angular2/core":23}],334:[function(require,module,exports){
 "use strict";
 var dom_1 = require('../../util/dom');
 var Activator = (function () {
@@ -55821,7 +56137,7 @@ var Activator = (function () {
 exports.Activator = Activator;
 var CLEAR_STATE_DEFERS = 5;
 
-},{"../../util/dom":367}],333:[function(require,module,exports){
+},{"../../util/dom":369}],335:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -55930,7 +56246,7 @@ var RippleActivator = (function (_super) {
 exports.RippleActivator = RippleActivator;
 var TOUCH_DOWN_ACCEL = 300;
 
-},{"../../util/dom":367,"./activator":332}],334:[function(require,module,exports){
+},{"../../util/dom":369,"./activator":334}],336:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -56126,7 +56442,7 @@ var POINTER_TOLERANCE = 4;
 var POINTER_MOVE_UNTIL_CANCEL = 10;
 var DISABLE_NATIVE_CLICK_AMOUNT = 2500;
 
-},{"../../config/config":342,"../../util/dom":367,"../app/app":277,"./activator":332,"./ripple":333,"angular2/core":21}],335:[function(require,module,exports){
+},{"../../config/config":344,"../../util/dom":369,"../app/app":279,"./activator":334,"./ripple":335,"angular2/core":23}],337:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -56407,7 +56723,7 @@ transition_1.Transition.register('toast-wp-slide-out', ToastWpPopOut);
 transition_1.Transition.register('toast-wp-slide-in', ToastWpPopIn);
 var toastIds = -1;
 
-},{"../../animations/animation":272,"../../config/config":342,"../../transitions/transition":362,"../../util/util":373,"../button/button":281,"../icon/icon":284,"../nav/nav-controller":305,"../nav/nav-params":306,"../nav/view-controller":313,"angular2/common":19,"angular2/core":21}],336:[function(require,module,exports){
+},{"../../animations/animation":274,"../../config/config":344,"../../transitions/transition":364,"../../util/util":375,"../button/button":283,"../icon/icon":286,"../nav/nav-controller":307,"../nav/nav-params":308,"../nav/view-controller":315,"angular2/common":21,"angular2/core":23}],338:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -56677,7 +56993,7 @@ var Toggle = (function () {
 }());
 exports.Toggle = Toggle;
 
-},{"../../util/dom":367,"../../util/form":370,"../../util/util":373,"../item/item":294,"angular2/common":19,"angular2/core":21}],337:[function(require,module,exports){
+},{"../../util/dom":369,"../../util/form":372,"../../util/util":375,"../item/item":296,"angular2/common":21,"angular2/core":23}],339:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -56913,7 +57229,7 @@ var ToolbarItem = (function () {
 }());
 exports.ToolbarItem = ToolbarItem;
 
-},{"../../config/config":342,"../button/button":281,"../ion":291,"../navbar/navbar":314,"angular2/core":21}],338:[function(require,module,exports){
+},{"../../config/config":344,"../button/button":283,"../ion":293,"../navbar/navbar":316,"angular2/core":23}],340:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -56969,7 +57285,7 @@ var VirtualItem = (function () {
 }());
 exports.VirtualItem = VirtualItem;
 
-},{"angular2/core":21}],339:[function(require,module,exports){
+},{"angular2/core":23}],341:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -57595,7 +57911,7 @@ var SCROLL_END_TIMEOUT_MS = 140;
 var QUEUE_CHANGE_DETECTION = 0;
 var QUEUE_WRITE_TO_NODES = 1;
 
-},{"../../config/config":342,"../../platform/platform":353,"../../util/dom":367,"../../util/util":373,"../content/content":283,"../img/img":285,"../nav/view-controller":313,"./virtual-item":338,"./virtual-util":340,"angular2/core":21}],340:[function(require,module,exports){
+},{"../../config/config":344,"../../platform/platform":355,"../../util/dom":369,"../../util/util":375,"../content/content":285,"../img/img":287,"../nav/view-controller":315,"./virtual-item":340,"./virtual-util":342,"angular2/core":23}],342:[function(require,module,exports){
 "use strict";
 var dom_1 = require('../../util/dom');
 /**
@@ -58094,7 +58410,7 @@ var TEMPLATE_FOOTER = 2;
 var VIEWABLE_RENDERED_PADDING = 3;
 var REQUIRED_DOM_READS = 2;
 
-},{"../../util/dom":367}],341:[function(require,module,exports){
+},{"../../util/dom":369}],343:[function(require,module,exports){
 "use strict";
 var core_1 = require('angular2/core');
 var router_1 = require('angular2/router');
@@ -58242,7 +58558,7 @@ function bindEvents(window, document, platform, events) {
     }, 2000);
 }
 
-},{"../components/app/app":277,"../components/menu/menu-controller":299,"../components/nav/nav-registry":309,"../components/tap-click/tap-click":334,"../platform/platform":353,"../translation/translate":363,"../util/click-block":366,"../util/dom":367,"../util/events":368,"../util/feature-detect":369,"../util/form":370,"../util/keyboard":371,"../util/scroll-view":372,"./config":342,"angular2/core":21,"angular2/http":22,"angular2/router":26}],342:[function(require,module,exports){
+},{"../components/app/app":279,"../components/menu/menu-controller":301,"../components/nav/nav-registry":311,"../components/tap-click/tap-click":336,"../platform/platform":355,"../translation/translate":365,"../util/click-block":368,"../util/dom":369,"../util/events":370,"../util/feature-detect":371,"../util/form":372,"../util/keyboard":373,"../util/scroll-view":374,"./config":344,"angular2/core":23,"angular2/http":24,"angular2/router":28}],344:[function(require,module,exports){
 /**
 * @ngdoc service
 * @name Config
@@ -58570,7 +58886,7 @@ var Config = (function () {
 exports.Config = Config;
 var modeConfigs = {};
 
-},{"../platform/platform":353,"../util/util":373}],343:[function(require,module,exports){
+},{"../platform/platform":355,"../util/util":375}],345:[function(require,module,exports){
 "use strict";
 var common_1 = require('angular2/common');
 var menu_1 = require('../components/menu/menu');
@@ -58780,7 +59096,7 @@ exports.IONIC_DIRECTIVES = [
     show_hide_when_1.HideWhen
 ];
 
-},{"../components/app/id":278,"../components/badge/badge":279,"../components/blur/blur":280,"../components/button/button":281,"../components/checkbox/checkbox":282,"../components/content/content":283,"../components/icon/icon":284,"../components/img/img":285,"../components/infinite-scroll/infinite-scroll":287,"../components/infinite-scroll/infinite-scroll-content":286,"../components/input/input":289,"../components/item/item":294,"../components/item/item-sliding":293,"../components/label/label":295,"../components/list/list":296,"../components/menu/menu":303,"../components/menu/menu-close":298,"../components/menu/menu-toggle":301,"../components/nav/nav":311,"../components/nav/nav-push":308,"../components/nav/nav-router":310,"../components/navbar/navbar":314,"../components/option/option":315,"../components/radio/radio-button":316,"../components/radio/radio-group":317,"../components/refresher/refresher":319,"../components/refresher/refresher-content":318,"../components/scroll/scroll":320,"../components/searchbar/searchbar":321,"../components/segment/segment":322,"../components/select/select":323,"../components/show-hide-when/show-hide-when":324,"../components/slides/slides":325,"../components/spinner/spinner":327,"../components/tabs/tab":330,"../components/tabs/tabs":331,"../components/toggle/toggle":336,"../components/toolbar/toolbar":337,"../components/virtual-scroll/virtual-item":338,"../components/virtual-scroll/virtual-scroll":339,"angular2/common":19}],344:[function(require,module,exports){
+},{"../components/app/id":280,"../components/badge/badge":281,"../components/blur/blur":282,"../components/button/button":283,"../components/checkbox/checkbox":284,"../components/content/content":285,"../components/icon/icon":286,"../components/img/img":287,"../components/infinite-scroll/infinite-scroll":289,"../components/infinite-scroll/infinite-scroll-content":288,"../components/input/input":291,"../components/item/item":296,"../components/item/item-sliding":295,"../components/label/label":297,"../components/list/list":298,"../components/menu/menu":305,"../components/menu/menu-close":300,"../components/menu/menu-toggle":303,"../components/nav/nav":313,"../components/nav/nav-push":310,"../components/nav/nav-router":312,"../components/navbar/navbar":316,"../components/option/option":317,"../components/radio/radio-button":318,"../components/radio/radio-group":319,"../components/refresher/refresher":321,"../components/refresher/refresher-content":320,"../components/scroll/scroll":322,"../components/searchbar/searchbar":323,"../components/segment/segment":324,"../components/select/select":325,"../components/show-hide-when/show-hide-when":326,"../components/slides/slides":327,"../components/spinner/spinner":329,"../components/tabs/tab":332,"../components/tabs/tabs":333,"../components/toggle/toggle":338,"../components/toolbar/toolbar":339,"../components/virtual-scroll/virtual-item":340,"../components/virtual-scroll/virtual-scroll":341,"angular2/common":21}],346:[function(require,module,exports){
 "use strict";
 var config_1 = require('./config');
 // iOS Mode Settings
@@ -58853,7 +59169,7 @@ config_1.Config.setModeConfig('wp', {
     tabSubPages: true,
 });
 
-},{"./config":342}],345:[function(require,module,exports){
+},{"./config":344}],347:[function(require,module,exports){
 "use strict";
 var core_1 = require('angular2/core');
 var browser_1 = require('angular2/platform/browser');
@@ -58925,7 +59241,7 @@ function App(args) {
 }
 exports.App = App;
 
-},{"../config/bootstrap":341,"../config/directives":343,"angular2/core":21,"angular2/platform/browser":24}],346:[function(require,module,exports){
+},{"../config/bootstrap":343,"../config/directives":345,"angular2/core":23,"angular2/platform/browser":26}],348:[function(require,module,exports){
 "use strict";
 var core_1 = require('angular2/core');
 var _reflect = Reflect;
@@ -58977,7 +59293,7 @@ function Page(config) {
 }
 exports.Page = Page;
 
-},{"angular2/core":21}],347:[function(require,module,exports){
+},{"angular2/core":23}],349:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -59022,7 +59338,7 @@ var DragGesture = (function (_super) {
 }(gesture_1.Gesture));
 exports.DragGesture = DragGesture;
 
-},{"../util":365,"./gesture":348}],348:[function(require,module,exports){
+},{"../util":367,"./gesture":350}],350:[function(require,module,exports){
 "use strict";
 var util_1 = require('../util');
 var hammer_1 = require('./hammer');
@@ -59088,7 +59404,7 @@ var Gesture = (function () {
 }());
 exports.Gesture = Gesture;
 
-},{"../util":365,"./hammer":349}],349:[function(require,module,exports){
+},{"../util":367,"./hammer":351}],351:[function(require,module,exports){
 "use strict";
 /* tslint:disable */
 var util_1 = require('../util/util');
@@ -61242,7 +61558,7 @@ util_1.assign(Hammer, {
 });
 win.Hammer = Hammer;
 
-},{"../util/util":373}],350:[function(require,module,exports){
+},{"../util/util":375}],352:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -61290,7 +61606,7 @@ var SlideEdgeGesture = (function (_super) {
 }(slide_gesture_1.SlideGesture));
 exports.SlideEdgeGesture = SlideEdgeGesture;
 
-},{"../util/dom":367,"../util/util":373,"./slide-gesture":351}],351:[function(require,module,exports){
+},{"../util/dom":369,"../util/util":375,"./slide-gesture":353}],353:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -61367,7 +61683,7 @@ var SlideGesture = (function (_super) {
 }(drag_gesture_1.DragGesture));
 exports.SlideGesture = SlideGesture;
 
-},{"../util":365,"./drag-gesture":347}],352:[function(require,module,exports){
+},{"../util":367,"./drag-gesture":349}],354:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -61396,7 +61712,7 @@ require('./transitions/transition-ios');
 require('./transitions/transition-md');
 require('./transitions/transition-wp');
 
-},{"./animations/animation":272,"./animations/builtins":273,"./components":274,"./config/bootstrap":341,"./config/config":342,"./config/directives":343,"./config/modes":344,"./decorators/app":345,"./decorators/page":346,"./platform/platform":353,"./platform/registry":354,"./platform/storage":355,"./transitions/transition":362,"./transitions/transition-ios":359,"./transitions/transition-md":360,"./transitions/transition-wp":361,"./translation/translate":363,"./translation/translate_pipe":364,"./util/click-block":366,"./util/events":368,"./util/form":370,"./util/keyboard":371}],353:[function(require,module,exports){
+},{"./animations/animation":274,"./animations/builtins":275,"./components":276,"./config/bootstrap":343,"./config/config":344,"./config/directives":345,"./config/modes":346,"./decorators/app":347,"./decorators/page":348,"./platform/platform":355,"./platform/registry":356,"./platform/storage":357,"./transitions/transition":364,"./transitions/transition-ios":361,"./transitions/transition-md":362,"./transitions/transition-wp":363,"./translation/translate":365,"./translation/translate_pipe":366,"./util/click-block":368,"./util/events":370,"./util/form":372,"./util/keyboard":373}],355:[function(require,module,exports){
 "use strict";
 var core_1 = require('angular2/core');
 var util_1 = require('../util/util');
@@ -62033,7 +62349,7 @@ var PlatformNode = (function () {
 var platformRegistry = {};
 var platformDefault = null;
 
-},{"../util/dom":367,"../util/util":373,"angular2/core":21}],354:[function(require,module,exports){
+},{"../util/dom":369,"../util/util":375,"angular2/core":23}],356:[function(require,module,exports){
 "use strict";
 var platform_1 = require('./platform');
 var dom_1 = require('../util/dom');
@@ -62218,7 +62534,7 @@ function isIOSDevice(p) {
     return p.testNavigatorPlatform('iphone|ipad|ipod');
 }
 
-},{"../util/dom":367,"./platform":353}],355:[function(require,module,exports){
+},{"../util/dom":369,"./platform":355}],357:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -62227,7 +62543,7 @@ __export(require('./storage/storage'));
 __export(require('./storage/local-storage'));
 __export(require('./storage/sql'));
 
-},{"./storage/local-storage":356,"./storage/sql":357,"./storage/storage":358}],356:[function(require,module,exports){
+},{"./storage/local-storage":358,"./storage/sql":359,"./storage/storage":360}],358:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -62330,7 +62646,7 @@ var LocalStorage = (function (_super) {
 }(storage_1.StorageEngine));
 exports.LocalStorage = LocalStorage;
 
-},{"./storage":358}],357:[function(require,module,exports){
+},{"./storage":360}],359:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -62475,7 +62791,7 @@ var SqlStorage = (function (_super) {
 }(storage_1.StorageEngine));
 exports.SqlStorage = SqlStorage;
 
-},{"../../util/util":373,"./storage":358}],358:[function(require,module,exports){
+},{"../../util/util":375,"./storage":360}],360:[function(require,module,exports){
 "use strict";
 /**
  * Storage is an easy way to store key/value pairs and other complicated
@@ -62556,7 +62872,7 @@ var StorageEngine = (function () {
 }());
 exports.StorageEngine = StorageEngine;
 
-},{}],359:[function(require,module,exports){
+},{}],361:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -62727,7 +63043,7 @@ var IOSTransition = (function (_super) {
 }(transition_1.Transition));
 transition_1.Transition.register('ios-transition', IOSTransition);
 
-},{"../animations/animation":272,"./transition":362}],360:[function(require,module,exports){
+},{"../animations/animation":274,"./transition":364}],362:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -62788,7 +63104,7 @@ var MDTransition = (function (_super) {
 }(transition_1.Transition));
 transition_1.Transition.register('md-transition', MDTransition);
 
-},{"../animations/animation":272,"./transition":362}],361:[function(require,module,exports){
+},{"../animations/animation":274,"./transition":364}],363:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -62847,7 +63163,7 @@ var WPTransition = (function (_super) {
 }(transition_1.Transition));
 transition_1.Transition.register('wp-transition', WPTransition);
 
-},{"../animations/animation":272,"./transition":362}],362:[function(require,module,exports){
+},{"../animations/animation":274,"./transition":364}],364:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -62881,7 +63197,7 @@ var Transition = (function (_super) {
 exports.Transition = Transition;
 var TransitionRegistry = {};
 
-},{"../animations/animation":272}],363:[function(require,module,exports){
+},{"../animations/animation":274}],365:[function(require,module,exports){
 "use strict";
 /**
  * @private
@@ -62946,7 +63262,7 @@ var Translate = (function () {
 }());
 exports.Translate = Translate;
 
-},{}],364:[function(require,module,exports){
+},{}],366:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -62992,7 +63308,7 @@ var TranslatePipe = (function () {
 }());
 exports.TranslatePipe = TranslatePipe;
 
-},{"./translate":363,"angular2/core":21}],365:[function(require,module,exports){
+},{"./translate":365,"angular2/core":23}],367:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -63001,7 +63317,7 @@ var domUtil = require('./util/dom');
 exports.dom = domUtil;
 __export(require('./util/util'));
 
-},{"./util/dom":367,"./util/util":373}],366:[function(require,module,exports){
+},{"./util/dom":369,"./util/util":375}],368:[function(require,module,exports){
 "use strict";
 var dom_1 = require('./dom');
 var CSS_CLICK_BLOCK = 'click-block-active';
@@ -63053,7 +63369,7 @@ function hide() {
     }
 }
 
-},{"./dom":367}],367:[function(require,module,exports){
+},{"./dom":369}],369:[function(require,module,exports){
 "use strict";
 // RequestAnimationFrame Polyfill (Android 4.3 and below)
 /*! @author Paul Irish */
@@ -63313,7 +63629,7 @@ function flushDimensionCache() {
 exports.flushDimensionCache = flushDimensionCache;
 var dimensionCache = {};
 
-},{}],368:[function(require,module,exports){
+},{}],370:[function(require,module,exports){
 "use strict";
 /**
  * @name Events
@@ -63421,7 +63737,7 @@ var Events = (function () {
 }());
 exports.Events = Events;
 
-},{}],369:[function(require,module,exports){
+},{}],371:[function(require,module,exports){
 "use strict";
 var FeatureDetect = (function () {
     function FeatureDetect() {
@@ -63468,7 +63784,7 @@ FeatureDetect.add('hairlines', function (window, document, body) {
     return canDo;
 });
 
-},{}],370:[function(require,module,exports){
+},{}],372:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -63554,7 +63870,7 @@ var Form = (function () {
 }());
 exports.Form = Form;
 
-},{"angular2/core":21}],371:[function(require,module,exports){
+},{"angular2/core":23}],373:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -63738,7 +64054,7 @@ exports.Keyboard = Keyboard;
 var KEYBOARD_CLOSE_POLLING = 150;
 var KEYBOARD_POLLING_CHECKS_MAX = 100;
 
-},{"../config/config":342,"./dom":367,"./form":370,"angular2/core":21}],372:[function(require,module,exports){
+},{"../config/config":344,"./dom":369,"./form":372,"angular2/core":23}],374:[function(require,module,exports){
 "use strict";
 var dom_1 = require('../util/dom');
 var ScrollView = (function () {
@@ -63961,7 +64277,7 @@ var MIN_VELOCITY_CONTINUE_DECELERATION = 0.12;
 var DECELERATION_FRICTION = 0.97;
 var FRAME_MS = (1000 / 60);
 
-},{"../util/dom":367}],373:[function(require,module,exports){
+},{"../util/dom":369}],375:[function(require,module,exports){
 "use strict";
 /**
  * Given a min and max, restrict the given number
@@ -64208,13 +64524,12 @@ function throttle(fn, wait, options) {
 }
 exports.throttle = throttle;
 
-},{}],374:[function(require,module,exports){
+},{}],376:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 var ng1_1 = require('./ng1');
-ng1_1.initAngular1();
 var DEVICE_READY_TIMEOUT = 2000;
 var actionsheet_1 = require('./plugins/actionsheet');
 exports.ActionSheet = actionsheet_1.ActionSheet;
@@ -64228,36 +64543,35 @@ var appversion_1 = require('./plugins/appversion');
 exports.AppVersion = appversion_1.AppVersion;
 var badge_1 = require('./plugins/badge');
 exports.Badge = badge_1.Badge;
+var background_geolocation_1 = require('./plugins/background-geolocation');
 var barcodescanner_1 = require('./plugins/barcodescanner');
 exports.BarcodeScanner = barcodescanner_1.BarcodeScanner;
 var base64togallery_1 = require('./plugins/base64togallery');
 exports.Base64ToGallery = base64togallery_1.Base64ToGallery;
 var batterystatus_1 = require('./plugins/batterystatus');
 exports.BatteryStatus = batterystatus_1.BatteryStatus;
+var brightness_1 = require('./plugins/brightness');
+exports.Brightness = brightness_1.Brightness;
 var ble_1 = require('./plugins/ble');
 exports.BLE = ble_1.BLE;
 var bluetoothserial_1 = require('./plugins/bluetoothserial');
 exports.BluetoothSerial = bluetoothserial_1.BluetoothSerial;
 var calendar_1 = require('./plugins/calendar');
-exports.Calendar = calendar_1.Calendar;
 var camera_1 = require('./plugins/camera');
-exports.Camera = camera_1.Camera;
+var card_io_1 = require('./plugins/card-io');
 var clipboard_1 = require('./plugins/clipboard');
 exports.Clipboard = clipboard_1.Clipboard;
 var contacts_1 = require('./plugins/contacts');
-exports.Contacts = contacts_1.Contacts;
 var datepicker_1 = require('./plugins/datepicker');
-exports.DatePicker = datepicker_1.DatePicker;
 var dbmeter_1 = require('./plugins/dbmeter');
 exports.DBMeter = dbmeter_1.DBMeter;
+var deeplinks_1 = require('./plugins/deeplinks');
+exports.Deeplinks = deeplinks_1.Deeplinks;
 var device_1 = require('./plugins/device');
-exports.Device = device_1.Device;
 var deviceaccounts_1 = require('./plugins/deviceaccounts');
 exports.DeviceAccounts = deviceaccounts_1.DeviceAccounts;
 var devicemotion_1 = require('./plugins/devicemotion');
-exports.DeviceMotion = devicemotion_1.DeviceMotion;
 var deviceorientation_1 = require('./plugins/deviceorientation');
-exports.DeviceOrientation = deviceorientation_1.DeviceOrientation;
 var diagnostic_1 = require('./plugins/diagnostic');
 exports.Diagnostic = diagnostic_1.Diagnostic;
 var dialogs_1 = require('./plugins/dialogs');
@@ -64268,57 +64582,80 @@ var facebook_1 = require('./plugins/facebook');
 exports.Facebook = facebook_1.Facebook;
 var file_1 = require('./plugins/file');
 exports.File = file_1.File;
+var filetransfer_1 = require('./plugins/filetransfer');
+exports.Transfer = filetransfer_1.Transfer;
 var flashlight_1 = require('./plugins/flashlight');
 exports.Flashlight = flashlight_1.Flashlight;
 var geolocation_1 = require('./plugins/geolocation');
 exports.Geolocation = geolocation_1.Geolocation;
 var globalization_1 = require('./plugins/globalization');
 exports.Globalization = globalization_1.Globalization;
+var google_plus_1 = require('./plugins/google-plus');
+exports.GooglePlus = google_plus_1.GooglePlus;
 var googlemaps_1 = require('./plugins/googlemaps');
-exports.GoogleMaps = googlemaps_1.GoogleMaps;
 var googleanalytics_1 = require('./plugins/googleanalytics');
 exports.GoogleAnalytics = googleanalytics_1.GoogleAnalytics;
 var hotspot_1 = require('./plugins/hotspot');
 exports.Hotspot = hotspot_1.Hotspot;
+var httpd_1 = require('./plugins/httpd');
 var imagepicker_1 = require('./plugins/imagepicker');
-exports.ImagePicker = imagepicker_1.ImagePicker;
 var inappbrowser_1 = require('./plugins/inappbrowser');
-exports.InAppBrowser = inappbrowser_1.InAppBrowser;
+var insomnia_1 = require('./plugins/insomnia');
+exports.Insomnia = insomnia_1.Insomnia;
 var keyboard_1 = require('./plugins/keyboard');
 exports.Keyboard = keyboard_1.Keyboard;
 var launchnavigator_1 = require('./plugins/launchnavigator');
-exports.LaunchNavigator = launchnavigator_1.LaunchNavigator;
 var localnotifications_1 = require('./plugins/localnotifications');
-exports.LocalNotifications = localnotifications_1.LocalNotifications;
 var media_1 = require('./plugins/media');
-exports.MediaPlugin = media_1.MediaPlugin;
 var network_1 = require('./plugins/network');
 exports.Network = network_1.Network;
 exports.Connection = network_1.Connection;
 var push_1 = require('./plugins/push');
-exports.Push = push_1.Push;
+var safari_view_controller_1 = require('./plugins/safari-view-controller');
 var screenshot_1 = require('./plugins/screenshot');
 exports.Screenshot = screenshot_1.Screenshot;
 var sms_1 = require('./plugins/sms');
-exports.SMS = sms_1.SMS;
 var socialsharing_1 = require('./plugins/socialsharing');
 exports.SocialSharing = socialsharing_1.SocialSharing;
 var spinnerdialog_1 = require('./plugins/spinnerdialog');
-exports.SpinnerDialog = spinnerdialog_1.SpinnerDialog;
 var splashscreen_1 = require('./plugins/splashscreen');
 exports.Splashscreen = splashscreen_1.Splashscreen;
 var sqlite_1 = require('./plugins/sqlite');
 exports.SQLite = sqlite_1.SQLite;
 var statusbar_1 = require('./plugins/statusbar');
 exports.StatusBar = statusbar_1.StatusBar;
+var _3dtouch_1 = require('./plugins/3dtouch');
 var toast_1 = require('./plugins/toast');
-exports.Toast = toast_1.Toast;
 var touchid_1 = require('./plugins/touchid');
 exports.TouchID = touchid_1.TouchID;
 var vibration_1 = require('./plugins/vibration');
 exports.Vibration = vibration_1.Vibration;
 var webintent_1 = require('./plugins/webintent');
 exports.WebIntent = webintent_1.WebIntent;
+__export(require('./plugins/3dtouch'));
+__export(require('./plugins/background-geolocation'));
+__export(require('./plugins/backgroundmode'));
+__export(require('./plugins/batterystatus'));
+__export(require('./plugins/calendar'));
+__export(require('./plugins/camera'));
+__export(require('./plugins/card-io'));
+__export(require('./plugins/contacts'));
+__export(require('./plugins/datepicker'));
+__export(require('./plugins/device'));
+__export(require('./plugins/devicemotion'));
+__export(require('./plugins/deviceorientation'));
+__export(require('./plugins/googlemaps'));
+__export(require('./plugins/httpd'));
+__export(require('./plugins/imagepicker'));
+__export(require('./plugins/inappbrowser'));
+__export(require('./plugins/launchnavigator'));
+__export(require('./plugins/localnotifications'));
+__export(require('./plugins/media'));
+__export(require('./plugins/push'));
+__export(require('./plugins/safari-view-controller'));
+__export(require('./plugins/sms'));
+__export(require('./plugins/spinnerdialog'));
+__export(require('./plugins/toast'));
 __export(require('./plugins/plugin'));
 // Window export to use outside of a module loading system
 window['IonicNative'] = {
@@ -64328,18 +64665,22 @@ window['IonicNative'] = {
     AppRate: apprate_1.AppRate,
     AppVersion: appversion_1.AppVersion,
     Badge: badge_1.Badge,
+    BackgroundGeolocation: background_geolocation_1.BackgroundGeolocation,
     BarcodeScanner: barcodescanner_1.BarcodeScanner,
     Base64ToGallery: base64togallery_1.Base64ToGallery,
     BatteryStatus: batterystatus_1.BatteryStatus,
+    Brightness: brightness_1.Brightness,
     BLE: ble_1.BLE,
     BluetoothSerial: bluetoothserial_1.BluetoothSerial,
     Calendar: calendar_1.Calendar,
     Camera: camera_1.Camera,
+    CardIO: card_io_1.CardIO,
     Clipboard: clipboard_1.Clipboard,
     Connection: network_1.Connection,
     Contacts: contacts_1.Contacts,
     DatePicker: datepicker_1.DatePicker,
     DBMeter: dbmeter_1.DBMeter,
+    Deeplinks: deeplinks_1.Deeplinks,
     Device: device_1.Device,
     DeviceAccounts: deviceaccounts_1.DeviceAccounts,
     DeviceMotion: devicemotion_1.DeviceMotion,
@@ -64352,9 +64693,11 @@ window['IonicNative'] = {
     Flashlight: flashlight_1.Flashlight,
     Geolocation: geolocation_1.Geolocation,
     Globalization: globalization_1.Globalization,
-    GoogleMaps: googlemaps_1.GoogleMaps,
+    GooglePlus: google_plus_1.GooglePlus,
+    GoogleMap: googlemaps_1.GoogleMap,
     GoogleAnalytics: googleanalytics_1.GoogleAnalytics,
     Hotspot: hotspot_1.Hotspot,
+    Httpd: httpd_1.Httpd,
     ImagePicker: imagepicker_1.ImagePicker,
     InAppBrowser: inappbrowser_1.InAppBrowser,
     Keyboard: keyboard_1.Keyboard,
@@ -64363,6 +64706,7 @@ window['IonicNative'] = {
     MediaPlugin: media_1.MediaPlugin,
     Network: network_1.Network,
     Push: push_1.Push,
+    SafariViewController: safari_view_controller_1.SafariViewController,
     Screenshot: screenshot_1.Screenshot,
     SMS: sms_1.SMS,
     SocialSharing: socialsharing_1.SocialSharing,
@@ -64370,11 +64714,14 @@ window['IonicNative'] = {
     Splashscreen: splashscreen_1.Splashscreen,
     SQLite: sqlite_1.SQLite,
     StatusBar: statusbar_1.StatusBar,
+    ThreeDeeTouch: _3dtouch_1.ThreeDeeTouch,
     Toast: toast_1.Toast,
     TouchID: touchid_1.TouchID,
+    Transfer: filetransfer_1.Transfer,
     Vibration: vibration_1.Vibration,
     WebIntent: webintent_1.WebIntent
 };
+ng1_1.initAngular1(window['IonicNative']);
 // To help developers using cordova, we listen for the device ready event and
 // log an error if it didn't fire in a reasonable amount of time. Generally,
 // when this happens, developers should remove and reinstall plugins, since
@@ -64391,33 +64738,160 @@ setTimeout(function () {
     }
 }, DEVICE_READY_TIMEOUT);
 
-},{"./ng1":375,"./plugins/actionsheet":376,"./plugins/admob":377,"./plugins/appavailability":378,"./plugins/apprate":379,"./plugins/appversion":380,"./plugins/badge":381,"./plugins/barcodescanner":382,"./plugins/base64togallery":383,"./plugins/batterystatus":384,"./plugins/ble":385,"./plugins/bluetoothserial":386,"./plugins/calendar":387,"./plugins/camera":388,"./plugins/clipboard":389,"./plugins/contacts":390,"./plugins/datepicker":391,"./plugins/dbmeter":392,"./plugins/device":393,"./plugins/deviceaccounts":394,"./plugins/devicemotion":395,"./plugins/deviceorientation":396,"./plugins/diagnostic":397,"./plugins/dialogs":398,"./plugins/emailcomposer":399,"./plugins/facebook":400,"./plugins/file":401,"./plugins/flashlight":402,"./plugins/geolocation":403,"./plugins/globalization":404,"./plugins/googleanalytics":405,"./plugins/googlemaps":406,"./plugins/hotspot":407,"./plugins/imagepicker":408,"./plugins/inappbrowser":409,"./plugins/keyboard":410,"./plugins/launchnavigator":411,"./plugins/localnotifications":412,"./plugins/media":413,"./plugins/network":414,"./plugins/plugin":415,"./plugins/push":416,"./plugins/screenshot":417,"./plugins/sms":418,"./plugins/socialsharing":419,"./plugins/spinnerdialog":420,"./plugins/splashscreen":421,"./plugins/sqlite":422,"./plugins/statusbar":423,"./plugins/toast":424,"./plugins/touchid":425,"./plugins/vibration":426,"./plugins/webintent":427}],375:[function(require,module,exports){
+},{"./ng1":377,"./plugins/3dtouch":378,"./plugins/actionsheet":379,"./plugins/admob":380,"./plugins/appavailability":381,"./plugins/apprate":382,"./plugins/appversion":383,"./plugins/background-geolocation":384,"./plugins/backgroundmode":385,"./plugins/badge":386,"./plugins/barcodescanner":387,"./plugins/base64togallery":388,"./plugins/batterystatus":389,"./plugins/ble":390,"./plugins/bluetoothserial":391,"./plugins/brightness":392,"./plugins/calendar":393,"./plugins/camera":394,"./plugins/card-io":395,"./plugins/clipboard":396,"./plugins/contacts":397,"./plugins/datepicker":398,"./plugins/dbmeter":399,"./plugins/deeplinks":400,"./plugins/device":401,"./plugins/deviceaccounts":402,"./plugins/devicemotion":403,"./plugins/deviceorientation":404,"./plugins/diagnostic":405,"./plugins/dialogs":406,"./plugins/emailcomposer":407,"./plugins/facebook":408,"./plugins/file":409,"./plugins/filetransfer":410,"./plugins/flashlight":411,"./plugins/geolocation":412,"./plugins/globalization":413,"./plugins/google-plus":414,"./plugins/googleanalytics":415,"./plugins/googlemaps":416,"./plugins/hotspot":417,"./plugins/httpd":418,"./plugins/imagepicker":419,"./plugins/inappbrowser":420,"./plugins/insomnia":421,"./plugins/keyboard":422,"./plugins/launchnavigator":423,"./plugins/localnotifications":424,"./plugins/media":425,"./plugins/network":426,"./plugins/plugin":427,"./plugins/push":428,"./plugins/safari-view-controller":429,"./plugins/screenshot":430,"./plugins/sms":431,"./plugins/socialsharing":432,"./plugins/spinnerdialog":433,"./plugins/splashscreen":434,"./plugins/sqlite":435,"./plugins/statusbar":436,"./plugins/toast":437,"./plugins/touchid":438,"./plugins/vibration":439,"./plugins/webintent":440}],377:[function(require,module,exports){
 "use strict";
 /**
- * Initialize the ngCordova Angular module if we're running in ng1
+ * Initialize the ionic.native Angular module if we're running in ng1.
+ * This iterates through the list of registered plugins and dynamically
+ * creates Angular 1 services of the form $cordovaSERVICE, ex: $cordovStatusBar.
  */
-function initAngular1() {
+function initAngular1(plugins) {
     if (window.angular) {
-        window.angular.module('ngCordova', []);
+        window.angular.module('ionic.native', []);
+        for (var name in plugins) {
+            var serviceName = '$cordova' + name;
+            var cls = plugins[name];
+            (function (serviceName, cls, name) {
+                window.angular.module('ionic.native').service(serviceName, [function () {
+                        var funcs = {};
+                        for (var k in cls) {
+                            funcs[k] = cls[k];
+                        }
+                        funcs['name'] = name;
+                        return funcs;
+                    }]);
+            })(serviceName, cls, name);
+        }
     }
 }
 exports.initAngular1 = initAngular1;
-/**
- * Publish a new Angular 1 service for this plugin.
- */
-function publishAngular1Service(config, cls) {
-    var serviceName = '$cordova' + cls.name;
-    console.log('Registering Angular1 service', serviceName);
-    window.angular.module('ngCordova').service(serviceName, [function () {
-            var funcs = {};
-            for (var k in cls) {
-            }
-            return funcs;
-        }]);
-}
-exports.publishAngular1Service = publishAngular1Service;
 
-},{}],376:[function(require,module,exports){
+},{}],378:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+ * @name 3DTouch
+ * @description
+ * @usage
+ * Please do refer to the original plugin's repo for detailed usage. The usage example here might not be sufficient.
+ * ```
+ * import {ThreeDeeTouch, ThreeDeeTouchQuickAction, ThreeDeeTouchForceTouch} from 'ionic-native';
+ *
+ * ...
+ *
+ * ThreeDeeTouch.isAvailable().then(isAvailable => console.log("3D Touch available? " + isAvailable)):
+ *
+ * ThreeDeeTouch.watchForceTouches()
+ *   .subscribe(
+ *     (data: ThreeDeeTouchForceTouch) => {
+ *       console.log("Force touch %" + data.force);
+ *       console.log("Force touch timestamp: " + data.timestamp);
+ *       console.log("Force touch x: " + data.x);
+ *       console.log("Force touch y: " + data.y);
+ *     }
+ *   );
+ *
+ *
+ * let actions: Array<ThreeDeeTouchQuickAction> = [
+ *   {
+ *     type: 'checkin',
+ *     title: 'Check in',
+ *     subtitle: 'Quickly check in',
+ *     iconType: 'Compose'
+ *   },
+ *   {
+ *     type: 'share',
+ *     title: 'Share',
+ *     subtitle: 'Share like you care',
+ *     iconType: 'Share'
+ *   },
+ *   {
+ *     type: 'search',
+ *     title: 'Search',
+ *     iconType: 'Search'
+ *   },
+ *   {
+ *     title: 'Show favorites',
+ *     iconTemplate: 'HeartTemplate'
+ *   }
+ * ];
+ * ThreeDeeTouch.configureQuickActions(actions);
+ * ```
+ */
+var ThreeDeeTouch = (function () {
+    function ThreeDeeTouch() {
+    }
+    /**
+     * You need an iPhone 6S or some future tech to use the features of this plugin, so you can check at runtime if the user's device is supported.
+     * @returns {Promise<boolean>} returns a promise that resolves with a boolean that indicates whether the plugin is available or not
+     */
+    ThreeDeeTouch.isAvailable = function () { return; };
+    /**
+     * You can get a notification when the user force touches the webview. The plugin defines a Force Touch when at least 75% of the maximum force is applied to the screen. Your app will receive the x and y coordinates, so you have to figure out which UI element was touched.
+     * @returns {Observable<ThreeDeeTouchForceTouch>} Returns an observable that sends a `ThreeDeeTouchForceTouch` object
+     */
+    ThreeDeeTouch.watchForceTouches = function () { return; };
+    ThreeDeeTouch.configureQuickActions = function (quickActions) { };
+    /**
+     * When a home icon is pressed, your app launches and this JS callback is invoked.
+     * @returns {Observable<any>} returns an observable that notifies you when he user presses on the home screen icon
+     */
+    ThreeDeeTouch.onHomeIconPressed = function () { return; };
+    /**
+     * UIWebView and WKWebView (the webviews powering Cordova apps) don't allow the fancy new link preview feature of iOS9.
+     */
+    ThreeDeeTouch.enableLinkPreview = function () { };
+    /**
+     * Disabled the link preview feature, if enabled.
+     */
+    ThreeDeeTouch.disableLinkPreview = function () { };
+    __decorate([
+        plugin_1.Cordova()
+    ], ThreeDeeTouch, "isAvailable", null);
+    __decorate([
+        plugin_1.Cordova({
+            observable: true
+        })
+    ], ThreeDeeTouch, "watchForceTouches", null);
+    __decorate([
+        plugin_1.Cordova({
+            sync: true
+        })
+    ], ThreeDeeTouch, "configureQuickActions", null);
+    __decorate([
+        plugin_1.Cordova({
+            observable: true
+        })
+    ], ThreeDeeTouch, "onHomeIconPressed", null);
+    __decorate([
+        plugin_1.Cordova({
+            sync: true
+        })
+    ], ThreeDeeTouch, "enableLinkPreview", null);
+    __decorate([
+        plugin_1.Cordova({
+            sync: true
+        })
+    ], ThreeDeeTouch, "disableLinkPreview", null);
+    ThreeDeeTouch = __decorate([
+        plugin_1.Plugin({
+            plugin: 'cordova-plugin-3dtouch',
+            pluginRef: 'ThreeDeeTouch',
+            repo: 'https://github.com/EddyVerbruggen/cordova-plugin-3dtouch',
+            platforms: ['iOS']
+        })
+    ], ThreeDeeTouch);
+    return ThreeDeeTouch;
+}());
+exports.ThreeDeeTouch = ThreeDeeTouch;
+
+},{"./plugin":427}],379:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -64493,7 +64967,7 @@ var ActionSheet = (function () {
 }());
 exports.ActionSheet = ActionSheet;
 
-},{"./plugin":415}],377:[function(require,module,exports){
+},{"./plugin":427}],380:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -64504,8 +64978,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var plugin_1 = require('./plugin');
 /**
  * @name AdMob
- * @description
+ * @description Plugin for Google Ads, including AdMob / DFP (doubleclick for publisher) and mediations to other Ad networks.
  * @usage
+ * Please refer the the plugin's original repository for detailed usage.
  */
 var AdMob = (function () {
     function AdMob() {
@@ -64690,14 +65165,15 @@ var AdMob = (function () {
         plugin_1.Plugin({
             plugin: 'cordova-plugin-admobpro',
             pluginRef: 'AdMob',
-            repo: 'https://github.com/floatinghotspot/cordova-admob-pro'
+            repo: 'https://github.com/floatinghotpot/cordova-admob-pro',
+            platforms: ['Android', 'iOS', 'Windows Phone 8']
         })
     ], AdMob);
     return AdMob;
 }());
 exports.AdMob = AdMob;
 
-},{"./plugin":415}],378:[function(require,module,exports){
+},{"./plugin":427}],381:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -64757,7 +65233,7 @@ var AppAvailability = (function () {
 }());
 exports.AppAvailability = AppAvailability;
 
-},{"./plugin":415}],379:[function(require,module,exports){
+},{"./plugin":427}],382:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -64838,7 +65314,7 @@ var AppRate = (function () {
 }());
 exports.AppRate = AppRate;
 
-},{"./plugin":415}],380:[function(require,module,exports){
+},{"./plugin":427}],383:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -64912,7 +65388,312 @@ var AppVersion = (function () {
 }());
 exports.AppVersion = AppVersion;
 
-},{"./plugin":415}],381:[function(require,module,exports){
+},{"./plugin":427}],384:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+ * @name BackgroundGeolocation
+ * @description
+ * This plugin provides foreground and background geolocation with battery-saving "circular region monitoring" and "stop detection". For
+ * more detail, please see https://github.com/mauron85/cordova-plugin-background-geolocation
+ *
+ * @usage
+ *
+ * ```ts
+ * import {BackgroundGeolocation} from 'ionic-native';
+ *
+ *
+ *
+ * // When device is ready :
+ * platform.ready().then(() => {
+ *
+ *     // BackgroundGeolocation is highly configurable. See platform specific configuration options
+ *     let config = {
+ *             desiredAccuracy: 10,
+ *             stationaryRadius: 20,
+ *             distanceFilter: 30,
+ *             debug: true, //  enable this hear sounds for background-geolocation life-cycle.
+ *             stopOnTerminate: false, // enable this to clear background location settings when the app terminates
+ *     };
+ *
+ *     BackgroundGeolocation.configure(config)
+ *        .then((location) => {
+ *             console.log('[js] BackgroundGeolocation callback:  ' + location.latitude + ',' + location.longitude);
+ *
+ *             // IMPORTANT:  You must execute the finish method here to inform the native plugin that you're finished,
+ *             // and the background-task may be completed.  You must do this regardless if your HTTP request is successful or not.
+ *             // IF YOU DON'T, ios will CRASH YOUR APP for spending too much time in the background.
+ *             BackgroundGeolocation.finish(); // FOR IOS ONLY
+ *         })
+ *        .catch((error) => {
+ *             console.log('BackgroundGeolocation error');
+ *         });
+ *
+ *     // Turn ON the background-geolocation system.  The user will be tracked whenever they suspend the app.
+ *     BackgroundGeolocation.start();
+ * }
+ *
+ * // If you wish to turn OFF background-tracking, call the #stop method.
+ * BackgroundGeolocation.stop();
+ *
+ * ```
+ */
+var BackgroundGeolocation = (function () {
+    function BackgroundGeolocation() {
+    }
+    /**
+     * Configure the plugin.
+     * Success callback will be called with one argument - Location object, which tries to mimic w3c Coordinates interface.
+     * See http://dev.w3.org/geo/api/spec-source.html#coordinates_interface
+     * Callback to be executed every time a geolocation is recorded in the background.
+     *
+     * Fail callback to be executed every time a geolocation error occurs.
+     *
+     * Options a json object of type Config
+     */
+    BackgroundGeolocation.configure = function (options) { return; };
+    /**
+     * Turn ON the background-geolocation system.
+     * The user will be tracked whenever they suspend the app.
+     */
+    BackgroundGeolocation.start = function () { return; };
+    /**
+     * Turn OFF background-tracking
+     */
+    BackgroundGeolocation.stop = function () { return; };
+    /**
+     * Inform the native plugin that you're finished, the background-task may be completed
+     * NOTE: IOS, WP only
+     */
+    BackgroundGeolocation.finish = function () { };
+    /**
+     * Force the plugin to enter "moving" or "stationary" state
+     * NOTE: IOS, WP only
+     */
+    BackgroundGeolocation.changePace = function (isMoving) { };
+    /**
+     * Setup configuration
+     */
+    BackgroundGeolocation.setConfig = function (options) { return; };
+    /**
+     * Returns current stationaryLocation if available. null if not
+     * NOTE: IOS, WP only
+     */
+    BackgroundGeolocation.getStationaryLocation = function () { return; };
+    /**
+     * Add a stationary-region listener. Whenever the devices enters "stationary-mode",
+     * your #success callback will be executed with #location param containing #radius of region
+     * NOTE: IOS, WP only
+     */
+    BackgroundGeolocation.onStationary = function () { return; };
+    /**
+     * Check if location is enabled on the device
+     * @returns {Promise<number>} Returns a promise with int argument that takes values 0, 1 (true).
+     * NOTE: ANDROID only
+     */
+    BackgroundGeolocation.isLocationEnabled = function () { return; };
+    /**
+     * Display device location settings
+     */
+    BackgroundGeolocation.showLocationSettings = function () { };
+    /**
+     * Method can be used to detect user changes in location services settings.
+     * If user enable or disable location services then success callback will be executed.
+     * In case or error (SettingNotFoundException) fail callback will be executed.
+     * NOTE: ANDROID only
+     */
+    BackgroundGeolocation.watchLocationMode = function () { return; };
+    /**
+     * Stop watching for location mode changes.
+     * NOTE: ANDROID only
+     */
+    BackgroundGeolocation.stopWatchingLocationMode = function () { };
+    /**
+     * Method will return all stored locations.
+     * Locations are stored when:
+     *  - config.stopOnTerminate is false and main activity was killed
+     *    by the system
+     *  or
+     *  - option.debug is true
+     * NOTE: ANDROID only
+     */
+    BackgroundGeolocation.getLocations = function () { return; };
+    /**
+     * Delete stored location by given locationId.
+     * NOTE: ANDROID only
+     */
+    BackgroundGeolocation.deleteLocation = function (locationId) { return; };
+    /**
+     * Delete all stored locations.
+     * NOTE: ANDROID only
+     */
+    BackgroundGeolocation.deleteAllLocations = function () { return; };
+    __decorate([
+        plugin_1.Cordova({
+            callbackOrder: 'reverse'
+        })
+    ], BackgroundGeolocation, "configure", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "start", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "stop", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "finish", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "changePace", null);
+    __decorate([
+        plugin_1.Cordova({
+            callbackOrder: 'reverse'
+        })
+    ], BackgroundGeolocation, "setConfig", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "getStationaryLocation", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "onStationary", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "isLocationEnabled", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "showLocationSettings", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "watchLocationMode", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "stopWatchingLocationMode", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "getLocations", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "deleteLocation", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundGeolocation, "deleteAllLocations", null);
+    BackgroundGeolocation = __decorate([
+        plugin_1.Plugin({
+            plugin: 'cordova-plugin-mauron85-background-geolocation',
+            pluginRef: 'plugins.backgroundGeoLocation',
+            repo: 'https://github.com/mauron85/cordova-plugin-background-geolocation',
+            platforms: ['iOS', 'Android', 'Windows Phone 8']
+        })
+    ], BackgroundGeolocation);
+    return BackgroundGeolocation;
+}());
+exports.BackgroundGeolocation = BackgroundGeolocation;
+
+},{"./plugin":427}],385:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+* @name Background Mode
+* @description
+* Cordova plugin to prevent the app from going to sleep while in background.
+*  Requires Cordova plugin: cordova-plugin-background-mode. For more info about plugin, vist: https://github.com/katzer/cordova-plugin-background-mode#android-customization
+*@usage
+* ```js
+* import {BackgroundMode} from 'ionic-native';
+*
+* BackgroundMode.enable();
+*/
+var BackgroundMode = (function () {
+    function BackgroundMode() {
+    }
+    /**
+    * Enable the background mode.
+    * Once called, prevents the app from being paused while in background.
+    */
+    BackgroundMode.enable = function () { };
+    /**
+    * Disable the background mode.
+    * Once the background mode has been disabled, the app will be paused when in background.
+    */
+    BackgroundMode.disable = function () { };
+    /**
+    * Checks if background mode is enabled or not.
+    */
+    BackgroundMode.isEnabled = function () { return; };
+    /**
+    * Can be used to get the information if the background mode is active.
+    */
+    BackgroundMode.isActive = function () { return; };
+    /**
+    * Override the default title, ticker and text.
+    * Available only for Android platform.
+    */
+    BackgroundMode.setDefaults = function (options) { };
+    /**
+    * Modify the displayed information.
+    * Available only for Android platform.
+    */
+    BackgroundMode.update = function (options) { };
+    /**
+    * Sets a callback for a specific event
+    * Can be used to get notified or run function when the background mode has been activated, deactivated or failed.
+    * @param eventName The name of the event. Available events: activate, deactivate, failure
+    */
+    BackgroundMode.on = function (eventName, callback) { };
+    __decorate([
+        plugin_1.Cordova({
+            sync: true
+        })
+    ], BackgroundMode, "enable", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundMode, "disable", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundMode, "isEnabled", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BackgroundMode, "isActive", null);
+    __decorate([
+        plugin_1.Cordova({
+            platforms: ['Android']
+        })
+    ], BackgroundMode, "setDefaults", null);
+    __decorate([
+        plugin_1.Cordova({
+            platforms: ['Android']
+        })
+    ], BackgroundMode, "update", null);
+    __decorate([
+        plugin_1.Cordova({
+            sync: true
+        })
+    ], BackgroundMode, "on", null);
+    BackgroundMode = __decorate([
+        plugin_1.Plugin({
+            plugin: 'de.appplant.cordova.plugin.background-mode',
+            pluginRef: 'cordova.plugins.backgroundMode',
+            repo: 'https://github.com/katzer/cordova-plugin-background-mode',
+            platforms: ['Android', 'iOS', 'Windows Phone 8']
+        })
+    ], BackgroundMode);
+    return BackgroundMode;
+}());
+exports.BackgroundMode = BackgroundMode;
+
+},{"./plugin":427}],386:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -65010,7 +65791,7 @@ var Badge = (function () {
 }());
 exports.Badge = Badge;
 
-},{"./plugin":415}],382:[function(require,module,exports){
+},{"./plugin":427}],387:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -65045,10 +65826,26 @@ var BarcodeScanner = (function () {
      * Open the barcode scanner.
      * @return Returns a Promise that resolves with scanner data, or rejects with an error.
      */
-    BarcodeScanner.scan = function () { return; };
+    BarcodeScanner.scan = function (options) { return; };
+    /**
+     * Encodes data into a barcode.
+     * NOTE: not well supported on Android
+     * @param type
+     * @param data
+     */
+    BarcodeScanner.encode = function (type, data) { return; };
+    BarcodeScanner.Encode = {
+        TEXT_TYPE: 'TEXT_TYPE',
+        EMAIL_TYPE: 'EMAIL_TYPE',
+        PHONE_TYPE: 'PHONE_TYPE',
+        SMS_TYPE: 'SMS_TYPE'
+    };
     __decorate([
         plugin_1.Cordova()
     ], BarcodeScanner, "scan", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], BarcodeScanner, "encode", null);
     BarcodeScanner = __decorate([
         plugin_1.Plugin({
             plugin: 'phonegap-plugin-barcodescanner',
@@ -65061,7 +65858,7 @@ var BarcodeScanner = (function () {
 }());
 exports.BarcodeScanner = BarcodeScanner;
 
-},{"./plugin":415}],383:[function(require,module,exports){
+},{"./plugin":427}],388:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -65092,12 +65889,12 @@ var Base64ToGallery = (function () {
      * @param data
      * @param prefix
      */
-    Base64ToGallery.prototype.base64ToGallery = function (data, prefix) {
+    Base64ToGallery.base64ToGallery = function (data, prefix) {
         return;
     };
     __decorate([
         plugin_1.Cordova()
-    ], Base64ToGallery.prototype, "base64ToGallery", null);
+    ], Base64ToGallery, "base64ToGallery", null);
     Base64ToGallery = __decorate([
         plugin_1.Plugin({
             plugin: 'cordova-base64-to-gallery',
@@ -65110,7 +65907,7 @@ var Base64ToGallery = (function () {
 }());
 exports.Base64ToGallery = Base64ToGallery;
 
-},{"./plugin":415}],384:[function(require,module,exports){
+},{"./plugin":427}],389:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -65180,7 +65977,7 @@ var BatteryStatus = (function () {
     ], BatteryStatus, "onCritical", null);
     BatteryStatus = __decorate([
         plugin_1.Plugin({
-            plugin: 'cordova-plugin-batterystatus',
+            plugin: 'cordova-plugin-battery-status',
             repo: 'https://github.com/apache/cordova-plugin-battery-status',
             platforms: ['Amazon Fire OS', 'iOS', 'Android', 'BlackBerry 10', 'Windows Phone 7', 'Windows Phone 8', 'Windows', 'Firefox OS', 'Browser']
         })
@@ -65189,7 +65986,7 @@ var BatteryStatus = (function () {
 }());
 exports.BatteryStatus = BatteryStatus;
 
-},{"./plugin":415}],385:[function(require,module,exports){
+},{"./plugin":427}],390:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -65613,7 +66410,7 @@ var BLE = (function () {
 }());
 exports.BLE = BLE;
 
-},{"./plugin":415}],386:[function(require,module,exports){
+},{"./plugin":427}],391:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -65632,18 +66429,16 @@ var BluetoothSerial = (function () {
     }
     /**
      * Connect to a Bluetooth device
+     * Returns an Observable. Subscribe to connect, unsubscribe to disconnect.
      * @param macAddress_or_uuid Identifier of the remote device
      */
     BluetoothSerial.connect = function (macAddress_or_uuid) { return; };
     /**
      * Connect insecurely to a Bluetooth device
+     * Returns an Observable. Subscribe to connect, unsubscribe to disconnect.
      * @param macAddress Identifier of the remote device
      */
     BluetoothSerial.connectInsecure = function (macAddress) { return; };
-    /**
-     * Disconnect
-     */
-    BluetoothSerial.disconnect = function () { return; };
     /**
      * Writes data to the serial port
      * @param data ArrayBuffer of data
@@ -65752,19 +66547,18 @@ var BluetoothSerial = (function () {
     BluetoothSerial.setDiscoverable = function (discoverableDuration) { };
     __decorate([
         plugin_1.Cordova({
-            platforms: ['Android', 'iOS', 'Windows Phone']
+            platforms: ['Android', 'iOS', 'Windows Phone'],
+            observable: true,
+            clearFunction: 'disconnect'
         })
     ], BluetoothSerial, "connect", null);
     __decorate([
         plugin_1.Cordova({
-            platforms: ['Android']
+            platforms: ['Android'],
+            observable: true,
+            clearFunction: 'disconnect'
         })
     ], BluetoothSerial, "connectInsecure", null);
-    __decorate([
-        plugin_1.Cordova({
-            platforms: ['Android', 'iOS', 'Windows Phone']
-        })
-    ], BluetoothSerial, "disconnect", null);
     __decorate([
         plugin_1.Cordova({
             platforms: ['Android', 'iOS', 'Windows Phone']
@@ -65870,7 +66664,74 @@ var BluetoothSerial = (function () {
 }());
 exports.BluetoothSerial = BluetoothSerial;
 
-},{"./plugin":415}],387:[function(require,module,exports){
+},{"./plugin":427}],392:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+ * @name Brightness
+ * @description
+ * The Brightness plugin let you control the display brightness of your device.
+ *
+ * Requires Cordova plugin: `cordova-plugin-brightness`. For more info, please see the [Brightness plugin docs](https://github.com/mgcrea/cordova-plugin-brightness).
+ *
+ * @usage
+ * ```ts
+ * import {Brightness} from 'ionic-native';
+ *
+ * let brightnessValue: number = 0.8;
+ * Brightness.setBrightness(brightnessValue);
+ * ```
+ *
+ */
+var Brightness = (function () {
+    function Brightness() {
+    }
+    /**
+     * Sets the brightness of the display.
+     *
+     * @param {value} Floating number between 0 and 1 in which case 1 means 100% brightness and 0 means 0% brightness.
+     * @returns {Promise} Returns a Promise that resolves if setting brightness was successful.
+     */
+    Brightness.setBrightness = function (value) { return; };
+    /**
+     * Reads the current brightness of the device display.
+     *
+     * @returns {Promise} Returns a Promise that resolves with the
+     * brightness value of the device display (floating number between 0 and 1).
+     */
+    Brightness.getBrightness = function () { return; };
+    /**
+    * Keeps the screen on. Prevents the device from setting the screen to sleep.
+    */
+    Brightness.setKeepScreenOn = function (value) { };
+    __decorate([
+        plugin_1.Cordova()
+    ], Brightness, "setBrightness", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], Brightness, "getBrightness", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], Brightness, "setKeepScreenOn", null);
+    Brightness = __decorate([
+        plugin_1.Plugin({
+            plugin: 'cordova-plugin-brightness',
+            pluginRef: 'plugins.brightness',
+            repo: 'https://github.com/mgcrea/cordova-plugin-brightness',
+            platforms: ['Android', 'iOS']
+        })
+    ], Brightness);
+    return Brightness;
+}());
+exports.Brightness = Brightness;
+
+},{"./plugin":427}],393:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -65892,6 +66753,43 @@ var plugin_1 = require('./plugin');
 var Calendar = (function () {
     function Calendar() {
     }
+    /**
+     * This function checks if we have permission to read/write from/to the calendar.
+     * The promise will resolve with `true` when:
+     * - You're running on iOS, or
+     * - You're targetting API level lower than 23, or
+     * - You're using Android < 6, or
+     * - You've already granted permission
+     *
+     * If this returns false, you should call `requestReadWritePermissions` function
+     * @returns {Promise<boolean>}
+     */
+    Calendar.hasReadWritePermission = function () { return; };
+    /**
+     * Check if we have read permission
+     * @returns {Promise<boolean>}
+     */
+    Calendar.hasReadPermission = function () { return; };
+    /**
+     * Check if we have write permission
+     * @returns {Promise<boolean>}
+     */
+    Calendar.hasWritePermission = function () { return; };
+    /**
+     * Request write permission
+     * @returns {Promise<any>}
+     */
+    Calendar.requestWritePermission = function () { return; };
+    /**
+     * Request read permission
+     * @returns {Promise<any>}
+     */
+    Calendar.requestReadPermission = function () { return; };
+    /**
+     * Requests read/write permissions
+     * @returns {Promise<any>}
+     */
+    Calendar.requestReadWritePermission = function () { return; };
     /**
      * Create a calendar. (iOS only)
      *
@@ -66114,6 +67012,24 @@ var Calendar = (function () {
     Calendar.openCalendar = function (date) { return; };
     __decorate([
         plugin_1.Cordova()
+    ], Calendar, "hasReadWritePermission", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], Calendar, "hasReadPermission", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], Calendar, "hasWritePermission", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], Calendar, "requestWritePermission", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], Calendar, "requestReadPermission", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], Calendar, "requestReadWritePermission", null);
+    __decorate([
+        plugin_1.Cordova()
     ], Calendar, "createCalendar", null);
     __decorate([
         plugin_1.Cordova()
@@ -66177,7 +67093,7 @@ var Calendar = (function () {
 }());
 exports.Calendar = Calendar;
 
-},{"./plugin":415}],388:[function(require,module,exports){
+},{"./plugin":427}],394:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66305,7 +67221,79 @@ var Camera = (function () {
 }());
 exports.Camera = Camera;
 
-},{"./plugin":415}],389:[function(require,module,exports){
+},{"./plugin":427}],395:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+ * @name CardIO
+ * @description
+ * @usage
+ * ```
+ * import {CardIO} from 'ionic-native';
+ *
+ * ...
+ *
+ * CardIO.canScan()
+ *   .then(
+ *     (res: boolean) => {
+ *       if(res){
+ *         let options = {
+ *           requireExpiry: true,
+ *           requireCCV: false,
+ *           requirePostalCode: false
+ *         };
+ *         CardIO.scan(options);
+ *       }
+ *     }
+ *   );
+ * ```
+ */
+var CardIO = (function () {
+    function CardIO() {
+    }
+    /**
+     * Check whether card scanning is currently available. (May vary by
+     * device, OS version, network connectivity, etc.)
+     *
+     */
+    CardIO.canScan = function () { return; };
+    /**
+     * Scan a credit card with card.io.
+     * @param options
+     */
+    CardIO.scan = function (options) { return; };
+    /**
+     * Retrieve the version of the card.io library. Useful when contacting support.
+     */
+    CardIO.version = function () { return; };
+    __decorate([
+        plugin_1.Cordova()
+    ], CardIO, "canScan", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], CardIO, "scan", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], CardIO, "version", null);
+    CardIO = __decorate([
+        plugin_1.Plugin({
+            plugin: 'https://github.com/card-io/card.io-Cordova-Plugin',
+            pluginRef: 'CardIO',
+            repo: 'https://github.com/card-io/card.io-Cordova-Plugin',
+            platforms: ['iOS', 'Android']
+        })
+    ], CardIO);
+    return CardIO;
+}());
+exports.CardIO = CardIO;
+
+},{"./plugin":427}],396:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66373,7 +67361,7 @@ var Clipboard = (function () {
 }());
 exports.Clipboard = Clipboard;
 
-},{"./plugin":415}],390:[function(require,module,exports){
+},{"./plugin":427}],397:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66382,24 +67370,395 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var plugin_1 = require('./plugin');
+var Contact = (function () {
+    function Contact() {
+        this._objectInstance = navigator.contacts.create();
+    }
+    Object.defineProperty(Contact.prototype, "id", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "displayName", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "nickname", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "phoneNumbers", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "emails", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "addresses", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "ims", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "organizations", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "birthday", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "note", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "photos", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "categories", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Contact.prototype, "urls", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Contact.prototype.clone = function () {
+        var newContact = new Contact();
+        for (var prop in this) {
+            if (prop === 'id')
+                return;
+            newContact[prop] = this[prop];
+        }
+        return newContact;
+    };
+    Contact.prototype.remove = function () { return; };
+    Contact.prototype.save = function () { return; };
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "id", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "displayName", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "nickname", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "phoneNumbers", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "emails", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "addresses", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "ims", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "organizations", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "birthday", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "note", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "photos", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "categories", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], Contact.prototype, "urls", null);
+    __decorate([
+        plugin_1.CordovaInstance()
+    ], Contact.prototype, "remove", null);
+    __decorate([
+        plugin_1.CordovaInstance()
+    ], Contact.prototype, "save", null);
+    return Contact;
+}());
+exports.Contact = Contact;
+var ContactName = (function () {
+    function ContactName(formatted, familyName, givenName, middleName, honorificPrefix, honorificSuffix) {
+        this._objectInstance = new window.ContactName(formatted, familyName, givenName, middleName, honorificPrefix, honorificSuffix);
+    }
+    Object.defineProperty(ContactName.prototype, "formatted", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactName.prototype, "familyName", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactName.prototype, "givenName", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactName.prototype, "middleName", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactName.prototype, "honorificPrefix", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactName.prototype, "honorificSuffix", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactName.prototype, "formatted", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactName.prototype, "familyName", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactName.prototype, "givenName", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactName.prototype, "middleName", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactName.prototype, "honorificPrefix", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactName.prototype, "honorificSuffix", null);
+    return ContactName;
+}());
+exports.ContactName = ContactName;
+var ContactField = (function () {
+    function ContactField(type, value, pref) {
+        this._objectInstance = new window.ContactField(type, value, pref);
+    }
+    Object.defineProperty(ContactField.prototype, "type", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactField.prototype, "value", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactField.prototype, "pref", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactField.prototype, "type", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactField.prototype, "value", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactField.prototype, "pref", null);
+    return ContactField;
+}());
+exports.ContactField = ContactField;
+var ContactAddress = (function () {
+    function ContactAddress(pref, type, formatted, streetAddress, locality, region, postalCode, country) {
+        this._objectInstance = new window.ContactAddress(pref, type, formatted, streetAddress, locality, region, postalCode, country);
+    }
+    Object.defineProperty(ContactAddress.prototype, "pref", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactAddress.prototype, "type", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactAddress.prototype, "formatted", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactAddress.prototype, "streetAddress", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactAddress.prototype, "locality", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactAddress.prototype, "region", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactAddress.prototype, "postalCode", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactAddress.prototype, "country", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactAddress.prototype, "pref", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactAddress.prototype, "type", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactAddress.prototype, "formatted", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactAddress.prototype, "streetAddress", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactAddress.prototype, "locality", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactAddress.prototype, "region", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactAddress.prototype, "postalCode", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactAddress.prototype, "country", null);
+    return ContactAddress;
+}());
+exports.ContactAddress = ContactAddress;
+var ContactOrganization = (function () {
+    function ContactOrganization() {
+        this._objectInstance = new window.ContactOrganization();
+    }
+    Object.defineProperty(ContactOrganization.prototype, "pref", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactOrganization.prototype, "type", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactOrganization.prototype, "name", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactOrganization.prototype, "department", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactOrganization.prototype, "title", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactOrganization.prototype, "pref", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactOrganization.prototype, "type", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactOrganization.prototype, "name", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactOrganization.prototype, "department", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactOrganization.prototype, "title", null);
+    return ContactOrganization;
+}());
+exports.ContactOrganization = ContactOrganization;
+var ContactFindOptions = (function () {
+    function ContactFindOptions() {
+        this._objectInstance = new window.ContactFindOptions();
+    }
+    Object.defineProperty(ContactFindOptions.prototype, "filter", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactFindOptions.prototype, "multiple", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactFindOptions.prototype, "desiredFields", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ContactFindOptions.prototype, "hasPhoneNumber", {
+        get: function () { return; },
+        enumerable: true,
+        configurable: true
+    });
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactFindOptions.prototype, "filter", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactFindOptions.prototype, "multiple", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactFindOptions.prototype, "desiredFields", null);
+    __decorate([
+        plugin_1.InstanceProperty
+    ], ContactFindOptions.prototype, "hasPhoneNumber", null);
+    return ContactFindOptions;
+}());
+exports.ContactFindOptions = ContactFindOptions;
 /**
  * @name Contacts
  * @description
  * Access and manage Contacts on the device.
  *
- * Requires plugin: `cordova-plugin-contacts`
- * For full info, please see the [Cordova Contacts plugin docs](https://github.com/apache/cordova-plugin-contacts)
- *
  * @usage
  *
  * ```js
- * import {Contacts} from 'ionic-native';
+ * import {Contact} from 'ionic-native';
  *
  *
  *
- * Contacts.create({
- *   displayName: "Mr. Ionitron"
- * }).then((contact) => {}, (err) => {})
+ * let contact = new Contact();
+ * contact.displayName = "Mr. Ionitron";
+ * contact.save().then(
+ *   () => console.log("Contact saved!", contact),
+ *   (error: any) => console.error("Error saving contact.", error)
+ * );
  * ```
  *
  *
@@ -66407,16 +67766,9 @@ var plugin_1 = require('./plugin');
 var Contacts = (function () {
     function Contacts() {
     }
-    /**
-     * Create a new Contact object.
-     *
-     * @param options {Object} Object whose properties the created Contact should have.
-     * @return {Contact} Returns the created contact
-     */
-    Contacts.create = function (options) {
+    Contacts.create = function () {
         return new Contact();
     };
-    ;
     /**
      * Search for contacts in the Contacts list.
      *
@@ -66442,11 +67794,6 @@ var Contacts = (function () {
     Contacts.pickContact = function () { return; };
     __decorate([
         plugin_1.Cordova({
-            sync: true
-        })
-    ], Contacts, "create", null);
-    __decorate([
-        plugin_1.Cordova({
             successIndex: 1,
             errorIndex: 2
         })
@@ -66465,7 +67812,7 @@ var Contacts = (function () {
 }());
 exports.Contacts = Contacts;
 
-},{"./plugin":415}],391:[function(require,module,exports){
+},{"./plugin":427}],398:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66522,7 +67869,7 @@ var DatePicker = (function () {
 }());
 exports.DatePicker = DatePicker;
 
-},{"./plugin":415}],392:[function(require,module,exports){
+},{"./plugin":427}],399:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66610,7 +67957,82 @@ var DBMeter = (function () {
 }());
 exports.DBMeter = DBMeter;
 
-},{"./plugin":415}],393:[function(require,module,exports){
+},{"./plugin":427}],400:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+ * @name Ionic Deeplinks
+ * @description This plugin handles deeplinks on iOS and Android for both custom URL scheme links
+ * and Universal App Links.
+ *
+ * @usage
+ * ```ts
+ * import {IonicDeeplinks} from 'ionic-native';
+ *
+ * ```
+ */
+var Deeplinks = (function () {
+    function Deeplinks() {
+    }
+    /**
+     * Define a set of paths to match against incoming deeplinks.
+     *
+     * @param {paths} Define a set of paths to match against incoming deeplinks.
+     * paths takes an object of the form { 'path': data }. If a deeplink
+     * matches the path, the resulting path-data pair will be returned in the
+     * promise result which you can then use to navigate in the app as you see fit.
+     * @returns {Promise} Returns a Promise that resolves when a deeplink comes through, and
+     * is rejected if a deeplink comes through that does not match a given path.
+     */
+    Deeplinks.route = function (paths) { return; };
+    /**
+     *
+     * This is a convenience version of `route` that takes a reference to a NavController
+     * from Ionic 2, or a custom class that conforms to this protocol:
+     *
+     * NavController.push = function(View, Params){}
+     *
+     * This handler will automatically navigate when a route matches. If you need finer-grained
+     * control over the behavior of a matching deeplink, use the plain `route` method.
+     *
+     * @param {paths} Define a set of paths to match against incoming deeplinks.
+     * paths takes an object of the form { 'path': data }. If a deeplink
+     * matches the path, the resulting path-data pair will be returned in the
+     * promise result which you can then use to navigate in the app as you see fit.
+     *
+     * @returns {Promise} Returns a Promise that resolves when a deeplink comes through, and
+     * is rejected if a deeplink comes through that does not match a given path.
+     */
+    Deeplinks.routeWithNavController = function (navController, paths) { return; };
+    __decorate([
+        plugin_1.Cordova({
+            observable: true
+        })
+    ], Deeplinks, "route", null);
+    __decorate([
+        plugin_1.Cordova({
+            observable: true
+        })
+    ], Deeplinks, "routeWithNavController", null);
+    Deeplinks = __decorate([
+        plugin_1.Plugin({
+            plugin: 'ionic-plugin-deeplinks',
+            pluginRef: 'IonicDeeplink',
+            repo: 'https://github.com/driftyo/ionic-plugin-deeplinks',
+            platforms: ['iOS', 'Android']
+        })
+    ], Deeplinks);
+    return Deeplinks;
+}());
+exports.Deeplinks = Deeplinks;
+
+},{"./plugin":427}],401:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66660,7 +68082,7 @@ var Device = (function () {
 }());
 exports.Device = Device;
 
-},{"./plugin":415}],394:[function(require,module,exports){
+},{"./plugin":427}],402:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66712,7 +68134,7 @@ var DeviceAccounts = (function () {
 }());
 exports.DeviceAccounts = DeviceAccounts;
 
-},{"./plugin":415}],395:[function(require,module,exports){
+},{"./plugin":427}],403:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66798,7 +68220,7 @@ var DeviceMotion = (function () {
 }());
 exports.DeviceMotion = DeviceMotion;
 
-},{"./plugin":415}],396:[function(require,module,exports){
+},{"./plugin":427}],404:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66856,7 +68278,7 @@ var DeviceOrientation = (function () {
         plugin_1.Cordova({
             callbackOrder: 'reverse',
             observable: true,
-            cancelFunction: 'clearWatch'
+            clearFunction: 'clearWatch'
         })
     ], DeviceOrientation, "watchHeading", null);
     DeviceOrientation = __decorate([
@@ -66870,7 +68292,7 @@ var DeviceOrientation = (function () {
 }());
 exports.DeviceOrientation = DeviceOrientation;
 
-},{"./plugin":415}],397:[function(require,module,exports){
+},{"./plugin":427}],405:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -67081,7 +68503,7 @@ var Diagnostic = (function () {
 }());
 exports.Diagnostic = Diagnostic;
 
-},{"./plugin":415}],398:[function(require,module,exports){
+},{"./plugin":427}],406:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -67186,7 +68608,7 @@ var Dialogs = (function () {
 }());
 exports.Dialogs = Dialogs;
 
-},{"./plugin":415}],399:[function(require,module,exports){
+},{"./plugin":427}],407:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -67200,6 +68622,8 @@ var plugin_1 = require('./plugin');
  * @description
  *
  * Requires Cordova plugin: cordova-plugin-email-composer. For more info, please see the [Email Composer plugin docs](https://github.com/katzer/cordova-plugin-email-composer).
+ *
+ * DISCLAIMER: This plugin is experiencing issues with the latest versions of Cordova. Use at your own risk. Functionality is not guaranteed. Please stay tuned for a more stable version.
  *
  * @usage
  * ```ts
@@ -67228,7 +68652,7 @@ var plugin_1 = require('./plugin');
  * };
  *
  * // Send a text message using default options
- * EmailComposer.send(email);
+ * EmailComposer.open(email);
  *
  * ```
  */
@@ -67238,13 +68662,21 @@ var EmailComposer = (function () {
     /**
      * Verifies if sending emails is supported on the device.
      *
-     * @param app {string?} An optional app id or uri scheme. Defaults to mailto.
-     * @param scope {any?} An optional scope for the promise
-     * @returns {Promise<boolean>} Resolves promise with boolean whether EmailComposer is available
+     * @param app {string?} An optional app id or uri scheme.
+     * @returns {Promise<boolean>} Resolves if available, rejects if not available
      */
-    EmailComposer.isAvailable = function (app, scope) {
+    EmailComposer.isAvailable = function (app) {
         return new Promise(function (resolve, reject) {
-            cordova.plugins.email.isAvailable(app, resolve, scope);
+            if (app)
+                cordova.plugins.email.isAvailable(app, function (isAvailable) { if (isAvailable)
+                    resolve();
+                else
+                    reject(); });
+            else
+                cordova.plugins.email.isAvailable(function (isAvailable) { if (isAvailable)
+                    resolve();
+                else
+                    reject(); });
         });
     };
     /**
@@ -67283,7 +68715,7 @@ var EmailComposer = (function () {
 }());
 exports.EmailComposer = EmailComposer;
 
-},{"./plugin":415}],400:[function(require,module,exports){
+},{"./plugin":427}],408:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -67372,10 +68804,14 @@ var plugin_1 = require('./plugin');
 var Facebook = (function () {
     function Facebook() {
     }
-    // @Cordova()
-    // static browserInit(appId: number){
-    //   return new Promise<any>((res, rej) => {});
-    // }
+    /**
+     * Browser wrapper
+     * @param appId
+     * @param version
+     */
+    Facebook.browserInit = function (appId, version) {
+        return;
+    };
     /**
      * Login to Facebook to authenticate this app.
      *
@@ -67504,6 +68940,9 @@ var Facebook = (function () {
     Facebook.appInvite = function (options) { return; };
     __decorate([
         plugin_1.Cordova()
+    ], Facebook, "browserInit", null);
+    __decorate([
+        plugin_1.Cordova()
     ], Facebook, "login", null);
     __decorate([
         plugin_1.Cordova()
@@ -67541,7 +68980,7 @@ var Facebook = (function () {
 }());
 exports.Facebook = Facebook;
 
-},{"./plugin":415}],401:[function(require,module,exports){
+},{"./plugin":427}],409:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -67577,6 +69016,9 @@ var File = (function () {
         var promise = new Promise(function (resolve, reject) { resolveFn = resolve; rejectFn = reject; });
         if ((/^\//.test(dir))) {
             rejectFn('directory cannot start with \/');
+        }
+        if (!(/\/$/.test(dir))) {
+            path += '/';
         }
         try {
             var directory = path + dir;
@@ -67851,6 +69293,9 @@ var File = (function () {
         if ((/^\//.test(file))) {
             rejectFn('file cannot start with \/');
         }
+        if (!(/\/$/.test(file))) {
+            path += '/';
+        }
         try {
             var directory = path + file;
             window.resolveLocalFileSystemURL(directory, function (fileSystem) {
@@ -67950,7 +69395,55 @@ var File = (function () {
     };
     // static writeFile(path: string, fileName: string, text: string, replace: boolean): Promise<any> { return }
     // static writeExistingFile(path: string, fileName: string, text: string): Promise<any> { return }
-    // static readAsText(path: string, file: string): Promise<any> { return }
+    /**
+     * Read a file as string.
+     *
+     * @param {string} path Base FileSystem. Please refer to the iOS and Android filesystems above
+     * @param {string} fileName Name of file to move
+     * @return Returns a Promise that resolves or rejects with an error.
+     */
+    File.readAsText = function (path, fileName) {
+        var resolveFn, rejectFn;
+        var promise = new Promise(function (resolve, reject) { resolveFn = resolve; rejectFn = reject; });
+        if ((/^\//.test(fileName))) {
+            rejectFn('file-name cannot start with \/');
+        }
+        try {
+            window.resolveLocalFileSystemURL(path, function (fileSystem) {
+                fileSystem.getFile(fileName, { create: false }, function (fileEntry) {
+                    fileEntry.file(function (file) {
+                        var reader = new FileReader();
+                        reader.onloadend = function (e) {
+                            if (this.result !== undefined && this.result !== null) {
+                                resolveFn(this.result);
+                            }
+                            else if (this.error !== undefined && this.error !== null) {
+                                rejectFn(this.error);
+                            }
+                            else {
+                                rejectFn({ code: null, message: 'READER_ONLOADEND_ERR' });
+                            }
+                        };
+                        reader.readAsText(file);
+                    }, function (error) {
+                        error.message = File.cordovaFileError[error.code];
+                        rejectFn(error);
+                    });
+                }, function (err) {
+                    err.message = File.cordovaFileError[err.code];
+                    rejectFn(err);
+                });
+            }, function (er) {
+                er.message = File.cordovaFileError[er.code];
+                rejectFn(er);
+            });
+        }
+        catch (e) {
+            e.message = File.cordovaFileError[e.code];
+            rejectFn(e);
+        }
+        return promise;
+    };
     // static readAsDataURL(path: string, file: string): Promise<any> { return }
     // static readAsBinaryString(path: string, file: string): Promise<any> { return }
     // static readAsArrayBuffer(path: string, file: string): Promise<any> { return }
@@ -68064,7 +69557,105 @@ var File = (function () {
 }());
 exports.File = File;
 
-},{"./plugin":415}],402:[function(require,module,exports){
+},{"./plugin":427}],410:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+ * @name Transfer
+ * @description This plugin allows you to upload and download files.
+ * Example:
+ * Create instance:
+ * const fileTransfer = new Transfer();
+ *
+ * Upload a file:
+ * fileTransfer.upload(..).then(..).catch(..);
+ *
+ * Download a file:
+ * fileTransfer.download(..).then(..).catch(..);
+ *
+ * Abort active transfer:
+ * fileTransfer.abort();
+ */
+var Transfer = (function () {
+    function Transfer() {
+        this._objectInstance = new FileTransfer();
+    }
+    /**
+     * Sends a file to a server.
+     *
+     * @param {string} fileUrl  Filesystem URL representing the file on the device or a data URI. For backwards compatibility, this can also be the full path of the file on the device.
+     * @param {string} url  URL of the server to receive the file, as encoded by encodeURI().
+     * @param {FileUploadOptions} options  Optional parameters.
+     * @param {boolean} trustAllHosts: Optional parameter, defaults to false. If set to true, it accepts all security certificates. This is useful since Android rejects self-signed security certificates. Not recommended for production use. Supported on Android and iOS.
+     * @return Returns a Promise that resolves to a FileUploadResult and rejects with FileTransferError.
+     */
+    Transfer.prototype.upload = function (fileUrl, url, options, trustAllHosts) {
+        return;
+    };
+    /**
+     * Downloads a file from server.
+     *
+     * @param {string} source  URL of the server to download the file, as encoded by encodeURI().
+     * @param {stirng} target  Filesystem url representing the file on the device. For backwards compatibility, this can also be the full path of the file on the device.
+     * @param {boolean} trustAllHosts  Optional parameter, defaults to false. If set to true, it accepts all security certificates. This is useful because Android rejects self-signed security certificates. Not recommended for production use. Supported on Android and iOS.
+     * @param {object} Optional parameters, currently only supports headers (such as Authorization (Basic Authentication), etc).
+     * @return Returns a Promise that resolves to a FileEntry object.
+     */
+    Transfer.prototype.download = function (source, target, trustAllHosts, options) {
+        return;
+    };
+    /**
+     * Registers a listener that gets called whenever a new chunk of data is transferred.
+     * @param {function} Listener that takes a progress event.
+     */
+    Transfer.prototype.onProgress = function (listener) {
+        this._objectInstance.onprogress = listener;
+    };
+    /**
+     * Aborts an in-progress transfer. The onerror callback is passed a FileTransferError
+     * object which has an error code of FileTransferError.ABORT_ERR.
+     */
+    Transfer.prototype.abort = function () { };
+    Transfer.FILE_NOT_FOUND_ERR = 1;
+    Transfer.INVALID_URL_ERR = 2;
+    Transfer.CONNECTION_ERR = 3;
+    Transfer.ABORT_ERR = 4;
+    Transfer.NOT_MODIFIED_ERR = 4;
+    __decorate([
+        plugin_1.CordovaInstance({
+            successIndex: 2,
+            errorIndex: 3
+        })
+    ], Transfer.prototype, "upload", null);
+    __decorate([
+        plugin_1.CordovaInstance({
+            successIndex: 2,
+            errorIndex: 3
+        })
+    ], Transfer.prototype, "download", null);
+    __decorate([
+        plugin_1.CordovaInstance({
+            sync: true
+        })
+    ], Transfer.prototype, "abort", null);
+    Transfer = __decorate([
+        plugin_1.Plugin({
+            plugin: 'cordova-plugin-file-transfer',
+            pluginRef: 'FileTransfer',
+            repo: 'https://github.com/apache/cordova-plugin-file-transfer'
+        })
+    ], Transfer);
+    return Transfer;
+}());
+exports.Transfer = Transfer;
+
+},{"./plugin":427}],411:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -68143,7 +69734,7 @@ var Flashlight = (function () {
 }());
 exports.Flashlight = Flashlight;
 
-},{"./plugin":415}],403:[function(require,module,exports){
+},{"./plugin":427}],412:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -68152,6 +69743,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var plugin_1 = require('./plugin');
+var Observable_1 = require('rxjs/Observable');
 /**
  * @name Geolocation
  * @description
@@ -68204,19 +69796,18 @@ var Geolocation = (function () {
      * @param {GeolocationOptions} options  The [geolocation options](https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions).
      * @return Returns an Observable that notifies with the [position](https://developer.mozilla.org/en-US/docs/Web/API/Position) of the device, or errors.
      */
-    Geolocation.watchPosition = function (options) { return; };
+    Geolocation.watchPosition = function (options) {
+        return new Observable_1.Observable(function (observer) {
+            var cb = function (data) { return observer.next(data); };
+            var watchId = navigator.geolocation.watchPosition(cb, options);
+            return function () { return navigator.geolocation.clearWatch(watchId); };
+        });
+    };
     __decorate([
         plugin_1.Cordova({
             callbackOrder: 'reverse'
         })
     ], Geolocation, "getCurrentPosition", null);
-    __decorate([
-        plugin_1.Cordova({
-            callbackOrder: 'reverse',
-            observable: true,
-            clearFunction: 'clearWatch'
-        })
-    ], Geolocation, "watchPosition", null);
     Geolocation = __decorate([
         plugin_1.Plugin({
             plugin: 'cordova-plugin-geolocation',
@@ -68228,7 +69819,7 @@ var Geolocation = (function () {
 }());
 exports.Geolocation = Geolocation;
 
-},{"./plugin":415}],404:[function(require,module,exports){
+},{"./plugin":427,"rxjs/Observable":442}],413:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -68379,7 +69970,70 @@ var Globalization = (function () {
 }());
 exports.Globalization = Globalization;
 
-},{"./plugin":415}],405:[function(require,module,exports){
+},{"./plugin":427}],414:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+ * @name Google Plus
+ * @description
+ * @usage
+ * ```
+ *
+ * ```
+ */
+var GooglePlus = (function () {
+    function GooglePlus() {
+    }
+    /**
+     * The login function walks the user through the Google Auth process.
+     * @param options
+     */
+    GooglePlus.login = function (options) { return; };
+    /**
+     * You can call trySilentLogin to check if they're already signed in to the app and sign them in silently if they are.
+     * @param options
+     */
+    GooglePlus.trySilentLogin = function (options) { return; };
+    /**
+     * This will clear the OAuth2 token.
+     */
+    GooglePlus.logout = function () { return; };
+    /**
+     * This will clear the OAuth2 token, forget which account was used to login, and disconnect that account from the app. This will require the user to allow the app access again next time they sign in. Be aware that this effect is not always instantaneous. It can take time to completely disconnect.
+     */
+    GooglePlus.disconnect = function () { return; };
+    __decorate([
+        plugin_1.Cordova()
+    ], GooglePlus, "login", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], GooglePlus, "trySilentLogin", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], GooglePlus, "logout", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], GooglePlus, "disconnect", null);
+    GooglePlus = __decorate([
+        plugin_1.Plugin({
+            plugin: 'cordova-plugin-googleplus',
+            pluginRef: 'window.plugins.googleplus',
+            repo: 'https://github.com/EddyVerbruggen/cordova-plugin-googleplus',
+            platforms: ['Web', 'Android', 'iOS'],
+            install: 'ionic plugin add cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=myreversedclientid'
+        })
+    ], GooglePlus);
+    return GooglePlus;
+}());
+exports.GooglePlus = GooglePlus;
+
+},{"./plugin":427}],415:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -68526,7 +70180,7 @@ var GoogleAnalytics = (function () {
 }());
 exports.GoogleAnalytics = GoogleAnalytics;
 
-},{"./plugin":415}],406:[function(require,module,exports){
+},{"./plugin":427}],416:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -68535,40 +70189,1068 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var plugin_1 = require('./plugin');
+var Observable_1 = require('rxjs/Observable');
 var plugin_2 = require('./plugin');
 /**
- * @name Google Maps
+ * @private
+ * You can listen to these events where appropriate
  */
-var GoogleMaps = (function () {
-    function GoogleMaps(elementId) {
-        this._objectInstance = plugin.google.maps.Map.getMap(document.getElementById(elementId));
+exports.GoogleMapsEvent = {
+    MAP_CLICK: 'click',
+    MAP_LONG_CLICK: 'long_click',
+    MY_LOCATION_CHANGE: 'my_location_change',
+    MY_LOCATION_BUTTON_CLICK: 'my_location_button_click',
+    INDOOR_BUILDING_FOCUSED: 'indoor_building_focused',
+    INDOOR_LEVEL_ACTIVATED: 'indoor_level_activated',
+    CAMERA_CHANGE: 'camera_change',
+    CAMERA_IDLE: 'camera_idle',
+    MAP_READY: 'map_ready',
+    MAP_LOADED: 'map_loaded',
+    MAP_WILL_MOVE: 'will_move',
+    MAP_CLOSE: 'map_close',
+    MARKER_CLICK: 'click',
+    OVERLAY_CLICK: 'overlay_click',
+    INFO_CLICK: 'info_click',
+    MARKER_DRAG: 'drag',
+    MARKER_DRAG_START: 'drag_start',
+    MARKER_DRAG_END: 'drag_end'
+};
+/**
+ * @private
+ */
+exports.GoogleMapsAnimation = {
+    BOUNCE: 'BOUNCE',
+    DROP: 'DROP'
+};
+/**
+ * @name Google Maps
+ * @description This plugin uses the native Google Maps SDK
+ * @usage
+ * ```
+ * import {GoogleMap, GoogleMapsEvent} from 'ionic-native';
+ *
+ * ...
+ *
+ * // somewhere in your component
+ * let map = new GoogleMap('elementID');
+ *
+ * map.on(GoogleMapsEvent.MAP_READY).subscribe(() => console.log("Map is ready!"));
+ * ```
+ */
+var GoogleMap = (function () {
+    function GoogleMap(elementId, options) {
+        this._objectInstance = plugin.google.maps.Map.getMap(document.getElementById(elementId), options);
     }
-    GoogleMaps.onInit = function () { return; };
-    GoogleMaps.prototype.setDebuggable = function (isDebuggable) { };
-    GoogleMaps.prototype.setClickable = function (isClickable) { };
+    /**
+     * Checks if a map object has been created.
+     * @return {Promise<boolean>} returns a promise that resolves with a boolean that indicates if the plugin is available.
+     */
+    GoogleMap.isAvailable = function () {
+        return;
+    };
+    GoogleMap.prototype.on = function (event) {
+        var _this = this;
+        return new Observable_1.Observable(function (observer) {
+            var cb = function (data) { return observer.next(data); };
+            _this._objectInstance.on(event, cb);
+            return function () { return _this._objectInstance.off(event); };
+        });
+    };
+    GoogleMap.prototype.one = function (event) {
+        var _this = this;
+        return new Promise(function (resolve) { return _this._objectInstance.one(event, resolve); });
+    };
+    GoogleMap.prototype.setDebuggable = function (isDebuggable) {
+    };
+    GoogleMap.prototype.setClickable = function (isClickable) {
+    };
+    /**
+     * Get the position of the camera
+     */
+    GoogleMap.prototype.getCameraPosition = function () {
+        return;
+    };
+    /**
+     * Get the location of the user
+     */
+    GoogleMap.prototype.getMyLocation = function () {
+        return;
+    };
+    /**
+     * Get the visible region
+     */
+    GoogleMap.prototype.getVisibleRegion = function () {
+        return;
+    };
+    GoogleMap.prototype.showDialog = function () {
+    };
+    GoogleMap.prototype.closeDialog = function () {
+    };
+    GoogleMap.prototype.getLicenseInfo = function () {
+        return;
+    };
+    GoogleMap.prototype.setCenter = function (latLng) {
+    };
+    GoogleMap.prototype.setZoom = function (zoomLevel) {
+    };
+    GoogleMap.prototype.setMapTypeId = function (typeId) {
+    };
+    GoogleMap.prototype.setTilt = function (tiltLevel) {
+    };
+    GoogleMap.prototype.animateCamera = function (animateCameraOptions) {
+    };
+    GoogleMap.prototype.moveCamera = function (cameraPosition) {
+    };
+    GoogleMap.prototype.setMyLocationEnabled = function (enabled) {
+    };
+    GoogleMap.prototype.setIndoorEnabled = function (enabled) {
+    };
+    GoogleMap.prototype.setTrafficEnabled = function (enabled) {
+    };
+    GoogleMap.prototype.setCompassEnabled = function (enabled) {
+    };
+    GoogleMap.prototype.setAllGesturesEnabled = function (enabled) {
+    };
+    GoogleMap.prototype.addMarker = function (options) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this._objectInstance.addMarker(options, function (marker) {
+                if (marker)
+                    resolve(new GoogleMapsMarker(marker));
+                else
+                    reject();
+            });
+        });
+    };
+    GoogleMap.prototype.addCircle = function (options) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this._objectInstance.addCircle(options, function (circle) {
+                if (circle)
+                    resolve(new GoogleMapsCircle(circle));
+                else
+                    reject();
+            });
+        });
+    };
+    GoogleMap.prototype.addPolygon = function (options) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this._objectInstance.addPolygon(options, function (polygon) {
+                if (polygon)
+                    resolve(new GoogleMapsPolygon(polygon));
+                else
+                    reject();
+            });
+        });
+    };
+    GoogleMap.prototype.addPolyline = function (options) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this._objectInstance.addPolyline(options, function (polyline) {
+                if (polyline)
+                    resolve(new GoogleMapsPolyline(polyline));
+                else
+                    reject();
+            });
+        });
+    };
+    GoogleMap.prototype.addTileOverlay = function (options) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this._objectInstance.addTileOverlay(options, function (tileOverlay) {
+                if (tileOverlay)
+                    resolve(new GoogleMapsTileOverlay(tileOverlay));
+                else
+                    reject();
+            });
+        });
+    };
+    GoogleMap.prototype.addGroundOverlay = function (options) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this._objectInstance.addTileOverlay(options, function (groundOverlay) {
+                if (groundOverlay)
+                    resolve(new GoogleMapsGroundOverlay(groundOverlay));
+                else
+                    reject();
+            });
+        });
+    };
+    GoogleMap.prototype.addKmlOverlay = function (options) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            _this._objectInstance.addTileOverlay(options, function (kmlOverlay) {
+                if (kmlOverlay)
+                    resolve(new GoogleMapsKmlOverlay(kmlOverlay));
+                else
+                    reject();
+            });
+        });
+    };
+    GoogleMap.prototype.setDiv = function (domNode) {
+    };
+    GoogleMap.prototype.setVisible = function (visible) {
+    };
+    GoogleMap.prototype.setOptions = function (options) {
+    };
+    GoogleMap.prototype.setBackgroundColor = function (backgroundColor) {
+    };
+    GoogleMap.prototype.setPadding = function (top, right, bottom, left) {
+    };
+    GoogleMap.prototype.clear = function () {
+    };
+    GoogleMap.prototype.refreshLayout = function () {
+    };
+    GoogleMap.prototype.fromLatLngToPoint = function (latLng, point) {
+        return;
+    };
+    GoogleMap.prototype.fromPointToLatLng = function (point, latLng) {
+        return;
+    };
+    GoogleMap.prototype.toDataURL = function () {
+        return;
+    };
+    GoogleMap.prototype.remove = function () {
+    };
+    GoogleMap.prototype.panBy = function () {
+    };
     __decorate([
         plugin_2.CordovaInstance({
             sync: true
         })
-    ], GoogleMaps.prototype, "setDebuggable", null);
+    ], GoogleMap.prototype, "setDebuggable", null);
     __decorate([
-        plugin_1.Cordova({
-            eventObservable: true,
-            event: 'plugin.google.maps.event.MAP_READY'
+        plugin_2.CordovaInstance({
+            sync: true
         })
-    ], GoogleMaps, "onInit", null);
-    GoogleMaps = __decorate([
+    ], GoogleMap.prototype, "setClickable", null);
+    __decorate([
+        plugin_2.CordovaInstance()
+    ], GoogleMap.prototype, "getCameraPosition", null);
+    __decorate([
+        plugin_2.CordovaInstance()
+    ], GoogleMap.prototype, "getMyLocation", null);
+    __decorate([
+        plugin_2.CordovaInstance()
+    ], GoogleMap.prototype, "getVisibleRegion", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "showDialog", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "closeDialog", null);
+    __decorate([
+        plugin_2.CordovaInstance()
+    ], GoogleMap.prototype, "getLicenseInfo", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setCenter", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setZoom", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setMapTypeId", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setTilt", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "animateCamera", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "moveCamera", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setMyLocationEnabled", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setIndoorEnabled", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setTrafficEnabled", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setCompassEnabled", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setAllGesturesEnabled", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setDiv", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setOptions", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setBackgroundColor", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "setPadding", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "clear", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "refreshLayout", null);
+    __decorate([
+        plugin_2.CordovaInstance()
+    ], GoogleMap.prototype, "fromLatLngToPoint", null);
+    __decorate([
+        plugin_2.CordovaInstance()
+    ], GoogleMap.prototype, "fromPointToLatLng", null);
+    __decorate([
+        plugin_2.CordovaInstance()
+    ], GoogleMap.prototype, "toDataURL", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "remove", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMap.prototype, "panBy", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], GoogleMap, "isAvailable", null);
+    GoogleMap = __decorate([
         plugin_1.Plugin({
-            pluginRef: 'plugin.google.maps',
+            pluginRef: 'plugin.google.maps.Map',
             plugin: 'cordova-plugin-googlemaps',
             repo: 'https://github.com/mapsplugin/cordova-plugin-googlemaps'
         })
-    ], GoogleMaps);
-    return GoogleMaps;
+    ], GoogleMap);
+    return GoogleMap;
 }());
-exports.GoogleMaps = GoogleMaps;
+exports.GoogleMap = GoogleMap;
+/**
+ * @private
+ */
+var GoogleMapsMarker = (function () {
+    function GoogleMapsMarker(_objectInstance) {
+        this._objectInstance = _objectInstance;
+    }
+    GoogleMapsMarker.prototype.addEventListener = function (event) {
+        var _this = this;
+        return new Observable_1.Observable(function (observer) {
+            var cb = function (data) {
+                observer.next(data);
+            };
+            _this._objectInstance.addEventListener(event, cb);
+            return function () { return _this._objectInstance.removeEventListener(event, cb); };
+        });
+    };
+    GoogleMapsMarker.prototype.isVisible = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.setVisible = function (visible) {
+    };
+    GoogleMapsMarker.prototype.getHashCode = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.remove = function () {
+    };
+    GoogleMapsMarker.prototype.setOpacity = function (alpha) {
+    };
+    GoogleMapsMarker.prototype.getOpacity = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.setZIndex = function () {
+    };
+    GoogleMapsMarker.prototype.setIconAnchor = function (x, y) {
+    };
+    GoogleMapsMarker.prototype.setInfoWindowAnchor = function (x, y) {
+    };
+    GoogleMapsMarker.prototype.setDraggable = function (draggable) {
+    };
+    GoogleMapsMarker.prototype.isDraggable = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.setFlat = function (flat) {
+        return;
+    };
+    GoogleMapsMarker.prototype.setIcon = function (icon) {
+    };
+    GoogleMapsMarker.prototype.setTitle = function (title) {
+    };
+    GoogleMapsMarker.prototype.getTitle = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.setSnippet = function (snippet) {
+    };
+    GoogleMapsMarker.prototype.getSnippet = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.setRotation = function (rotation) {
+    };
+    GoogleMapsMarker.prototype.getRotation = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.showInfoWindow = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.hideInfoWindow = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.setPosition = function (latLng) {
+    };
+    GoogleMapsMarker.prototype.getPosition = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.getMap = function () {
+        return;
+    };
+    GoogleMapsMarker.prototype.setAnimation = function (animation) {
+    };
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "isVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance()
+    ], GoogleMapsMarker.prototype, "setVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "getHashCode", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "remove", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setOpacity", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "getOpacity", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setZIndex", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setIconAnchor", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setInfoWindowAnchor", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setDraggable", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "isDraggable", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setFlat", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setIcon", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setTitle", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "getTitle", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setSnippet", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "getSnippet", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setRotation", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "getRotation", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "showInfoWindow", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "hideInfoWindow", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setPosition", null);
+    __decorate([
+        plugin_2.CordovaInstance()
+    ], GoogleMapsMarker.prototype, "getPosition", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "getMap", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsMarker.prototype, "setAnimation", null);
+    return GoogleMapsMarker;
+}());
+exports.GoogleMapsMarker = GoogleMapsMarker;
+/**
+ * @private
+ */
+var GoogleMapsCircle = (function () {
+    function GoogleMapsCircle(_objectInstance) {
+        this._objectInstance = _objectInstance;
+    }
+    GoogleMapsCircle.prototype.addEventListener = function (event) {
+        var _this = this;
+        return new Observable_1.Observable(function (observer) {
+            var cb = function (data) { return observer.next(data); };
+            _this._objectInstance.addEventListener(event, cb);
+            return function () { return _this._objectInstance.removeEventListener(event, cb); };
+        });
+    };
+    GoogleMapsCircle.prototype.getCenter = function () {
+        return;
+    };
+    GoogleMapsCircle.prototype.getRadius = function () {
+        return;
+    };
+    GoogleMapsCircle.prototype.getStrokeColor = function () {
+        return;
+    };
+    GoogleMapsCircle.prototype.getVisible = function () {
+        return;
+    };
+    GoogleMapsCircle.prototype.getZIndex = function () {
+        return;
+    };
+    GoogleMapsCircle.prototype.remove = function () {
+    };
+    GoogleMapsCircle.prototype.setCenter = function (latLng) {
+    };
+    GoogleMapsCircle.prototype.setFillColor = function (fillColor) {
+    };
+    GoogleMapsCircle.prototype.setStrokeColor = function (strokeColor) {
+    };
+    GoogleMapsCircle.prototype.setStrokeWidth = function (strokeWidth) {
+    };
+    GoogleMapsCircle.prototype.setVisible = function (visible) {
+    };
+    GoogleMapsCircle.prototype.setZIndex = function (zIndex) {
+    };
+    GoogleMapsCircle.prototype.setRadius = function (radius) {
+    };
+    GoogleMapsCircle.prototype.getMap = function () {
+        return;
+    };
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "getCenter", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "getRadius", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "getStrokeColor", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "getVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "getZIndex", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "remove", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "setCenter", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "setFillColor", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "setStrokeColor", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "setStrokeWidth", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "setVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "setZIndex", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "setRadius", null);
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsCircle.prototype, "getMap", null);
+    return GoogleMapsCircle;
+}());
+exports.GoogleMapsCircle = GoogleMapsCircle;
+/**
+ * @private
+ */
+var GoogleMapsPolyline = (function () {
+    function GoogleMapsPolyline(_objectInstance) {
+        this._objectInstance = _objectInstance;
+    }
+    GoogleMapsPolyline.prototype.addEventListener = function (event) {
+        var _this = this;
+        return new Observable_1.Observable(function (observer) {
+            var cb = function (data) { return observer.next(data); };
+            _this._objectInstance.addEventListener(event, cb);
+            return function () { return _this._objectInstance.removeEventListener(event, cb); };
+        });
+    };
+    GoogleMapsPolyline.prototype.getPoints = function () {
+        return;
+    };
+    GoogleMapsPolyline.prototype.getCOlor = function () {
+        return;
+    };
+    GoogleMapsPolyline.prototype.getWidth = function () {
+        return;
+    };
+    GoogleMapsPolyline.prototype.getGeodesic = function () {
+        return;
+    };
+    GoogleMapsPolyline.prototype.getZIndex = function () {
+        return;
+    };
+    GoogleMapsPolyline.prototype.remove = function () {
+    };
+    GoogleMapsPolyline.prototype.setPoints = function (points) {
+    };
+    GoogleMapsPolyline.prototype.setColor = function (color) {
+    };
+    GoogleMapsPolyline.prototype.setWidth = function (width) {
+    };
+    GoogleMapsPolyline.prototype.setVisible = function (visible) {
+    };
+    GoogleMapsPolyline.prototype.setZIndex = function (zIndex) {
+    };
+    GoogleMapsPolyline.prototype.setGeoDesic = function (geoDesic) {
+    };
+    GoogleMapsPolyline.prototype.getMap = function () {
+        return;
+    };
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "getPoints", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "getCOlor", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "getWidth", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "getGeodesic", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "getZIndex", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "remove", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "setPoints", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "setColor", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "setWidth", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "setVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "setZIndex", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "setGeoDesic", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolyline.prototype, "getMap", null);
+    return GoogleMapsPolyline;
+}());
+exports.GoogleMapsPolyline = GoogleMapsPolyline;
+/**
+ * @private
+ */
+var GoogleMapsPolygon = (function () {
+    function GoogleMapsPolygon(_objectInstance) {
+        this._objectInstance = _objectInstance;
+    }
+    GoogleMapsPolygon.prototype.addEventListener = function (event) {
+        var _this = this;
+        return new Observable_1.Observable(function (observer) {
+            var cb = function (data) { return observer.next(data); };
+            _this._objectInstance.addEventListener(event, cb);
+            return function () { return _this._objectInstance.removeEventListener(event, cb); };
+        });
+    };
+    GoogleMapsPolygon.prototype.getPoints = function () {
+        return;
+    };
+    GoogleMapsPolygon.prototype.getStrokeColor = function () {
+        return;
+    };
+    GoogleMapsPolygon.prototype.getFillColor = function () {
+        return;
+    };
+    GoogleMapsPolygon.prototype.getStrokeWidth = function () {
+        return;
+    };
+    GoogleMapsPolygon.prototype.getGeodesic = function () {
+        return;
+    };
+    GoogleMapsPolygon.prototype.getVisible = function () {
+        return;
+    };
+    GoogleMapsPolygon.prototype.getZIndex = function () {
+        return;
+    };
+    GoogleMapsPolygon.prototype.remove = function () {
+    };
+    GoogleMapsPolygon.prototype.setPoints = function (points) {
+    };
+    GoogleMapsPolygon.prototype.setStrokeColor = function (strokeColor) {
+    };
+    GoogleMapsPolygon.prototype.setFillColor = function (fillColor) {
+    };
+    GoogleMapsPolygon.prototype.setStrokeWidth = function (strokeWidth) {
+    };
+    GoogleMapsPolygon.prototype.setVisible = function (visible) {
+    };
+    GoogleMapsPolygon.prototype.setZIndex = function (zIndex) {
+    };
+    GoogleMapsPolygon.prototype.setGeodesic = function (geodesic) {
+    };
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "getPoints", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "getStrokeColor", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "getFillColor", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "getStrokeWidth", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "getGeodesic", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "getVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "getZIndex", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "remove", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "setPoints", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "setStrokeColor", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "setFillColor", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "setStrokeWidth", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "setVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "setZIndex", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsPolygon.prototype, "setGeodesic", null);
+    return GoogleMapsPolygon;
+}());
+exports.GoogleMapsPolygon = GoogleMapsPolygon;
+/**
+ * @private
+ */
+var GoogleMapsTileOverlay = (function () {
+    function GoogleMapsTileOverlay(_objectInstance) {
+        this._objectInstance = _objectInstance;
+    }
+    GoogleMapsTileOverlay.prototype.getVisible = function () {
+        return;
+    };
+    GoogleMapsTileOverlay.prototype.setVisible = function (visible) {
+    };
+    GoogleMapsTileOverlay.prototype.getFadeIn = function () {
+        return;
+    };
+    GoogleMapsTileOverlay.prototype.setFadeIn = function (fadeIn) {
+    };
+    GoogleMapsTileOverlay.prototype.getZIndex = function () {
+        return;
+    };
+    GoogleMapsTileOverlay.prototype.setZIndex = function (zIndex) {
+    };
+    GoogleMapsTileOverlay.prototype.getOpacity = function () {
+        return;
+    };
+    GoogleMapsTileOverlay.prototype.setOpacity = function (opacity) {
+    };
+    GoogleMapsTileOverlay.prototype.clearTileCache = function () {
+    };
+    GoogleMapsTileOverlay.prototype.remove = function () {
+    };
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsTileOverlay.prototype, "getVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsTileOverlay.prototype, "setVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsTileOverlay.prototype, "getFadeIn", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsTileOverlay.prototype, "setFadeIn", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsTileOverlay.prototype, "getZIndex", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsTileOverlay.prototype, "setZIndex", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsTileOverlay.prototype, "getOpacity", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsTileOverlay.prototype, "setOpacity", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsTileOverlay.prototype, "clearTileCache", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsTileOverlay.prototype, "remove", null);
+    return GoogleMapsTileOverlay;
+}());
+exports.GoogleMapsTileOverlay = GoogleMapsTileOverlay;
+/**
+ * @private
+ */
+var GoogleMapsGroundOverlay = (function () {
+    function GoogleMapsGroundOverlay(_objectInstance) {
+        this._objectInstance = _objectInstance;
+    }
+    GoogleMapsGroundOverlay.prototype.setBearing = function (bearing) {
+    };
+    GoogleMapsGroundOverlay.prototype.getBearing = function () {
+        return;
+    };
+    GoogleMapsGroundOverlay.prototype.setOpacity = function (opacity) {
+    };
+    GoogleMapsGroundOverlay.prototype.getOpacity = function () {
+        return;
+    };
+    GoogleMapsGroundOverlay.prototype.setVisible = function (visible) {
+    };
+    GoogleMapsGroundOverlay.prototype.getVisible = function () {
+        return;
+    };
+    GoogleMapsGroundOverlay.prototype.setImage = function (image) {
+    };
+    ;
+    GoogleMapsGroundOverlay.prototype.remove = function () {
+    };
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsGroundOverlay.prototype, "setBearing", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsGroundOverlay.prototype, "getBearing", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsGroundOverlay.prototype, "setOpacity", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsGroundOverlay.prototype, "getOpacity", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsGroundOverlay.prototype, "setVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsGroundOverlay.prototype, "getVisible", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsGroundOverlay.prototype, "setImage", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsGroundOverlay.prototype, "remove", null);
+    return GoogleMapsGroundOverlay;
+}());
+exports.GoogleMapsGroundOverlay = GoogleMapsGroundOverlay;
+/**
+ * @private
+ */
+var GoogleMapsKmlOverlay = (function () {
+    function GoogleMapsKmlOverlay(_objectInstance) {
+        this._objectInstance = _objectInstance;
+    }
+    GoogleMapsKmlOverlay.prototype.remove = function () {
+    };
+    GoogleMapsKmlOverlay.prototype.getOverlays = function () {
+        return;
+    };
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsKmlOverlay.prototype, "remove", null);
+    __decorate([
+        plugin_2.CordovaInstance({ sync: true })
+    ], GoogleMapsKmlOverlay.prototype, "getOverlays", null);
+    return GoogleMapsKmlOverlay;
+}());
+exports.GoogleMapsKmlOverlay = GoogleMapsKmlOverlay;
+/**
+ * @private
+ */
+var GoogleMapsLatLng = (function () {
+    function GoogleMapsLatLng(lat, lng) {
+        this.lat = lat;
+        this.lng = lng;
+        this._objectInstance = new plugin.google.maps.LatLng(lat, lng);
+    }
+    GoogleMapsLatLng.prototype.equals = function (other) {
+        return this.lat === other.lat && this.lng === other.lng;
+    };
+    GoogleMapsLatLng.prototype.toString = function () {
+        return;
+    };
+    GoogleMapsLatLng.prototype.toUrlValue = function (precision) {
+        precision = precision || 6;
+        return this.lat.toFixed(precision) + ',' + this.lng.toFixed(precision);
+    };
+    __decorate([
+        plugin_2.CordovaInstance({
+            sync: true
+        })
+    ], GoogleMapsLatLng.prototype, "toString", null);
+    return GoogleMapsLatLng;
+}());
+exports.GoogleMapsLatLng = GoogleMapsLatLng;
 
-},{"./plugin":415}],407:[function(require,module,exports){
+},{"./plugin":427,"rxjs/Observable":442}],417:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -68826,7 +71508,65 @@ var Hotspot = (function () {
 }());
 exports.Hotspot = Hotspot;
 
-},{"./plugin":415}],408:[function(require,module,exports){
+},{"./plugin":427}],418:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+ * @name Httpd
+ * @description
+ * Embedded httpd for Cordova apps. Light weight HTTP server.
+ * @usage
+ */
+var Httpd = (function () {
+    function Httpd() {
+    }
+    /**
+     * Starts a web server.
+     * @returns {Observable<string>} Returns an Observable. Subscribe to receive the URL for your web server (if succeeded). Unsubscribe to stop the server.
+     * @param options {HttpdOptions}
+     */
+    Httpd.startServer = function (options) { return; };
+    /**
+     * Gets the URL of the running server
+     * @returns {Promise<string>} Returns a promise that resolves with the URL of the web server.
+     */
+    Httpd.getUrl = function () { return; };
+    /**
+     * Get the local path of the running webserver
+     * @returns {Promise<string>} Returns a promise that resolves with the local path of the web server.
+     */
+    Httpd.getLocalPath = function () { return; };
+    __decorate([
+        plugin_1.Cordova({
+            observable: true,
+            clearFunction: 'stopServer'
+        })
+    ], Httpd, "startServer", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], Httpd, "getUrl", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], Httpd, "getLocalPath", null);
+    Httpd = __decorate([
+        plugin_1.Plugin({
+            plugin: 'https://github.com/floatinghotpot/cordova-httpd.git',
+            pluginRef: 'cordova.plugins.CorHttpd',
+            repo: 'https://github.com/floatinghotpot/cordova-httpd',
+            platforms: ['iOS', 'Android']
+        })
+    ], Httpd);
+    return Httpd;
+}());
+exports.Httpd = Httpd;
+
+},{"./plugin":427}],419:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -68883,7 +71623,7 @@ var ImagePicker = (function () {
 }());
 exports.ImagePicker = ImagePicker;
 
-},{"./plugin":415}],409:[function(require,module,exports){
+},{"./plugin":427}],420:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -68919,7 +71659,70 @@ var InAppBrowser = (function () {
 }());
 exports.InAppBrowser = InAppBrowser;
 
-},{"./plugin":415}],410:[function(require,module,exports){
+},{"./plugin":427}],421:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+ * @name Insomnia
+ * @description
+ * Prevent the screen of the mobile device from falling asleep.
+ *
+ * @usage
+ * ```js
+ * import {Insomnia} from 'ionic-native';
+ *
+ * Insomnia.keepAwake()
+ *   .then(
+ *     () => console.log('success'),
+ *     () => console.log('error')
+ *   );
+ *
+ * Insomnia.allowSleepAgain()
+ *   .then(
+ *     () => console.log('success'),
+ *     () => console.log('error')
+ *   );
+ * ```
+ *
+ */
+var Insomnia = (function () {
+    function Insomnia() {
+    }
+    /**
+     * Keeps awake the application
+     * @returns {Promise}
+     */
+    Insomnia.keepAwake = function () { return; };
+    /**
+     * Allows the application to sleep again
+     * @returns {Promise}
+     */
+    Insomnia.allowSleepAgain = function () { return; };
+    __decorate([
+        plugin_1.Cordova()
+    ], Insomnia, "keepAwake", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], Insomnia, "allowSleepAgain", null);
+    Insomnia = __decorate([
+        plugin_1.Plugin({
+            plugin: 'https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git',
+            pluginRef: 'plugins.insomnia',
+            repo: 'https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin',
+            platforms: ['Android', 'iOS', 'Windows Phone 8']
+        })
+    ], Insomnia);
+    return Insomnia;
+}());
+exports.Insomnia = Insomnia;
+
+},{"./plugin":427}],422:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -69013,7 +71816,7 @@ var Keyboard = (function () {
 }());
 exports.Keyboard = Keyboard;
 
-},{"./plugin":415}],411:[function(require,module,exports){
+},{"./plugin":427}],423:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -69071,7 +71874,7 @@ var LaunchNavigator = (function () {
 }());
 exports.LaunchNavigator = LaunchNavigator;
 
-},{"./plugin":415}],412:[function(require,module,exports){
+},{"./plugin":427}],424:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -69295,7 +72098,7 @@ var LocalNotifications = (function () {
 }());
 exports.LocalNotifications = LocalNotifications;
 
-},{"./plugin":415}],413:[function(require,module,exports){
+},{"./plugin":427}],425:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -69304,6 +72107,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var plugin_1 = require('./plugin');
+var Observable_1 = require('rxjs/Observable');
 /**
  * @name MediaPlugin
  * @description
@@ -69312,23 +72116,47 @@ var plugin_1 = require('./plugin');
  * import {MediaPlugin} from 'ionic-native';
  *
  *
- * ...
  *
- *
- * // Playing a file
+ * // Create a MediaPlugin instance.  Expects path to file or url as argument
  * var file = new MediaPlugin("path/to/file.mp3");
+ *
+ * // Catch the Success & Error Output
+ * // Platform Quirks
+ * // iOS calls success on completion of playback only
+ * // Android calls success on completion of playback AND on release()
+ * file.init.then(() => {
+ *   console.log("Playback Finished");
+ * }, (err) => {
+ *   console.log("somthing went wrong! error code: "+err.code+" message: "+err.message);
+ * });
  *
  * // play the file
  * file.play();
  *
- * // skip to 10 seconds
+ * // pause the file
+ * file.pause();
+ *
+ * // get current playback position
+ * file.getCurrentPosition().then((position) => {
+ *   console.log(position);
+ * });
+ *
+ * // get file duration
+ * file.getDuration().then((duration) => {
+ *   console.log(position);
+ * });
+ *
+ * // skip to 10 seconds (expects int value in ms)
  * file.seekTo(10000);
  *
- * // stop plying the file
+ * // stop playing the file
  * file.stop();
  *
- *
- * ...
+ * // release the native audio resource
+ * // Platform Quirks:
+ * // iOS simply create a new instance and the old one will be overwritten
+ * // Android you must call release() to destroy instances of media when you are done
+ * file.release();
  *
  * // Recording to a file
  * var newFile = new MediaPlugin("path/to/file.mp3");
@@ -69347,8 +72175,12 @@ var MediaPlugin = (function () {
      * @param src {string} A URI containing the audio content.
      */
     function MediaPlugin(src) {
-        // TODO handle success, error, and status
-        this._objectInstance = new Media(src);
+        var res, rej, next;
+        this.init = new Promise(function (resolve, reject) { res = resolve; rej = reject; });
+        this.status = new Observable_1.Observable(function (observer) {
+            next = function (data) { return observer.next(data); };
+        });
+        this._objectInstance = new Media(src, res, rej, next);
     }
     /**
      * Returns the current amplitude of the current recording.
@@ -69490,7 +72322,7 @@ var MediaError = (function () {
 }());
 exports.MediaError = MediaError;
 
-},{"./plugin":415}],414:[function(require,module,exports){
+},{"./plugin":427,"rxjs/Observable":442}],426:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -69633,7 +72465,7 @@ var Connection = (function () {
 }());
 exports.Connection = Connection;
 
-},{"./plugin":415}],415:[function(require,module,exports){
+},{"./plugin":427}],427:[function(require,module,exports){
 "use strict";
 var util_1 = require('../util');
 var Observable_1 = require('rxjs/Observable');
@@ -69647,27 +72479,16 @@ exports.getPlugin = function (pluginRef) {
 };
 /**
  * @private
- * @param pluginRef
- * @returns {boolean}
- */
-exports.isInstalled = function (pluginRef) {
-    return !!exports.getPlugin(pluginRef);
-};
-/**
- * @private
  * @param pluginObj
  * @param method
  */
 exports.pluginWarn = function (pluginObj, method) {
-    var pluginName = pluginObj.name;
-    var plugin = pluginObj.plugin;
-    if (method) {
+    var pluginName = pluginObj.name, plugin = pluginObj.plugin;
+    if (method)
         console.warn('Native: tried calling ' + pluginName + '.' + method + ', but the ' + pluginName + ' plugin is not installed.');
-    }
-    else {
+    else
         console.warn('Native: tried accessing the ' + pluginName + ' plugin but it\'s not installed.');
-    }
-    console.warn('Install the ' + pluginName + ' plugin: \'cordova plugin add ' + plugin + '\'');
+    console.warn('Install the ' + pluginName + ' plugin: \'ionic plugin add ' + plugin + '\'');
 };
 /**
  * @private
@@ -69675,12 +72496,10 @@ exports.pluginWarn = function (pluginObj, method) {
  * @param method
  */
 exports.cordovaWarn = function (pluginName, method) {
-    if (method) {
+    if (method)
         console.warn('Native: tried calling ' + pluginName + '.' + method + ', but Cordova is not available. Make sure to include cordova.js or run in a device/simulator');
-    }
-    else {
+    else
         console.warn('Native: tried accessing the ' + pluginName + ' plugin but Cordova is not available. Make sure to include cordova.js or run in a device/simulator');
-    }
 };
 function setIndex(args, opts, resolve, reject) {
     if (opts === void 0) { opts = {}; }
@@ -69704,9 +72523,9 @@ function setIndex(args, opts, resolve, reject) {
     return args;
 }
 function callCordovaPlugin(pluginObj, methodName, args, opts, resolve, reject) {
+    if (opts === void 0) { opts = {}; }
     // Try to figure out where the success/error callbacks need to be bound
     // to our promise resolve/reject handlers.
-    if (opts === void 0) { opts = {}; }
     args = setIndex(args, opts, resolve, reject);
     var pluginInstance = exports.getPlugin(pluginObj.pluginRef);
     if (!pluginInstance) {
@@ -69727,14 +72546,12 @@ function callCordovaPlugin(pluginObj, methodName, args, opts, resolve, reject) {
 }
 function getPromise(cb) {
     if (window.Promise) {
-        // console.log('Native promises available...');
         return new Promise(function (resolve, reject) {
             cb(resolve, reject);
         });
     }
     else if (window.angular) {
         var $q_1 = window.angular.injector(['ng']).get('$q');
-        // console.log('Loaded $q', $q);
         return $q_1(function (resolve, reject) {
             cb(resolve, reject);
         });
@@ -69768,10 +72585,12 @@ function wrapObservable(pluginObj, methodName, args, opts) {
         }
         return function () {
             try {
-                if (opts.clearWithArgs) {
-                    return util_1.get(window, pluginObj.pluginRef)[opts.clearFunction].apply(pluginObj, args);
+                if (opts.clearFunction) {
+                    if (opts.clearWithArgs) {
+                        return util_1.get(window, pluginObj.pluginRef)[opts.clearFunction].apply(pluginObj, args);
+                    }
+                    return util_1.get(window, pluginObj.pluginRef)[opts.clearFunction].call(pluginObj, pluginResult);
                 }
-                return util_1.get(window, pluginObj.pluginRef)[opts.clearFunction].call(pluginObj, pluginResult);
             }
             catch (e) {
                 console.warn('Unable to clear the previous observable watch for', pluginObj.name, methodName);
@@ -69785,7 +72604,7 @@ function callInstance(pluginObj, methodName, args, opts, resolve, reject) {
     args = setIndex(args, opts, resolve, reject);
     return pluginObj._objectInstance[methodName].apply(pluginObj._objectInstance, args);
 }
-function wrapInstance(pluginObj, methodName, args, opts) {
+function wrapInstance(pluginObj, methodName, opts) {
     if (opts === void 0) { opts = {}; }
     return function () {
         var args = [];
@@ -69896,7 +72715,6 @@ exports.Plugin = Plugin;
 function Cordova(opts) {
     if (opts === void 0) { opts = {}; }
     return function (target, methodName, descriptor) {
-        var originalMethod = descriptor.value;
         return {
             value: function () {
                 var args = [];
@@ -69946,7 +72764,8 @@ function CordovaProperty(target, key, descriptor) {
             exports.cordovaWarn(this.name, null);
             return {};
         }
-        var pluginInstance = exports.getPlugin(this.pluginRef);
+        var pluginObj = this;
+        var pluginInstance = exports.getPlugin(pluginObj.pluginRef);
         if (!pluginInstance) {
             exports.pluginWarn(this, key);
             return {};
@@ -69967,18 +72786,18 @@ function InstanceProperty(target, key, descriptor) {
     descriptor.get = function () {
         return this._objectInstance[key];
     };
-    descriptor.get = function () {
+    descriptor.set = function () {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        return this._objectInstance[key] = args[0];
+        this._objectInstance[key] = args[0];
     };
     return descriptor;
 }
 exports.InstanceProperty = InstanceProperty;
 
-},{"../util":428,"rxjs/Observable":429}],416:[function(require,module,exports){
+},{"../util":441,"rxjs/Observable":442}],428:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70052,7 +72871,117 @@ var Push = (function () {
 }());
 exports.Push = Push;
 
-},{"./plugin":415}],417:[function(require,module,exports){
+},{"./plugin":427}],429:[function(require,module,exports){
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var plugin_1 = require('./plugin');
+/**
+ * @name SafariViewController
+ * @description
+ * @usage
+ * ```
+ * import {SafariViewController} from 'ionic-native';
+ *
+ * ...
+ *
+ * SafariViewController.isAvailable()
+ *   .then(
+ *     (available) => {
+ *       if(available){
+ *
+ *         SafariViewController.show({
+ *           url: 'http://ionic.io',
+ *           hidden: false,
+ *           animated: false,
+ *           transition: 'curl',
+ *           enterReaderModeIfAvailable: true,
+ *           tintColor: '#ff0000'
+ *         })
+ *         .then(
+ *           (result: any) => {
+ *             if(result.event === 'opened') console.log("Opened");
+ *             else if(result.event === 'loaded') console.log("Loaded");
+ *             else if(result.event === 'closed') console.log("Closed");
+ *           },
+ *           (error: any) => console.error(error)
+ *         );
+ *
+ *       } else {
+ *         // use fallback browser, example InAppBrowser
+ *       }
+ *     }
+ *   );
+ * ```
+ */
+var SafariViewController = (function () {
+    function SafariViewController() {
+    }
+    /**
+     * Checks if SafariViewController is available
+     */
+    SafariViewController.isAvailable = function () { return; };
+    /**
+     * Shows Safari View Controller
+     * @param options
+     */
+    SafariViewController.show = function (options) { };
+    /**
+     * Hides Safari View Controller
+     */
+    SafariViewController.hide = function () { };
+    /**
+     * Tries to connect to the  Chrome's custom tabs service. you must call this method before calling any of the other methods listed below.
+     */
+    SafariViewController.connectToService = function () { return; };
+    /**
+     * Call this method whenever there's a chance the user will open an external url.
+     */
+    SafariViewController.warmUp = function () { return; };
+    /**
+     * For even better performance optimization, call this methods if there's more than a 50% chance the user will open a certain URL.
+     * @param url
+     */
+    SafariViewController.mayLaunchUrl = function (url) { return; };
+    __decorate([
+        plugin_1.Cordova()
+    ], SafariViewController, "isAvailable", null);
+    __decorate([
+        plugin_1.Cordova({
+            callbackOrder: 'reverse'
+        })
+    ], SafariViewController, "show", null);
+    __decorate([
+        plugin_1.Cordova({
+            sync: true
+        })
+    ], SafariViewController, "hide", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], SafariViewController, "connectToService", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], SafariViewController, "warmUp", null);
+    __decorate([
+        plugin_1.Cordova()
+    ], SafariViewController, "mayLaunchUrl", null);
+    SafariViewController = __decorate([
+        plugin_1.Plugin({
+            plugin: 'cordova-plugin-safariviewcontroller',
+            pluginRef: 'SafariViewController',
+            platforms: ['iOS'],
+            repo: 'https://github.com/EddyVerbruggen/cordova-plugin-safariviewcontroller'
+        })
+    ], SafariViewController);
+    return SafariViewController;
+}());
+exports.SafariViewController = SafariViewController;
+
+},{"./plugin":427}],430:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70073,26 +73002,36 @@ var Screenshot = (function () {
      *        Default quality is set to 100.
      * @param {string} filename. Name of the file as stored on the storage
      */
-    Screenshot.save = function (format, quality, filename) { return; };
+    Screenshot.save = function (format, quality, filename) {
+        return new Promise(function (resolve, reject) {
+            navigator.screenshot.save(function (error, result) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve(result);
+                }
+            }, format, quality, filename);
+        });
+    };
     /**
      *  Takes screenshot and returns the image as an URI
      *
      * @param {number} quality. Determines the quality of the screenshot.
      *        Default quality is set to 100.
      */
-    Screenshot.URI = function (quality) { return; };
-    __decorate([
-        plugin_1.Cordova({
-            successIndex: 1,
-            errorIndex: 0
-        })
-    ], Screenshot, "save", null);
-    __decorate([
-        plugin_1.Cordova({
-            successIndex: 1,
-            errorIndex: 0
-        })
-    ], Screenshot, "URI", null);
+    Screenshot.URI = function (quality) {
+        return new Promise(function (resolve, reject) {
+            navigator.screenshot.URI(function (error, result) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve(result);
+                }
+            }, quality);
+        });
+    };
     Screenshot = __decorate([
         plugin_1.Plugin({
             plugin: 'https://github.com/gitawego/cordova-screenshot.git',
@@ -70104,7 +73043,7 @@ var Screenshot = (function () {
 }());
 exports.Screenshot = Screenshot;
 
-},{"./plugin":415}],418:[function(require,module,exports){
+},{"./plugin":427}],431:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70156,7 +73095,7 @@ var SMS = (function () {
 }());
 exports.SMS = SMS;
 
-},{"./plugin":415}],419:[function(require,module,exports){
+},{"./plugin":427}],432:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70188,6 +73127,11 @@ var SocialSharing = (function () {
      * @param url {string} A URL to share
      */
     SocialSharing.share = function (message, subject, file, url) { };
+    /**
+     * Shares using the share sheet with additional options and returns a result object or an error message (requires plugin version 5.1.0+)
+     * @param options {object} The options object with the message, subject, files, url and chooserTitle properties.
+     */
+    SocialSharing.shareWithOptions = function (options) { return; };
     /**
      * Checks if you can share via a specific app.
      * @param appName App name or package name. Examples: instagram or com.apple.social.facebook
@@ -70261,6 +73205,11 @@ var SocialSharing = (function () {
         plugin_1.Cordova({
             platforms: ['iOS', 'Android']
         })
+    ], SocialSharing, "shareWithOptions", null);
+    __decorate([
+        plugin_1.Cordova({
+            platforms: ['iOS', 'Android']
+        })
     ], SocialSharing, "canShareVia", null);
     __decorate([
         plugin_1.Cordova({
@@ -70315,7 +73264,7 @@ var SocialSharing = (function () {
 }());
 exports.SocialSharing = SocialSharing;
 
-},{"./plugin":415}],420:[function(require,module,exports){
+},{"./plugin":427}],433:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70375,7 +73324,7 @@ var SpinnerDialog = (function () {
 }());
 exports.SpinnerDialog = SpinnerDialog;
 
-},{"./plugin":415}],421:[function(require,module,exports){
+},{"./plugin":427}],434:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70430,7 +73379,7 @@ var Splashscreen = (function () {
 }());
 exports.Splashscreen = Splashscreen;
 
-},{"./plugin":415}],422:[function(require,module,exports){
+},{"./plugin":427}],435:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70559,7 +73508,7 @@ var SQLite = (function () {
 }());
 exports.SQLite = SQLite;
 
-},{"./plugin":415}],423:[function(require,module,exports){
+},{"./plugin":427}],436:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70579,11 +73528,11 @@ var plugin_1 = require('./plugin');
  * ```ts
  * import {StatusBar} from 'ionic-native';
  *
+ * ...
  *
+ * StatuBar.overlaysWebView(true); // let status var overlay webview
  *
- * StatuBar.overlaysWebView(true);
- *
- * StatusBar.
+ * StatusBar.backgroundColorByHexString('#ffffff'); // set status bar to white
  * ```
  *
  */
@@ -70707,14 +73656,15 @@ var StatusBar = (function () {
         plugin_1.Plugin({
             plugin: 'cordova-plugin-statusbar',
             pluginRef: 'StatusBar',
-            repo: 'https://github.com/apache/cordova-plugin-statusbar'
+            repo: 'https://github.com/apache/cordova-plugin-statusbar',
+            platforms: ['iOS', 'Android', 'Windows Phone 8', 'Windows 8', 'Windows 10']
         })
     ], StatusBar);
     return StatusBar;
 }());
 exports.StatusBar = StatusBar;
 
-},{"./plugin":415}],424:[function(require,module,exports){
+},{"./plugin":427}],437:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70857,14 +73807,15 @@ var Toast = (function () {
         plugin_1.Plugin({
             plugin: 'cordova-plugin-x-toast',
             pluginRef: 'plugins.toast',
-            repo: 'https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin'
+            repo: 'https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin',
+            platforms: ['Android', 'iOS', 'Windows Phone 8']
         })
     ], Toast);
     return Toast;
 }());
 exports.Toast = Toast;
 
-},{"./plugin":415}],425:[function(require,module,exports){
+},{"./plugin":427}],438:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70896,7 +73847,19 @@ var plugin_1 = require('./plugin');
  * ```js
  * import {TouchID} from 'ionic-native';
  *
+ * ...
  *
+ * TouchID.isAvailable()
+ *   .then(
+ *     res => console.log("TouchID is available!"),
+ *     err => console.error("TouchID isn't available", err)
+ *   );
+ *
+ * TouchID.verifyFingerprint('Scan your fingerprint please')
+ *   .then(
+ *     res => console.log("Ok", res),
+ *     err => console.error("Error", err)
+ *   );
  *
  * ```
  */
@@ -70947,14 +73910,15 @@ var TouchID = (function () {
         plugin_1.Plugin({
             plugin: 'cordova-plugin-touch-id',
             pluginRef: 'plugins.touchid',
-            repo: 'https://github.com/EddyVerbruggen/cordova-plugin-touch-id'
+            repo: 'https://github.com/EddyVerbruggen/cordova-plugin-touch-id',
+            platforms: ['iOS']
         })
     ], TouchID);
     return TouchID;
 }());
 exports.TouchID = TouchID;
 
-},{"./plugin":415}],426:[function(require,module,exports){
+},{"./plugin":427}],439:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70991,7 +73955,7 @@ var Vibration = (function () {
     }
     /**
      * Vibrates the device for given amount of time.
-     * @param time {Number|Array<Number>} Milliseconds to vibrate the device. If passed an array of numbers, it will define a vibration pattern. Pass 0 to stop any vibration immediately.
+     * @param time {number|Array<number>} Milliseconds to vibrate the device. If passed an array of numbers, it will define a vibration pattern. Pass 0 to stop any vibration immediately.
      */
     Vibration.vibrate = function (time) { };
     __decorate([
@@ -71003,14 +73967,15 @@ var Vibration = (function () {
         plugin_1.Plugin({
             plugin: 'cordova-plugin-vibration',
             pluginRef: 'navigator',
-            repo: 'https://github.com/apache/cordova-plugin-vibration'
+            repo: 'https://github.com/apache/cordova-plugin-vibration',
+            platforms: ['Android', 'iOS', 'Windows 8.1 Phone', 'Windows 8.1', 'Windows 10']
         })
     ], Vibration);
     return Vibration;
 }());
 exports.Vibration = Vibration;
 
-},{"./plugin":415}],427:[function(require,module,exports){
+},{"./plugin":427}],440:[function(require,module,exports){
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -71019,6 +73984,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var plugin_1 = require('./plugin');
+/**
+ * @name WebIntent
+ * @description
+ * @usage
+ * For usage information please refer to the plugin's Github repo.
+ */
 var WebIntent = (function () {
     function WebIntent() {
     }
@@ -71072,14 +74043,15 @@ var WebIntent = (function () {
         plugin_1.Plugin({
             plugin: 'https://github.com/Initsogar/cordova-webintent.git',
             pluginRef: 'window.plugins.webintent',
-            repo: 'https://github.com/Initsogar/cordova-webintent.git'
+            repo: 'https://github.com/Initsogar/cordova-webintent.git',
+            platforms: ['Android']
         })
     ], WebIntent);
     return WebIntent;
 }());
 exports.WebIntent = WebIntent;
 
-},{"./plugin":415}],428:[function(require,module,exports){
+},{"./plugin":427}],441:[function(require,module,exports){
 "use strict";
 function get(obj, path) {
     for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
@@ -71093,7 +74065,673 @@ function get(obj, path) {
 exports.get = get;
 ;
 
-},{}],429:[function(require,module,exports){
+},{}],442:[function(require,module,exports){
+"use strict";
+var root_1 = require('./util/root');
+var toSubscriber_1 = require('./util/toSubscriber');
+var $$observable = require('symbol-observable');
+/**
+ * A representation of any set of values over any amount of time. This the most basic building block
+ * of RxJS.
+ *
+ * @class Observable<T>
+ */
+var Observable = (function () {
+    /**
+     * @constructor
+     * @param {Function} subscribe the function that is  called when the Observable is
+     * initially subscribed to. This function is given a Subscriber, to which new values
+     * can be `next`ed, or an `error` method can be called to raise an error, or
+     * `complete` can be called to notify of a successful completion.
+     */
+    function Observable(subscribe) {
+        this._isScalar = false;
+        if (subscribe) {
+            this._subscribe = subscribe;
+        }
+    }
+    /**
+     * Creates a new Observable, with this Observable as the source, and the passed
+     * operator defined as the new observable's operator.
+     * @method lift
+     * @param {Operator} operator the operator defining the operation to take on the observable
+     * @return {Observable} a new observable with the Operator applied
+     */
+    Observable.prototype.lift = function (operator) {
+        var observable = new Observable();
+        observable.source = this;
+        observable.operator = operator;
+        return observable;
+    };
+    /**
+     * Registers handlers for handling emitted values, error and completions from the observable, and
+     *  executes the observable's subscriber function, which will take action to set up the underlying data stream
+     * @method subscribe
+     * @param {PartialObserver|Function} observerOrNext (optional) either an observer defining all functions to be called,
+     *  or the first of three possible handlers, which is the handler for each value emitted from the observable.
+     * @param {Function} error (optional) a handler for a terminal event resulting from an error. If no error handler is provided,
+     *  the error will be thrown as unhandled
+     * @param {Function} complete (optional) a handler for a terminal event resulting from successful completion.
+     * @return {ISubscription} a subscription reference to the registered handlers
+     */
+    Observable.prototype.subscribe = function (observerOrNext, error, complete) {
+        var operator = this.operator;
+        var sink = toSubscriber_1.toSubscriber(observerOrNext, error, complete);
+        if (operator) {
+            operator.call(sink, this);
+        }
+        else {
+            sink.add(this._subscribe(sink));
+        }
+        if (sink.syncErrorThrowable) {
+            sink.syncErrorThrowable = false;
+            if (sink.syncErrorThrown) {
+                throw sink.syncErrorValue;
+            }
+        }
+        return sink;
+    };
+    /**
+     * @method forEach
+     * @param {Function} next a handler for each value emitted by the observable
+     * @param {PromiseConstructor} [PromiseCtor] a constructor function used to instantiate the Promise
+     * @return {Promise} a promise that either resolves on observable completion or
+     *  rejects with the handled error
+     */
+    Observable.prototype.forEach = function (next, PromiseCtor) {
+        var _this = this;
+        if (!PromiseCtor) {
+            if (root_1.root.Rx && root_1.root.Rx.config && root_1.root.Rx.config.Promise) {
+                PromiseCtor = root_1.root.Rx.config.Promise;
+            }
+            else if (root_1.root.Promise) {
+                PromiseCtor = root_1.root.Promise;
+            }
+        }
+        if (!PromiseCtor) {
+            throw new Error('no Promise impl found');
+        }
+        return new PromiseCtor(function (resolve, reject) {
+            var subscription = _this.subscribe(function (value) {
+                if (subscription) {
+                    // if there is a subscription, then we can surmise
+                    // the next handling is asynchronous. Any errors thrown
+                    // need to be rejected explicitly and unsubscribe must be
+                    // called manually
+                    try {
+                        next(value);
+                    }
+                    catch (err) {
+                        reject(err);
+                        subscription.unsubscribe();
+                    }
+                }
+                else {
+                    // if there is NO subscription, then we're getting a nexted
+                    // value synchronously during subscription. We can just call it.
+                    // If it errors, Observable's `subscribe` imple will ensure the
+                    // unsubscription logic is called, then synchronously rethrow the error.
+                    // After that, Promise will trap the error and send it
+                    // down the rejection path.
+                    next(value);
+                }
+            }, reject, resolve);
+        });
+    };
+    Observable.prototype._subscribe = function (subscriber) {
+        return this.source.subscribe(subscriber);
+    };
+    /**
+     * An interop point defined by the es7-observable spec https://github.com/zenparsing/es-observable
+     * @method Symbol.observable
+     * @return {Observable} this instance of the observable
+     */
+    Observable.prototype[$$observable] = function () {
+        return this;
+    };
+    // HACK: Since TypeScript inherits static properties too, we have to
+    // fight against TypeScript here so Subject can have a different static create signature
+    /**
+     * Creates a new cold Observable by calling the Observable constructor
+     * @static true
+     * @owner Observable
+     * @method create
+     * @param {Function} subscribe? the subscriber function to be passed to the Observable constructor
+     * @return {Observable} a new cold observable
+     */
+    Observable.create = function (subscribe) {
+        return new Observable(subscribe);
+    };
+    return Observable;
+}());
+exports.Observable = Observable;
+
+},{"./util/root":452,"./util/toSubscriber":453,"symbol-observable":476}],443:[function(require,module,exports){
+"use strict";
+exports.empty = {
+    isUnsubscribed: true,
+    next: function (value) { },
+    error: function (err) { throw err; },
+    complete: function () { }
+};
+
+},{}],444:[function(require,module,exports){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var isFunction_1 = require('./util/isFunction');
+var Subscription_1 = require('./Subscription');
+var Observer_1 = require('./Observer');
+var rxSubscriber_1 = require('./symbol/rxSubscriber');
+/**
+ * Implements the {@link Observer} interface and extends the
+ * {@link Subscription} class. While the {@link Observer} is the public API for
+ * consuming the values of an {@link Observable}, all Observers get converted to
+ * a Subscriber, in order to provide Subscription-like capabilities such as
+ * `unsubscribe`. Subscriber is a common type in RxJS, and crucial for
+ * implementing operators, but it is rarely used as a public API.
+ *
+ * @class Subscriber<T>
+ */
+var Subscriber = (function (_super) {
+    __extends(Subscriber, _super);
+    /**
+     * @param {Observer|function(value: T): void} [destinationOrNext] A partially
+     * defined Observer or a `next` callback function.
+     * @param {function(e: ?any): void} [error] The `error` callback of an
+     * Observer.
+     * @param {function(): void} [complete] The `complete` callback of an
+     * Observer.
+     */
+    function Subscriber(destinationOrNext, error, complete) {
+        _super.call(this);
+        this.syncErrorValue = null;
+        this.syncErrorThrown = false;
+        this.syncErrorThrowable = false;
+        this.isStopped = false;
+        switch (arguments.length) {
+            case 0:
+                this.destination = Observer_1.empty;
+                break;
+            case 1:
+                if (!destinationOrNext) {
+                    this.destination = Observer_1.empty;
+                    break;
+                }
+                if (typeof destinationOrNext === 'object') {
+                    if (destinationOrNext instanceof Subscriber) {
+                        this.destination = destinationOrNext;
+                        this.destination.add(this);
+                    }
+                    else {
+                        this.syncErrorThrowable = true;
+                        this.destination = new SafeSubscriber(this, destinationOrNext);
+                    }
+                    break;
+                }
+            default:
+                this.syncErrorThrowable = true;
+                this.destination = new SafeSubscriber(this, destinationOrNext, error, complete);
+                break;
+        }
+    }
+    Subscriber.prototype[rxSubscriber_1.$$rxSubscriber] = function () { return this; };
+    /**
+     * A static factory for a Subscriber, given a (potentially partial) definition
+     * of an Observer.
+     * @param {function(x: ?T): void} [next] The `next` callback of an Observer.
+     * @param {function(e: ?any): void} [error] The `error` callback of an
+     * Observer.
+     * @param {function(): void} [complete] The `complete` callback of an
+     * Observer.
+     * @return {Subscriber<T>} A Subscriber wrapping the (partially defined)
+     * Observer represented by the given arguments.
+     */
+    Subscriber.create = function (next, error, complete) {
+        var subscriber = new Subscriber(next, error, complete);
+        subscriber.syncErrorThrowable = false;
+        return subscriber;
+    };
+    /**
+     * The {@link Observer} callback to receive notifications of type `next` from
+     * the Observable, with a value. The Observable may call this method 0 or more
+     * times.
+     * @param {T} [value] The `next` value.
+     * @return {void}
+     */
+    Subscriber.prototype.next = function (value) {
+        if (!this.isStopped) {
+            this._next(value);
+        }
+    };
+    /**
+     * The {@link Observer} callback to receive notifications of type `error` from
+     * the Observable, with an attached {@link Error}. Notifies the Observer that
+     * the Observable has experienced an error condition.
+     * @param {any} [err] The `error` exception.
+     * @return {void}
+     */
+    Subscriber.prototype.error = function (err) {
+        if (!this.isStopped) {
+            this.isStopped = true;
+            this._error(err);
+        }
+    };
+    /**
+     * The {@link Observer} callback to receive a valueless notification of type
+     * `complete` from the Observable. Notifies the Observer that the Observable
+     * has finished sending push-based notifications.
+     * @return {void}
+     */
+    Subscriber.prototype.complete = function () {
+        if (!this.isStopped) {
+            this.isStopped = true;
+            this._complete();
+        }
+    };
+    Subscriber.prototype.unsubscribe = function () {
+        if (this.isUnsubscribed) {
+            return;
+        }
+        this.isStopped = true;
+        _super.prototype.unsubscribe.call(this);
+    };
+    Subscriber.prototype._next = function (value) {
+        this.destination.next(value);
+    };
+    Subscriber.prototype._error = function (err) {
+        this.destination.error(err);
+        this.unsubscribe();
+    };
+    Subscriber.prototype._complete = function () {
+        this.destination.complete();
+        this.unsubscribe();
+    };
+    return Subscriber;
+}(Subscription_1.Subscription));
+exports.Subscriber = Subscriber;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SafeSubscriber = (function (_super) {
+    __extends(SafeSubscriber, _super);
+    function SafeSubscriber(_parent, observerOrNext, error, complete) {
+        _super.call(this);
+        this._parent = _parent;
+        var next;
+        var context = this;
+        if (isFunction_1.isFunction(observerOrNext)) {
+            next = observerOrNext;
+        }
+        else if (observerOrNext) {
+            context = observerOrNext;
+            next = observerOrNext.next;
+            error = observerOrNext.error;
+            complete = observerOrNext.complete;
+            if (isFunction_1.isFunction(context.unsubscribe)) {
+                this.add(context.unsubscribe.bind(context));
+            }
+            context.unsubscribe = this.unsubscribe.bind(this);
+        }
+        this._context = context;
+        this._next = next;
+        this._error = error;
+        this._complete = complete;
+    }
+    SafeSubscriber.prototype.next = function (value) {
+        if (!this.isStopped && this._next) {
+            var _parent = this._parent;
+            if (!_parent.syncErrorThrowable) {
+                this.__tryOrUnsub(this._next, value);
+            }
+            else if (this.__tryOrSetError(_parent, this._next, value)) {
+                this.unsubscribe();
+            }
+        }
+    };
+    SafeSubscriber.prototype.error = function (err) {
+        if (!this.isStopped) {
+            var _parent = this._parent;
+            if (this._error) {
+                if (!_parent.syncErrorThrowable) {
+                    this.__tryOrUnsub(this._error, err);
+                    this.unsubscribe();
+                }
+                else {
+                    this.__tryOrSetError(_parent, this._error, err);
+                    this.unsubscribe();
+                }
+            }
+            else if (!_parent.syncErrorThrowable) {
+                this.unsubscribe();
+                throw err;
+            }
+            else {
+                _parent.syncErrorValue = err;
+                _parent.syncErrorThrown = true;
+                this.unsubscribe();
+            }
+        }
+    };
+    SafeSubscriber.prototype.complete = function () {
+        if (!this.isStopped) {
+            var _parent = this._parent;
+            if (this._complete) {
+                if (!_parent.syncErrorThrowable) {
+                    this.__tryOrUnsub(this._complete);
+                    this.unsubscribe();
+                }
+                else {
+                    this.__tryOrSetError(_parent, this._complete);
+                    this.unsubscribe();
+                }
+            }
+            else {
+                this.unsubscribe();
+            }
+        }
+    };
+    SafeSubscriber.prototype.__tryOrUnsub = function (fn, value) {
+        try {
+            fn.call(this._context, value);
+        }
+        catch (err) {
+            this.unsubscribe();
+            throw err;
+        }
+    };
+    SafeSubscriber.prototype.__tryOrSetError = function (parent, fn, value) {
+        try {
+            fn.call(this._context, value);
+        }
+        catch (err) {
+            parent.syncErrorValue = err;
+            parent.syncErrorThrown = true;
+            return true;
+        }
+        return false;
+    };
+    SafeSubscriber.prototype._unsubscribe = function () {
+        var _parent = this._parent;
+        this._context = null;
+        this._parent = null;
+        _parent.unsubscribe();
+    };
+    return SafeSubscriber;
+}(Subscriber));
+
+},{"./Observer":443,"./Subscription":445,"./symbol/rxSubscriber":446,"./util/isFunction":450}],445:[function(require,module,exports){
+"use strict";
+var isArray_1 = require('./util/isArray');
+var isObject_1 = require('./util/isObject');
+var isFunction_1 = require('./util/isFunction');
+var tryCatch_1 = require('./util/tryCatch');
+var errorObject_1 = require('./util/errorObject');
+var UnsubscriptionError_1 = require('./util/UnsubscriptionError');
+/**
+ * Represents a disposable resource, such as the execution of an Observable. A
+ * Subscription has one important method, `unsubscribe`, that takes no argument
+ * and just disposes the resource held by the subscription.
+ *
+ * Additionally, subscriptions may be grouped together through the `add()`
+ * method, which will attach a child Subscription to the current Subscription.
+ * When a Subscription is unsubscribed, all its children (and its grandchildren)
+ * will be unsubscribed as well.
+ *
+ * @class Subscription
+ */
+var Subscription = (function () {
+    /**
+     * @param {function(): void} [unsubscribe] A function describing how to
+     * perform the disposal of resources when the `unsubscribe` method is called.
+     */
+    function Subscription(unsubscribe) {
+        /**
+         * A flag to indicate whether this Subscription has already been unsubscribed.
+         * @type {boolean}
+         */
+        this.isUnsubscribed = false;
+        if (unsubscribe) {
+            this._unsubscribe = unsubscribe;
+        }
+    }
+    /**
+     * Disposes the resources held by the subscription. May, for instance, cancel
+     * an ongoing Observable execution or cancel any other type of work that
+     * started when the Subscription was created.
+     * @return {void}
+     */
+    Subscription.prototype.unsubscribe = function () {
+        var hasErrors = false;
+        var errors;
+        if (this.isUnsubscribed) {
+            return;
+        }
+        this.isUnsubscribed = true;
+        var _a = this, _unsubscribe = _a._unsubscribe, _subscriptions = _a._subscriptions;
+        this._subscriptions = null;
+        if (isFunction_1.isFunction(_unsubscribe)) {
+            var trial = tryCatch_1.tryCatch(_unsubscribe).call(this);
+            if (trial === errorObject_1.errorObject) {
+                hasErrors = true;
+                (errors = errors || []).push(errorObject_1.errorObject.e);
+            }
+        }
+        if (isArray_1.isArray(_subscriptions)) {
+            var index = -1;
+            var len = _subscriptions.length;
+            while (++index < len) {
+                var sub = _subscriptions[index];
+                if (isObject_1.isObject(sub)) {
+                    var trial = tryCatch_1.tryCatch(sub.unsubscribe).call(sub);
+                    if (trial === errorObject_1.errorObject) {
+                        hasErrors = true;
+                        errors = errors || [];
+                        var err = errorObject_1.errorObject.e;
+                        if (err instanceof UnsubscriptionError_1.UnsubscriptionError) {
+                            errors = errors.concat(err.errors);
+                        }
+                        else {
+                            errors.push(err);
+                        }
+                    }
+                }
+            }
+        }
+        if (hasErrors) {
+            throw new UnsubscriptionError_1.UnsubscriptionError(errors);
+        }
+    };
+    /**
+     * Adds a tear down to be called during the unsubscribe() of this
+     * Subscription.
+     *
+     * If the tear down being added is a subscription that is already
+     * unsubscribed, is the same reference `add` is being called on, or is
+     * `Subscription.EMPTY`, it will not be added.
+     *
+     * If this subscription is already in an `isUnsubscribed` state, the passed
+     * tear down logic will be executed immediately.
+     *
+     * @param {TeardownLogic} teardown The additional logic to execute on
+     * teardown.
+     * @return {Subscription} Returns the Subscription used or created to be
+     * added to the inner subscriptions list. This Subscription can be used with
+     * `remove()` to remove the passed teardown logic from the inner subscriptions
+     * list.
+     */
+    Subscription.prototype.add = function (teardown) {
+        if (!teardown || (teardown === this) || (teardown === Subscription.EMPTY)) {
+            return;
+        }
+        var sub = teardown;
+        switch (typeof teardown) {
+            case 'function':
+                sub = new Subscription(teardown);
+            case 'object':
+                if (sub.isUnsubscribed || typeof sub.unsubscribe !== 'function') {
+                    break;
+                }
+                else if (this.isUnsubscribed) {
+                    sub.unsubscribe();
+                }
+                else {
+                    (this._subscriptions || (this._subscriptions = [])).push(sub);
+                }
+                break;
+            default:
+                throw new Error('Unrecognized teardown ' + teardown + ' added to Subscription.');
+        }
+        return sub;
+    };
+    /**
+     * Removes a Subscription from the internal list of subscriptions that will
+     * unsubscribe during the unsubscribe process of this Subscription.
+     * @param {Subscription} subscription The subscription to remove.
+     * @return {void}
+     */
+    Subscription.prototype.remove = function (subscription) {
+        // HACK: This might be redundant because of the logic in `add()`
+        if (subscription == null || (subscription === this) || (subscription === Subscription.EMPTY)) {
+            return;
+        }
+        var subscriptions = this._subscriptions;
+        if (subscriptions) {
+            var subscriptionIndex = subscriptions.indexOf(subscription);
+            if (subscriptionIndex !== -1) {
+                subscriptions.splice(subscriptionIndex, 1);
+            }
+        }
+    };
+    Subscription.EMPTY = (function (empty) {
+        empty.isUnsubscribed = true;
+        return empty;
+    }(new Subscription()));
+    return Subscription;
+}());
+exports.Subscription = Subscription;
+
+},{"./util/UnsubscriptionError":447,"./util/errorObject":448,"./util/isArray":449,"./util/isFunction":450,"./util/isObject":451,"./util/tryCatch":454}],446:[function(require,module,exports){
+"use strict";
+var root_1 = require('../util/root');
+var Symbol = root_1.root.Symbol;
+exports.$$rxSubscriber = (typeof Symbol === 'function' && typeof Symbol.for === 'function') ?
+    Symbol.for('rxSubscriber') : '@@rxSubscriber';
+
+},{"../util/root":452}],447:[function(require,module,exports){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * An error thrown when one or more errors have occurred during the
+ * `unsubscribe` of a {@link Subscription}.
+ */
+var UnsubscriptionError = (function (_super) {
+    __extends(UnsubscriptionError, _super);
+    function UnsubscriptionError(errors) {
+        _super.call(this);
+        this.errors = errors;
+        this.name = 'UnsubscriptionError';
+        this.message = errors ? errors.length + " errors occurred during unsubscription:\n" + errors.map(function (err, i) { return ((i + 1) + ") " + err.toString()); }).join('\n') : '';
+    }
+    return UnsubscriptionError;
+}(Error));
+exports.UnsubscriptionError = UnsubscriptionError;
+
+},{}],448:[function(require,module,exports){
+"use strict";
+// typeof any so that it we don't have to cast when comparing a result to the error object
+exports.errorObject = { e: {} };
+
+},{}],449:[function(require,module,exports){
+"use strict";
+exports.isArray = Array.isArray || (function (x) { return x && typeof x.length === 'number'; });
+
+},{}],450:[function(require,module,exports){
+"use strict";
+function isFunction(x) {
+    return typeof x === 'function';
+}
+exports.isFunction = isFunction;
+
+},{}],451:[function(require,module,exports){
+"use strict";
+function isObject(x) {
+    return x != null && typeof x === 'object';
+}
+exports.isObject = isObject;
+
+},{}],452:[function(require,module,exports){
+(function (global){
+"use strict";
+var objectTypes = {
+    'boolean': false,
+    'function': true,
+    'object': true,
+    'number': false,
+    'string': false,
+    'undefined': false
+};
+exports.root = (objectTypes[typeof self] && self) || (objectTypes[typeof window] && window);
+/* tslint:disable:no-unused-variable */
+var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
+var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
+var freeGlobal = objectTypes[typeof global] && global;
+if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal)) {
+    exports.root = freeGlobal;
+}
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{}],453:[function(require,module,exports){
+"use strict";
+var Subscriber_1 = require('../Subscriber');
+var rxSubscriber_1 = require('../symbol/rxSubscriber');
+function toSubscriber(nextOrObserver, error, complete) {
+    if (nextOrObserver) {
+        if (nextOrObserver instanceof Subscriber_1.Subscriber) {
+            return nextOrObserver;
+        }
+        if (nextOrObserver[rxSubscriber_1.$$rxSubscriber]) {
+            return nextOrObserver[rxSubscriber_1.$$rxSubscriber]();
+        }
+    }
+    if (!nextOrObserver && !error && !complete) {
+        return new Subscriber_1.Subscriber();
+    }
+    return new Subscriber_1.Subscriber(nextOrObserver, error, complete);
+}
+exports.toSubscriber = toSubscriber;
+
+},{"../Subscriber":444,"../symbol/rxSubscriber":446}],454:[function(require,module,exports){
+"use strict";
+var errorObject_1 = require('./errorObject');
+var tryCatchTarget;
+function tryCatcher() {
+    try {
+        return tryCatchTarget.apply(this, arguments);
+    }
+    catch (e) {
+        errorObject_1.errorObject.e = e;
+        return errorObject_1.errorObject;
+    }
+}
+function tryCatch(fn) {
+    tryCatchTarget = fn;
+    return tryCatcher;
+}
+exports.tryCatch = tryCatch;
+;
+
+},{"./errorObject":448}],455:[function(require,module,exports){
 "use strict";
 var root_1 = require('./util/root');
 var SymbolShim_1 = require('./util/SymbolShim');
@@ -71218,16 +74856,9 @@ var Observable = (function () {
 }());
 exports.Observable = Observable;
 
-},{"./util/SymbolShim":441,"./util/errorObject":442,"./util/root":446,"./util/toSubscriber":448,"./util/tryCatch":449}],430:[function(require,module,exports){
-"use strict";
-exports.empty = {
-    isUnsubscribed: true,
-    next: function (value) { },
-    error: function (err) { throw err; },
-    complete: function () { }
-};
-
-},{}],431:[function(require,module,exports){
+},{"./util/SymbolShim":467,"./util/errorObject":468,"./util/root":472,"./util/toSubscriber":474,"./util/tryCatch":475}],456:[function(require,module,exports){
+arguments[4][443][0].apply(exports,arguments)
+},{"dup":443}],457:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -71425,7 +75056,7 @@ var SubjectObservable = (function (_super) {
     return SubjectObservable;
 }(Observable_1.Observable));
 
-},{"./Observable":429,"./Subscriber":432,"./Subscription":433,"./subject/SubjectSubscription":438,"./symbol/rxSubscriber":439,"./util/ObjectUnsubscribedError":440,"./util/throwError":447}],432:[function(require,module,exports){
+},{"./Observable":455,"./Subscriber":458,"./Subscription":459,"./subject/SubjectSubscription":464,"./symbol/rxSubscriber":465,"./util/ObjectUnsubscribedError":466,"./util/throwError":473}],458:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -71618,7 +75249,7 @@ var SafeSubscriber = (function (_super) {
     return SafeSubscriber;
 }(Subscriber));
 
-},{"./Observer":430,"./Subscription":433,"./symbol/rxSubscriber":439,"./util/isFunction":444}],433:[function(require,module,exports){
+},{"./Observer":456,"./Subscription":459,"./symbol/rxSubscriber":465,"./util/isFunction":470}],459:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -71739,13 +75370,13 @@ var UnsubscriptionError = (function (_super) {
 }(Error));
 exports.UnsubscriptionError = UnsubscriptionError;
 
-},{"./util/errorObject":442,"./util/isArray":443,"./util/isFunction":444,"./util/isObject":445,"./util/tryCatch":449}],434:[function(require,module,exports){
+},{"./util/errorObject":468,"./util/isArray":469,"./util/isFunction":470,"./util/isObject":471,"./util/tryCatch":475}],460:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var map_1 = require('../../operator/map');
 Observable_1.Observable.prototype.map = map_1.map;
 
-},{"../../Observable":429,"../../operator/map":436}],435:[function(require,module,exports){
+},{"../../Observable":455,"../../operator/map":462}],461:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -71838,7 +75469,7 @@ function dispatchError(_a) {
     }
 }
 
-},{"../Observable":429,"../util/root":446}],436:[function(require,module,exports){
+},{"../Observable":455,"../util/root":472}],462:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -71897,7 +75528,7 @@ var MapSubscriber = (function (_super) {
     return MapSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":432}],437:[function(require,module,exports){
+},{"../Subscriber":458}],463:[function(require,module,exports){
 "use strict";
 var root_1 = require('../util/root');
 function toPromise(PromiseCtor) {
@@ -71920,7 +75551,7 @@ function toPromise(PromiseCtor) {
 }
 exports.toPromise = toPromise;
 
-},{"../util/root":446}],438:[function(require,module,exports){
+},{"../util/root":472}],464:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -71956,7 +75587,7 @@ var SubjectSubscription = (function (_super) {
 }(Subscription_1.Subscription));
 exports.SubjectSubscription = SubjectSubscription;
 
-},{"../Subscription":433}],439:[function(require,module,exports){
+},{"../Subscription":459}],465:[function(require,module,exports){
 "use strict";
 var SymbolShim_1 = require('../util/SymbolShim');
 /**
@@ -71967,7 +75598,7 @@ var SymbolShim_1 = require('../util/SymbolShim');
  */
 exports.rxSubscriber = SymbolShim_1.SymbolShim.for('rxSubscriber');
 
-},{"../util/SymbolShim":441}],440:[function(require,module,exports){
+},{"../util/SymbolShim":467}],466:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -71988,7 +75619,7 @@ var ObjectUnsubscribedError = (function (_super) {
 }(Error));
 exports.ObjectUnsubscribedError = ObjectUnsubscribedError;
 
-},{}],441:[function(require,module,exports){
+},{}],467:[function(require,module,exports){
 "use strict";
 var root_1 = require('./root');
 function polyfillSymbol(root) {
@@ -72058,30 +75689,15 @@ function ensureObservable(Symbol) {
 exports.ensureObservable = ensureObservable;
 exports.SymbolShim = polyfillSymbol(root_1.root);
 
-},{"./root":446}],442:[function(require,module,exports){
-"use strict";
-// typeof any so that it we don't have to cast when comparing a result to the error object
-exports.errorObject = { e: {} };
-
-},{}],443:[function(require,module,exports){
-"use strict";
-exports.isArray = Array.isArray || (function (x) { return x && typeof x.length === 'number'; });
-
-},{}],444:[function(require,module,exports){
-"use strict";
-function isFunction(x) {
-    return typeof x === 'function';
-}
-exports.isFunction = isFunction;
-
-},{}],445:[function(require,module,exports){
-"use strict";
-function isObject(x) {
-    return x != null && typeof x === 'object';
-}
-exports.isObject = isObject;
-
-},{}],446:[function(require,module,exports){
+},{"./root":472}],468:[function(require,module,exports){
+arguments[4][448][0].apply(exports,arguments)
+},{"dup":448}],469:[function(require,module,exports){
+arguments[4][449][0].apply(exports,arguments)
+},{"dup":449}],470:[function(require,module,exports){
+arguments[4][450][0].apply(exports,arguments)
+},{"dup":450}],471:[function(require,module,exports){
+arguments[4][451][0].apply(exports,arguments)
+},{"dup":451}],472:[function(require,module,exports){
 (function (global){
 "use strict";
 var objectTypes = {
@@ -72103,12 +75719,12 @@ if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === fre
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],447:[function(require,module,exports){
+},{}],473:[function(require,module,exports){
 "use strict";
 function throwError(e) { throw e; }
 exports.throwError = throwError;
 
-},{}],448:[function(require,module,exports){
+},{}],474:[function(require,module,exports){
 "use strict";
 var Subscriber_1 = require('../Subscriber');
 var rxSubscriber_1 = require('../symbol/rxSubscriber');
@@ -72125,27 +75741,39 @@ function toSubscriber(nextOrObserver, error, complete) {
 }
 exports.toSubscriber = toSubscriber;
 
-},{"../Subscriber":432,"../symbol/rxSubscriber":439}],449:[function(require,module,exports){
-"use strict";
-var errorObject_1 = require('./errorObject');
-var tryCatchTarget;
-function tryCatcher() {
-    try {
-        return tryCatchTarget.apply(this, arguments);
-    }
-    catch (e) {
-        errorObject_1.errorObject.e = e;
-        return errorObject_1.errorObject;
-    }
-}
-function tryCatch(fn) {
-    tryCatchTarget = fn;
-    return tryCatcher;
-}
-exports.tryCatch = tryCatch;
-;
+},{"../Subscriber":458,"../symbol/rxSubscriber":465}],475:[function(require,module,exports){
+arguments[4][454][0].apply(exports,arguments)
+},{"./errorObject":468,"dup":454}],476:[function(require,module,exports){
+(function (global){
+/* global window */
+'use strict';
 
-},{"./errorObject":442}]},{},[1])
+module.exports = require('./ponyfill')(global || window || this);
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"./ponyfill":477}],477:[function(require,module,exports){
+'use strict';
+
+module.exports = function symbolObservablePonyfill(root) {
+	var result;
+	var Symbol = root.Symbol;
+
+	if (typeof Symbol === 'function') {
+		if (Symbol.observable) {
+			result = Symbol.observable;
+		} else {
+			result = Symbol('observable');
+			Symbol.observable = result;
+		}
+	} else {
+		result = '@@observable';
+	}
+
+	return result;
+};
+
+},{}]},{},[1])
 
 
 //# sourceMappingURL=app.bundle.js.map

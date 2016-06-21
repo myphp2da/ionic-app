@@ -14,14 +14,6 @@ loading-modal .container {
   &.busy {
     z-index: 9999;
     transition: z-index 0.2s step-start;
-    .backdrop {
-      opacity: 0.3;
-    }
-  }
- 
-  .backdrop {
-    opacity: 0.01;
-    transition: opacity 0.2s;
   }
  
   ion-spinner {
