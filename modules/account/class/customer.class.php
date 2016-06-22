@@ -17,6 +17,18 @@ class customer extends account
      */
     protected $_area_table = 'mst_areas';
 
+    /** Update last check date for customer
+     * @params $id: Customer ID to update last check date
+     * @return int | bool : Returns affected rows on success,
+     *                    otherwise returns false
+     */
+    public function updateLastCheck($id) {
+        $update_array = array(
+            'dtiLastCheck' => TODAY_DATETIME
+        );
+        return $this->updateByArray($this->_customer_table, $update_array, "id = ".$id);
+    }
+
 	/** Get all customer addresses for Customer ID provided
 	 * @param int $customer_id : Customer ID
 	 * @return array | int : returns Array of customer addresses for provided Customer ID on success,
@@ -139,17 +151,6 @@ class customer extends account
 		return $this->getResult($sql);
 	}
 
-	/** This function will check whether it is a valid Customer OR not
-	 * @param $id          : particular id
-	 * @return int|array : return 404 if no data available for the query,
-	 *                     otherwise return array of result
-	 */
-	function checkCustomer($id)
-	{
-		$query = "SELECT * from " . $this->_table . " where tinStatus = '1' and id = " . $id;
-		return $this->getResult($query);
-	}
-
 	/** Inserts data into rel_reset_password table
 	 * @param array $data: array of the table field name and post data of the fields
 	 * @return bool|int : id of the row inserted otherwise false on failure
@@ -158,7 +159,7 @@ class customer extends account
 	{
 		$this->insertByArray($this->_reset_password, $data);
 	}
-	/* Get reset-token from rel_reset_password and mst_customer tables with matching ID in both.
+	/** Get reset-token from rel_reset_password and mst_customer tables with matching ID in both.
               @params $emailId:strEmailId from mst_customer,
                       $token:strToken from rel_reset_password
               @return:single array resultset return.
@@ -207,23 +208,6 @@ class customer extends account
 	function updateCustomer($data, $where)
 	{
 		return $this->updateByArray($this->_table, $data, $where);
-	}
-
-	/** This function check Login as well as duplication of Mobile or Email id at the time of registation
-	 * @param string $username : email as checking
-	 * @return it returns single result otherwise 404
-	 */
-	function checkEmail($email, $for = 'registration')
-	{
-		$table = ($for == 'registration') ? $this->_reg_table : $this->_table;
-		$where = ($for == 'registration') ? "txtCompanyEmail = '" . $email . "'" : "email = '" . $email . "'";
-		$sql = "select count(id) as total_rows from " . $table . " where " . $where;
-		$data = $this->getResult($sql);
-		if ($data['total_rows'] > 0) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	/** This function check Login as well as duplication of Mobile or Email id at the time of registation
