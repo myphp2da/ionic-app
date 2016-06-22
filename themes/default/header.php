@@ -4,16 +4,18 @@
         <!--logo end-->
         <div class="horizontal-menu navbar-collapse collapse">
             <ul class="nav navbar-nav">
-            	<li><a href="<?php _e(SITE_URL);?>account/dashboard"<?php if(strstr(_env('request_uri'), 'dashboard')) {?> class="active"<?php } ?>><i class="fa fa-desktop"></i> Dashboard</a></li>
+            	<li>
+                    <a href="<?php _e(SITE_URL);?>account/dashboard"<?php if(strstr(_env('request_uri'), 'dashboard')) {?> class="active"<?php } ?>><i class="fa fa-desktop"></i> Dashboard</a>
+                </li>
 
-                <?php if($account_obj->checkModule('page')) { ?>
-                <li class="dropdown<?php if(strstr(_env('request_uri'), _b64('navigation')) || strstr(_env('request_uri'), 'page')) {?> active<?php } ?>"><a href="<?php _e(SITE_URL);?>page/list" data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle <?php if(strstr(_env('request_uri'), 'page')) {?> active<?php } ?>"><i class="fa fa-file-text-o"></i> Pages</a>
+                <?php /*if($account_obj->checkModule('page')) { */?><!--
+                <li class="dropdown<?php /*if(strstr(_env('request_uri'), _b64('navigation')) || strstr(_env('request_uri'), 'page')) {*/?> active<?php /*} */?>"><a href="<?php /*_e(SITE_URL);*/?>page/list" data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle <?php /*if(strstr(_env('request_uri'), 'page')) {*/?> active<?php /*} */?>"><i class="fa fa-file-text-o"></i> Pages</a>
                     <ul class="dropdown-menu">
-                        <li<?php if(strstr(_env('request_uri'), 'page/')) {?> class="active"<?php } ?>><a href="<?php _e(SITE_URL);?>page/list">All Pages</a></li>
-                        <li<?php if(strstr(_env('request_uri'), _b64('navigation'))) {?> class="active"<?php } ?>><a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('navigation'));?>">Navigations</a></li>
+                        <li<?php /*if(strstr(_env('request_uri'), 'page/')) {*/?> class="active"<?php /*} */?>><a href="<?php /*_e(SITE_URL);*/?>page/list">All Pages</a></li>
+                        <li<?php /*if(strstr(_env('request_uri'), _b64('navigation'))) {*/?> class="active"<?php /*} */?>><a href="<?php /*_e(SITE_URL);*/?>master/list?t=<?php /*_e(_b64('navigation'));*/?>">Navigations</a></li>
                     </ul>
                 </li>
-                <?php } ?>
+                --><?php /*}*/ ?>
 
                 <?php if($account_obj->checkModule('product')) { ?>
                     <li class="dropdown<?php if(strstr(_env('request_uri'), 'product')) {?> active<?php } ?>"><a href="<?php _e(SITE_URL);?>product/list" data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle <?php if(strstr(_env('request_uri'), 'product')) {?> active<?php } ?>"><i class="fa fa-file-text-o"></i> Products</a>
@@ -33,19 +35,6 @@
                 </li>
                 <?php } ?>
 
-                <?php //if($account_obj->checkModule('content')) { ?>
-                <li class="dropdown <?php if(strstr(_env('request_uri'), _b64('navigation')) || strstr(_env('request_uri'), 'content')) {?>
-                 active<?php } ?>">
-                    <a href="<?php _e(SITE_URL);?>content/list" data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle
-                    <?php if(strstr(_env('request_uri'), 'content')) {?> active<?php } ?>">
-                        <i class="fa fa-user"></i>Manage Content</a>
-                    <ul class="dropdown-menu">
-                        <li<?php if(strstr(_env('request_uri'), 'content/')) {?> class="active"<?php } ?>>
-                            <a href="<?php _e(SITE_URL);?>content/list">Content List</a></li>
-                    </ul>
-                </li>
-                <?php //} ?>
-
                 <!--Master-->
 
                 <li class="dropdown <?php if(strstr(_env('request_uri'), _b64('category')) || strstr(_env('request_uri'), 'master')) {?>
@@ -55,23 +44,23 @@
                         <i class="fa fa-user"></i>Master</a>
                     <ul class="dropdown-menu">
                         <li<?php if(strstr(_env('request_uri'), _b64('category'))) {?> class="active"<?php } ?>>
-                            <a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('category'));?>">Manage Categories</a></li>
+                            <a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('category'));?>">Manage Categories</a>
+                        </li>
                         <li<?php if(strstr(_env('request_uri'), _b64('quantity'))) {?> class="active"<?php } ?>>
-                            <a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('quantity'));?>">Manage Quantities</a></li>
+                            <a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('quantity'));?>">Manage Quantities</a>
+                        </li>
+                        <li<?php if(strstr(_env('request_uri'), _b64('slot'))) {?> class="active"<?php } ?>>
+                            <a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('slot'));?>">Manage Slots</a>
+                        </li>
+                        <li<?php if(strstr(_env('request_uri'), _b64('area'))) {?> class="active"<?php } ?>>
+                            <a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('area'));?>">Manage Areas</a>
+                        </li>
                     </ul>
                 </li>
 
-                <!-- Media -->
-                <?php //if($account_obj->checkModule('media')) { ?>
-                    <li class="dropdown<?php if(strstr(_env('request_uri'), _b64('navigation')) || strstr(_env('request_uri'), 'media')) {?> active<?php } ?>">
-                        <a href="<?php _e(SITE_URL);?>media/list" data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle
-                        <?php if(strstr(_env('request_uri'),'media/list') || strstr(_env('request_uri'), 'access-type')) {?> active<?php } ?>"><i class="fa fa-user"></i> Media</a>
-                        <ul class="dropdown-menu">
-                            <li<?php if(strstr(_env('request_uri'), 'media')) {?> class="active"<?php } ?>><a href="<?php _e(SITE_URL);?>media/list">Photo Album</a></li>
-                            <li<?php if(strstr(_env('request_uri'), 'media')) {?> class="active"<?php } ?>><a href="<?php _e(SITE_URL);?>media/videolist">Video Album</a></li>
-                        </ul>
-                    </li>
-                <?php //} ?>
+                <li>
+                    <a href="<?php _e(SITE_URL);?>default/sync-db"<?php if(strstr(_env('request_uri'), 'sync-db')) {?> class="active"<?php } ?>><i class="fa fa-upload"></i> Save DB</a>
+                </li>
 
             </ul>
             <div class="clear"></div>
