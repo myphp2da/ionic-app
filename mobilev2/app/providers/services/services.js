@@ -99,9 +99,9 @@ export class Services {
         return this.http.post(url, post_data).map(res => res.json());
     }
 
-    loadHome() {
+    loadHome(user_id) {
         var url = this.baseUrl+'product/0.1/get-home-contents';
-        var post_data = JSON.stringify({key: this.key});
+        var post_data = JSON.stringify({key: this.key, user: user_id});
 
         return this.http.post(url, post_data).map(res => res.json());
     }

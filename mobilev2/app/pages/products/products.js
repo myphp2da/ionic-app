@@ -134,7 +134,7 @@ export class ProductsPage {
 
                     this.cart = data.cart;
                     this.sqlite.setKey('Cart', data.cart);
-                    this.nav.push(CartPage);
+                    this.nav.push(CartPage, {'cart': this.cart});
                 }
             });
         });

@@ -1,4 +1,5 @@
 import {Page, NavController} from 'ionic-angular';
+import {Device} from 'ionic-native';
 import {LoginPage} from '../login/login';
 import {SignupPage} from '../signup/signup';
 
@@ -26,5 +27,9 @@ export class MainPage {
 
     appSignUp() {
         this.nav.push(SignupPage);
+    }
+
+    skipLogin() {
+        console.log(Device.device.uuid);
     }
 }

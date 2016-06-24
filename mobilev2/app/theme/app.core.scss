@@ -65,3 +65,29 @@ ion-slide img {
     max-height: 100px;
     border-radius: 50%;
 }
+
+.buy .button-clear {
+    color: #FFF;
+}
+
+.content.item {
+    border-bottom: 1px solid #DDD;
+}
+
+.item-inner {
+    border-bottom: 0;
+}
+
+.buttons {
+    background: #EEE;
+    padding: 0;
+    border-bottom: 1px solid #DDD;
+}
+
+.buttons ion-col {
+    padding: 0;
+}
+
+.buttons button {
+    margin: 0;
+}

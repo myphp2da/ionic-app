@@ -4,7 +4,7 @@
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-navbar *navbar>
+<ion-navbar favorite *navbar>
   <a menu-toggle>
     <icon menu></icon>
   </a>
@@ -31,8 +31,8 @@
   <p>Standard Delivery: Tomorrow Evening</p>
         
 </ion-content>
-<ion-toolbar position="bottom">
-  <button full (click)="saveToCart()">
+<ion-toolbar position="bottom" tomato class="buy">
+  <button full clear (click)="saveToCart()">
       <ion-icon name="cart"></ion-icon> Buy for {{content.price}}
   </button>
 </ion-toolbar>

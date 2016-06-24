@@ -57,6 +57,11 @@ export class LoginPage {
                 this.nav.present(alert);
             } else {
                 this.sqlite.updateUser(data.data.user_details);
+
+                if(data.data.addresses) {
+                    this.sqlite.updateDeliveryAddresses(data.data.addresses);
+                }
+
                 this.sqlite.setKey('UserId', data.data.user_details.id);
                 this.nav.setRoot(HomePage);
             }

@@ -25,8 +25,8 @@ export class CartPage {
       this.loading.show();
       
       this.nav = nav;
-      
-      var itemAvailable = false;
+
+      this.hasProducts = true;
       
       this.total_amount = 0;
       
@@ -35,26 +35,31 @@ export class CartPage {
       this.sqlite = sqlite;
       
       this.sqlite.getKey('Cart').then((value) => {
-          
-          this.cart = value;
-          
-          console.log('Cart: '+value);
 
-        service.loadCart(value).subscribe(data => {
-            this.loading.hide();
-            if(data.status == 'false') {
-                var alert = Alert.create({
-                    title: 'ERROR!',
-                    message: data.msg,
-                    buttons: ['Ok']
-                });
-                this.nav.present(alert);
-            } else {
-                this.contents = data.data;
-                this.total_amount = data.total_amount;
-                itemAvailable = true;
-            }
-        });
+          if(value) {
+          
+            this.cart = value;
+
+            service.loadCart(value).subscribe(data => {
+                this.loading.hide();
+                if(data.status == 'false') {
+                    var alert = Alert.create({
+                        title: 'ERROR!',
+                        message: data.msg,
+                        buttons: ['Ok']
+                    });
+                    this.nav.present(alert);
+                    this.hasProducts = false;
+                } else {
+                    this.contents = data.data;
+                    this.total_amount = data.total_amount;
+                }
+            });
+          } else {
+              this.cart = 0;
+              this.loading.hide();
+              this.hasProducts = false;
+          }
       });
   }
   
@@ -112,6 +117,6 @@ export class CartPage {
   }
   
   checkoutCart() {
-      this.nav.push(DeliveryPage, {'cart' => this.cart});
+      this.nav.push(DeliveryPage, {'cart': this.cart});
   }
 }

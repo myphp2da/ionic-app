@@ -4,14 +4,12 @@
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-navbar *navbar>
+<ion-navbar *navbar favorite>
   <ion-title>Delivery Options</ion-title>
 </ion-navbar>
 
-<ion-content class="slot">
-
-  <ion-grid>
-    <ion-row>
+<ion-grid>
+    <ion-row class="buttons">
       <ion-col width-33>
         <button full clear>
           <ion-icon name="checkmark-circle"></ion-icon>
@@ -33,15 +31,15 @@
     </ion-row>
   </ion-grid>
 
-  <ion-item padding>
+<ion-content class="slot" padding>
+
+  <ion-item>
     <h2>Select Time Slot for Delivery</h2>
   </ion-item>
 
-  <ion-list radio-group padding>
+  <ion-list radio-group>
     <div *ngFor="#item of items">
-    <ion-list-header>
-      {{item.date | date:'longDate'}}
-    </ion-list-header>
+    <p>{{item.date | date:'longDate'}}</p>
     <ion-item *ngFor="#slot of item.slots">
       <ion-label>{{slot.range}}</ion-label>
       <ion-radio value="{{item.date}} - {{slot.range}}" (click)="setSlot(item.date, slot.range)"></ion-radio>
@@ -51,10 +49,10 @@
 
 </ion-content>
 
-<ion-toolbar position="bottom" padding>
+<ion-toolbar position="bottom" padding tomato>
 		<ion-buttons end>
-			<button class="button button-small button-info" (click)="gotoPayment()">
-				Continue >
+			<button outline (click)="gotoPayment()">
+				Continue
 			</button>
 		</ion-buttons>
 </ion-toolbar>

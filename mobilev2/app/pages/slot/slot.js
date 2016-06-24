@@ -41,7 +41,7 @@ export class SlotPage {
   }
 
   gotoPayment() {
-    this.nav.push(PaymentPage, {'cart' => this.cart});
+    this.nav.push(PaymentPage, {'cart': this.cart});
   }
 
   setSlot(date, range) {

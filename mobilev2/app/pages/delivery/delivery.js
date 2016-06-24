@@ -53,7 +53,7 @@ export class DeliveryPage {
   }
 
   gotoSlots() {
-    this.nav.push(SlotPage, {'cart' => this.cart});
+    this.nav.push(SlotPage, {'cart': this.cart});
   }
 
   setDelivery(address) {

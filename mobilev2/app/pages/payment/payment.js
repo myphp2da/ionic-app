@@ -41,9 +41,9 @@ export class PaymentPage {
   confirmOrder() {
     this.sqlite.updateCart('tinStatus', 1, this.cart);
 
-    this.sqlite.getCart(this.cart).then((data) => {
-        var cart_details = data.res.rows.item(0);
-        this.service.completeOrder(this.user, cart_details).then((response) => {
+    this.sqlite.getCart(this.cart).then((result) => {
+        var cart_details = result.res.rows.item(0);
+        this.service.completeOrder(this.user, cart_details).subscribe(response => {
           console.log(response.status);
           if(response.status == 'false') {
               var alert = Alert.create({
