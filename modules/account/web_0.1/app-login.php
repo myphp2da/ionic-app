@@ -30,16 +30,44 @@
         _subModule('account', 'customer');
         $customer_obj = new customer();
 
-        $check_result_id = $customer_obj->checkCustomerLogin($user_name, $password);
+        $user_details = $customer_obj->checkCustomerLogin($user_name, $password);
 
-        if($check_result_id == 404){
+        if($user_details == 404){
             $data['status'] = 'false'; //false
             $data['msg'] = 'Incorrect Username or Password.. Please try again';
         } else {
+
+            $addresses = $customer_obj->getCustomerAddresses($user_details['id']);
+
+            if($addresses == 404){
+                $data['status'] = 'false'; //false
+                $data['msg'] = 'No address added by you yet.';
+            } else {
+
+                $output = array();
+                foreach($addresses as $address) {
+
+                    $address_array = array(
+                        'id' => $address['id'],
+                        'label' => $address['strLabel'],
+                        'name' => $address['strFirstName'].' '.$address['strLastName'],
+                        'address1' => $address['strAddressLine1'],
+                        'address2' => $address['strAddressLine2'],
+                        'area' => $address['strArea'],
+                        'city' => $address['strCity'],
+                        'state' => $address['strState'],
+                        'pincode' => $address['intPinCode']
+                    );
+
+                    $output[] = $address_array;
+                }
+            }
+
             $data['status'] = 'true'; //true
             $data['msg'] = 'Login Successful';
             $data['code'] = 200;
-            $data['data']['user_details'] = $check_result_id;
+            $data['data']['user_details'] = $user_details;
+            $data['data']['addresses'] = $output;
         }
     } else {
         $data['status'] = 'false'; //false
