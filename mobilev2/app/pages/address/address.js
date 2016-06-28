@@ -1,5 +1,7 @@
 import {IonicApp, Page, Alert, NavController, NavParams, Storage, LocalStorage} from 'ionic-angular';
 import {Services} from '../../providers/services/services';
+import {SQLite} from '../../providers/sqlite/sqlite';
+import {AddressesPage} from '../addresses/addresses';
 import { Component } from 'angular2/core';
 import { FORM_DIRECTIVES, FormBuilder, ControlGroup, Validators, AbstractControl } from 'angular2/common';
 
@@ -15,12 +17,12 @@ import { FORM_DIRECTIVES, FormBuilder, ControlGroup, Validators, AbstractControl
 })
 export class AddressPage {
   static get parameters() {
-    return [[IonicApp], [Services], [NavController], [NavParams], [FormBuilder]];
+    return [[IonicApp], [Services], [NavController], [NavParams], [FormBuilder], [SQLite]];
   }
 
-  constructor(app, service, nav, params, fb) {
+  constructor(app, service, nav, params, fb, sqlite) {
 
-    var address = params.get('address');
+    this.address_id = params.get('address');
 
     this.loading = app.getComponent('loading');  
     this.loading.show();
@@ -29,14 +31,19 @@ export class AddressPage {
 
     this.service = service;
 
+    this.sqlite = sqlite;
+
     this.local = new Storage(LocalStorage);
 
+    this.heading = 'Add Address';
+    var current_address = [];
+    
     this.authForm = fb.group({
         'label': ['', Validators.compose([Validators.required, Validators.maxLength(20)])],
         'fname': ['', Validators.compose([Validators.required, Validators.maxLength(20)])],
         'lname': ['', Validators.compose([Validators.required, Validators.maxLength(20)])],
-        'address_line_1': ['', Validators.compose([Validators.required])],
-        'address_line_2': ['', Validators.compose()],
+        'address1': ['', Validators.compose([Validators.required])],
+        'address2': ['', Validators.compose()],
         'area': ['', Validators.compose()],
         'city': ['', Validators.compose([Validators.required, Validators.maxLength(20)])],
         'state': ['', Validators.compose([Validators.required, Validators.maxLength(20)])],
@@ -46,8 +53,8 @@ export class AddressPage {
     this.label = this.authForm.controls['label'];
     this.fname = this.authForm.controls['fname'];
     this.lname = this.authForm.controls['lname'];
-    this.address1 = this.authForm.controls['address_line_1'];
-    this.address2 = this.authForm.controls['address_line_2'];     
+    this.address1 = this.authForm.controls['address1'];
+    this.address2 = this.authForm.controls['address2'];     
     this.area = this.authForm.controls['area'];
     this.city = this.authForm.controls['city'];
     this.state = this.authForm.controls['state'];
@@ -58,6 +65,24 @@ export class AddressPage {
         this.loading.hide();
         if(data.status == 'true') {
             this.contents = data.data;
+
+            if(this.address_id != 0) {
+                sqlite.getDeliveryAddressByID(this.address_id).then((result) => {
+                    current_address = result.res.rows.item(0);
+                    this.address_label = current_address.strLabel;
+                    this.address_fname = current_address.strFirstName;
+                    this.address_lname = current_address.strLastName;
+                    this.address_line1 = current_address.strAddressLine1;
+                    this.address_line2 = current_address.strAddressLine2;
+                    this.area = current_address.idArea;
+                    this.area_name = current_address.strArea;
+                    this.area_city = current_address.strCity;
+                    this.area_state = current_address.strState;
+                    this.area_pincode = current_address.intPincode;
+
+                    this.heading = 'Edit '+this.address_label;
+                });
+            }
         }
     });
     
@@ -69,6 +94,7 @@ export class AddressPage {
         this.area_city = area.city;
         this.area_state = area.state;
         this.area_pincode = area.pincode;
+        this.area_name = area.name;
       }
     }, this);
   }
@@ -76,6 +102,9 @@ export class AddressPage {
   onSubmit(value) {
         
       this.loading.show();
+
+      value.area = this.area;
+      value.area_name = this.area_name;
       
       var user_id = 0;
       this.local.get('UserId').then((result) => {
@@ -83,8 +112,7 @@ export class AddressPage {
               user_id = result;
           }
     
-          this.service.addAddress(user_id, this.area, value).subscribe(data => {
-              console.log(data.status);
+          this.service.addAddress(user_id, this.area, value, this.address_id).subscribe(data => {
               this.loading.hide();
               if(data.status == 'false') {
                   var alert = Alert.create({
@@ -94,7 +122,8 @@ export class AddressPage {
                   });
                   this.nav.present(alert);
               } else {
-                  this.nav.push(HomePage);
+                  this.nav.push(AddressesPage);
+                  this.sqlite.addDeliveryAddress(value, this.address_id);
               }
           });
       });

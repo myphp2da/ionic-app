@@ -13,31 +13,38 @@
         <a class="button button-clear button-small">
             <ion-icon ios="ios-notifications" md="md-notifications"></ion-icon>
         </a>
-        <a menuToggle="right" class="button button-clear button-small">
-            <ion-icon ios="ios-menu" md="md-menu"></ion-icon>
-        </a>
     </ion-buttons>
 </ion-navbar>
 
 <ion-content class="my-account">
-    <div *ngIf="user" class="selection">
-      <ion-card>
+    <div *ngIf="profile" class="selection">
+      <ion-card padding>
           <ion-item>
               <ion-avatar item-left image-large>
-                  <img src="{{user.strImageName}}"/>
+                  <img src="{{profile_image}}"/>
               </ion-avatar>
               <ion-item-content>
-                  <h2>{{user.strName}}</h2>
+                  <h2>{{profile.strName}}</h2>
               </ion-item-content>
           </ion-item>
 
-          <a href="mailto:{{user.strEmail}}" ion-item>
-              <icon mail item-left></icon>
+          <a href="mailto:{{profile.strEmail}}" ion-item>
+              <ion-icon name="mail" item-left></ion-icon>
               <h2>Email</h2>
-              <p>{{user.strEmail}}</p>
+              <p>{{profile.strEmail}}</p>
           </a>
 
+          <ion-item>
+              <ion-icon name="phone" item-left></ion-icon>
+              <h2>Phone</h2>
+              <p>{{profile.strPhone}}</p>
+          </ion-item>
+
       </ion-card>
+
+      <button (click)="gotoAddresses()">
+          View Delivery Addresses
+      </button>
 
     </div>
 </ion-content>

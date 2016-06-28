@@ -99,6 +99,13 @@ export class MyApp {
     return (this.shownGroup == group.id);
   }
 
+  logoutApp() {
+      this.menu.close();
+      this.sqlite.removeKey('UserId');
+      let nav = this.app.getComponent('nav');
+      nav.setRoot(MainPage);
+  }
+
   toggleGroup(group) {
       //console.log(this.shownGroup);
     if (this.isGroupShown(group)) {
@@ -114,7 +121,7 @@ export class MyApp {
             if(result) {
                 this.sqlite.getKey('UserId').then((result) => {
                     if(result) {
-                        this.rootPage = HomePage;
+                        this.rootPage = AccountPage;
                     } else {
                         this.rootPage = MainPage;
                     }

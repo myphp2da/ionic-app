@@ -44,22 +44,24 @@
                 $data['msg'] = 'No address added by you yet.';
             } else {
 
-                $output = array();
+                $address_data = array();
                 foreach($addresses as $address) {
 
                     $address_array = array(
                         'id' => $address['id'],
                         'label' => $address['strLabel'],
-                        'name' => $address['strFirstName'].' '.$address['strLastName'],
+                        'fname' => $address['strFirstName'],
+                        'lname' => $address['strLastName'],
                         'address1' => $address['strAddressLine1'],
                         'address2' => $address['strAddressLine2'],
-                        'area' => $address['strArea'],
+                        'area' => $address['idArea'],
+                        'area_name' => $address['strArea'],
                         'city' => $address['strCity'],
                         'state' => $address['strState'],
                         'pincode' => $address['intPinCode']
                     );
 
-                    $output[] = $address_array;
+                    $address_data[] = $address_array;
                 }
             }
 
@@ -67,7 +69,7 @@
             $data['msg'] = 'Login Successful';
             $data['code'] = 200;
             $data['data']['user_details'] = $user_details;
-            $data['data']['addresses'] = $output;
+            $data['data']['addresses'] = $address_data;
         }
     } else {
         $data['status'] = 'false'; //false

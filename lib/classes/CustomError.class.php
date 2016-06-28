@@ -59,7 +59,7 @@
             if(file_exists(SITE_PATH.$this->error_path) && filesize(SITE_PATH.$this->error_path) > (100 * 1024)) {
                 $error_count = $this->saveErrorLogs();
 
-                /*if($error_count > 0) {
+                if($error_count > 0) {
 
                     _class('emailer');
                     $emailer_obj = new emailer();
@@ -71,7 +71,7 @@
                         'subject'      => MAIL_NAME . ' : ' . $error_count . ' error(s) found'
                     );
                     $emailer_obj->sendMail('system-errors', $edata);
-                }*/
+                }
             }
         }
 	}

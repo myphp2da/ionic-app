@@ -69,26 +69,47 @@ class customer extends account
 		return $data['total_rows'];
 	}
 
+    /** Update customer address for provided data
+     * @param array $post_data : Posted data to be updated
+     * @return int | bool : Returns affected rows on success,
+     *                      otherwise returns false
+     */
+    public function updateCustomerAddress($post_data) {
+        $address_array = $this->customerAddressArray($post_data);
+        return $address_id = $this->updateByArray($this->_customer_addresses_table, $address_array, "id = ".$post_data['id']);
+    }
+
 	/** Insert customer address for provided data
 	 * @param array $post_data : Posted data to be inserted
 	 * @return int | bool : Returns last inserted ID on success,
 	 *                      otherwise returns false
 	 */
 	public function insertCustomerAddress($post_data) {
-		$address_array = array(
-			'strFirstName' => $post_data['fname'],
-			'strLastName' => $post_data['lname'],
-			'strLabel' => $post_data['label'],
-			'idArea' => $post_data['area'],
-			'strAddressLine1' => $post_data['address1'],
-			'strAddressLine2' => $post_data['address2'],
-			'strCity' => $post_data['city'],
-			'strState' => $post_data['state'],
-			'intPinCode' => $post_data['pincode'],
-			'idCustomer' => $post_data['customer']
-		);
+        $address_array = $this->customerAddressArray($post_data);
         return $address_id = $this->insertByArray($this->_customer_addresses_table, $address_array);
 	}
+
+    /** Parse customer address array as per data provided
+     *
+     * @param array $post_data : Array of data to be parsed
+     * @return array : Returns parsed array on success
+     */
+    public function customerAddressArray($post_data) {
+        $address_array = array(
+            'strFirstName' => $post_data['fname'],
+            'strLastName' => $post_data['lname'],
+            'strLabel' => $post_data['label'],
+            'idArea' => $post_data['area'],
+            'strAddressLine1' => $post_data['address1'],
+            'strAddressLine2' => $post_data['address2'],
+            'strCity' => $post_data['city'],
+            'strState' => $post_data['state'],
+            'intPinCode' => $post_data['pincode'],
+            'idCustomer' => $post_data['customer']
+        );
+
+        return $address_array;
+    }
 
 	public function insertCustomer($data)
 	{

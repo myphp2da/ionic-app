@@ -57,9 +57,9 @@ export class Services {
         return this.http.post(url, post_data).map(res => res.json());
     }
 
-    addAddress(user_id, area_id, posted_data) {
+    addAddress(user_id, area_id, posted_data, address_id) {
         var url = this.baseUrl+'account/0.1/add-address';
-        var post_data = JSON.stringify({key: this.key, user: user_id, area: area_id, data: posted_data});
+        var post_data = JSON.stringify({key: this.key, user: user_id, area: area_id, address: address_id, data: posted_data});
 
         return this.http.post(url, post_data).map(res => res.json());
     }

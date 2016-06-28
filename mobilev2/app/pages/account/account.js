@@ -1,5 +1,7 @@
 import {Page, Storage, LocalStorage, NavController} from 'ionic-angular';
 import {MainPage} from '../main/main';
+import {AddressesPage} from '../addresses/addresses';
+import {AddressPage} from '../address/address';
 import {Services} from '../../providers/services/services';
 import {SQLite} from '../../providers/sqlite/sqlite';
 
@@ -28,9 +30,21 @@ export class AccountPage {
           } else {
               this.sqlite.getUser(result).then((response) => {
                   this.profile = response.res.rows.item(0);
-                  console.log(this.profile);
+
+                  this.profile_image = 'images/profile.jpg';
+                  if(this.profile.strImageName != null) {
+                      this.profile_image = this.profile.strImageName;
+                  }
               });
           }
       });
+    }
+
+    gotoAddresses() {
+        this.nav.push(AddressesPage);
+    }
+
+    gotoAddressForm(id) {
+        this.nav.push(AddressPage, {address: id});
     }
 }

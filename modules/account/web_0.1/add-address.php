@@ -32,6 +32,8 @@
             die(json_encode($data));
         }
 
+        $address_id = isset($post_data->address) && is_numeric($post_data->address) ? $post_data->address : 0;
+
         _subModule('account', 'customer');
         $customer_obj = new customer();
 
@@ -39,18 +41,23 @@
             'label' => $post_data->data->label,
             'fname' => $post_data->data->fname,
             'lname' => $post_data->data->lname,
-            'address1' => $post_data->data->address_line_1,
-            'address2' => $post_data->data->address_line_2,
+            'address1' => $post_data->data->address1,
+            'address2' => $post_data->data->address2,
             'area' => $post_data->area,
             'city' => $post_data->data->city,
             'state' => $post_data->data->state,
             'pincode' => $post_data->data->pincode,
-            'customer' => $post_data->user
+            'customer' => $post_data->user,
+            'id' => $address_id
         );
 
-        $address_id = $customer_obj->insertCustomerAddress($address_array);
+        if($address_id != 0) {
+            $address_result = $customer_obj->updateCustomerAddress($address_array);
+        } else {
+            $address_result = $customer_obj->insertCustomerAddress($address_array);
+        }
 
-        if($address_id === false){
+        if($address_result === false){
             $data['status'] = 'false'; //false
             $data['msg'] = 'ERROR! something went wrong. Please try again...';
         } else {

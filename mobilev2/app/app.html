@@ -25,7 +25,10 @@
 
         <ion-list *ngIf="user">
             <button small ion-item *ngFor="#p of account_pages" (click)="openPage(p)" padding>
-                <ion-icon name="{{p.icon}}"></ion-icon> {{p.title}}
+                {{p.title}}
+            </button>
+            <button small ion-item (click)="logoutApp()" padding>
+                Logout
             </button>
         </ion-list>
 

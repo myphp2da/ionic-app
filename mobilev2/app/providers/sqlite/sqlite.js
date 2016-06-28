@@ -50,28 +50,72 @@ export class SQLite {
       let create_address = 'CREATE TABLE IF NOT EXISTS delivery_addresses ('+
                                 'id int(11) NOT NULL, '+
                                 'strLabel varchar(15) NOT NULL,'+
-                                'strName varchar(50) NOT NULL,'+
+                                'strFirstName varchar(50) NOT NULL,'+
+                                'strLastName varchar(50) NOT NULL,'+
                                 'strAddressLine1 varchar(255) DEFAULT NULL,'+
                                 'strAddressLine2 varchar(50) NOT NULL,'+
                                 'idArea int(11) NOT NULL,'+
+                                'strArea int(11) NOT NULL,'+
                                 'strCity varchar(255) DEFAULT NULL,'+
                                 'strState varchar(255) DEFAULT NULL,'+
                                 'intPincode int(6) NOT NULL)';
       this.storage.query(create_address);
 
-      let sql = 'insert into delivery_addresses(id, strLabel, strName, strAddressLine1, strAddressLine2, idArea, strCity, strState, intPincode)'+
-                                        'values(?, ?, ?, ?, ?, ?, ?, ?, ?)';
-      return this.storage.query(sql, [
-          data.id, 
-          data.label,
-          data.name, 
-          data.address1, 
-          data.address2,
-          data.area,
-          data.city,
-          data.state,
-          data.pincode
-      ]);
+      data.forEach(function(row) {
+        this.addDeliveryAddress(row, 0);
+      });
+  }
+
+  addDeliveryAddress(data, address_id) {
+
+      if(address_id == 0) {
+          let sql = 'insert into delivery_addresses(id, strLabel, strFirstName, strLastName, strAddressLine1, strAddressLine2, idArea, strArea, strCity, strState, intPincode)'+
+                                            'values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+          return this.storage.query(sql, [
+                data.id, 
+                data.label,
+                data.fname,
+                data.lname, 
+                data.address1, 
+                data.address2,
+                data.area,
+                data.area_name,
+                data.city,
+                data.state,
+                data.pincode
+          ]);
+      } else {
+
+          let sql = 'update delivery_addresses set ' + 
+                        'strLabel = ?,' + 
+                        'strFirstName = ?,' + 
+                        'strLastName = ?,' + 
+                        'strAddressLine1 = ?,' +
+                        'strAddressLine2 = ?,' + 
+                        'idArea = ?,' + 
+                        'strArea = ?,' +
+                        'strCity = ?,' + 
+                        'strState = ?,' + 
+                        'intPincode = ? ' + 
+                        'where id = ?';
+
+          console.log(data);                        
+
+          return this.storage.query(sql, [
+                data.label,
+                data.fname,
+                data.lname, 
+                data.address1, 
+                data.address2,
+                data.area,
+                data.area_name,
+                data.city,
+                data.state,
+                data.pincode,
+                data.id
+          ]);
+
+      }
   }
 
   updateAreas(data) {
@@ -181,5 +225,15 @@ export class SQLite {
   getUser() {
       let sql = "select * from user_details limit 1";
       return this.storage.query(sql);
+  }
+
+  getDeliveryAddresses(where) {
+      let sql = "select * from delivery_addresses where 1"+where;
+      return this.storage.query(sql);
+  }
+
+  getDeliveryAddressByID(id) {
+      let where = " and id = "+id;
+      return this.getDeliveryAddresses(where);
   }
 }
