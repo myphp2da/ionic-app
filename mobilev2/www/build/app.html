@@ -3,9 +3,19 @@
 // That is determined by the last line in this -->
 <ion-menu [content]="content">
 
-    <ion-content padding>
+    <ion-content>
 
-        <ion-item text-wrap text-center>
+        <ion-item *ngIf="user">
+              <ion-avatar item-left image-large>
+                  <img src="{{user_image}}"/>
+              </ion-avatar>
+              <ion-item-content>
+                  <h2>{{user.strName}}</h2>
+                  <small>{{user.strEmail}}</small>
+              </ion-item-content>
+        </ion-item>
+
+        <ion-item text-wrap text-center *ngIf="!user" padding>
             <div text-center>
                 <img src="images/main.jpg">
                 <p>By eating many fruits and vegetables in place of fast food and junk food, people could avoid obesity.</p>
@@ -13,59 +23,39 @@
             </div>
         </ion-item>
 
+        <ion-list *ngIf="user">
+            <button small ion-item *ngFor="#p of account_pages" (click)="openPage(p)" padding>
+                {{p.title}}
+            </button>
+            <button small ion-item (click)="logoutApp()" padding>
+                Logout
+            </button>
+        </ion-list>
+
+        <ion-list *ngIf="!user">
+            <button small ion-item *ngFor="#p of signup_pages" (click)="openPage(p)" padding>
+                <ion-icon name="{{p.icon}}"></ion-icon> {{p.title}}
+            </button>
+        </ion-list>
+
         <ion-list>
-            <!-- remember the `this.pages` object we created in `app.js`?
-            // Iterate through, then when clicked, run the associated function
-            // passing in the #p item. -->
-            <button ion-item *ngFor="#p of pages" (click)="openPage(p)">
+            <button small ion-item *ngFor="#p of pages" (click)="openPage(p)" padding>
                 {{p.title}}
             </button>
         </ion-list>
 
-        <!--<ion-list>
-            <div ng-repeat="group in groups">
-                <ion-item class="item-stable"
-                            ng-click="toggleGroup(group)"
-                            ng-class="{active: isGroupShown(group)}">
-                    <i class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i>
-                    &nbsp;
-                    Group {{group.name}}
+        <ion-list *ngIf="categories">
+            <ion-item *ngFor="#category of categories" (click)="toggleGroup(category)">
+                <ion-icon name="isGroupShown(category)?'ion-minus':'ion-plus'"></ion-icon>
+                {{category.name}}
+                <ion-item class="item-accordion" *ngFor="#item of category.sub_categories">
+                    {{item.name}}
                 </ion-item>
-                <ion-item class="item-accordion"
-                            ng-repeat="item in group.items"
-                            ng-show="isGroupShown(group)">
-                    {{item}}
-                </ion-item>
-            </div>
-        </ion-list>-->
+            </ion-item>
+        </ion-list>
     </ion-content>
 
 </ion-menu>
 <!-- What's my root? remember the this.rootPage? -->
 <ion-nav id="nav" [root]="rootPage" #content swipe-back-enabled="false"></ion-nav>
-<ion-menu [content]="content" side="right">
-
-    <ion-content padding>
-
-          <ion-item>
-              <ion-avatar item-left image-large>
-                  <img src="{{user_image}}"/>
-              </ion-avatar>
-              <ion-item-content *ngIf="user">
-                  <h2>{{user.strName}}</h2>
-                  <small>{{user.strEmail}}</small>
-              </ion-item-content>
-          </ion-item>
-
-        <ion-list>
-            <!-- remember the `this.pages` object we created in `app.js`?
-            // Iterate through, then when clicked, run the associated function
-            // passing in the #p item. -->
-            <button ion-item *ngFor="#p of account_pages" (click)="openPage(p)">
-                <ion-icon name="{{p.icon}}"></ion-icon> {{p.title}}
-            </button>
-        </ion-list>
-    </ion-content>
-
-</ion-menu>
 <loading-modal id="loading"></loading-modal>

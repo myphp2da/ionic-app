@@ -4,10 +4,98 @@
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-navbar *navbar>
+<ion-navbar favorite *navbar>
   <ion-title>Order Placed</ion-title>
 </ion-navbar>
 
 <ion-content padding class="confirm">
-  <p>You have successfully placed your order.</p>
+  You have successfully placed your order.
+
+  <ion-grid>
+    <ion-row>
+      <ion-col width-75>
+        <b>Order Number</b><br />
+        10000005548<br />
+        March 30, 2016 07:36 PM
+
+      </ion-col>
+      <ion-col text-right>
+        <b>Amount</b><br />
+        ₹ {{total_amount}}
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <b>You have 1 product in your order.</b>
+
+  <ion-item *ngFor="#content of contents" class="content" text-wrap>
+      <ion-item>
+          <h2 (click)="itemTapped($event, content)">{{content.title}}</h2>
+          ₹ {{content.total_price}}
+      </ion-item>
+
+      <ion-item>
+        <ion-thumbnail image-small item-left (click)="itemTapped($event, content)">
+            <img src="{{content.photo}}">
+        </ion-thumbnail>
+        
+        <p>{{content.label}} - {{content.remarks}}</p>
+
+        <ion-grid>
+          <ion-row class="buttons">
+            <ion-col>
+              <b>Price</b>
+            </ion-col>
+            <ion-col text-right>
+              <b>Quantity</b>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <small>₹ {{content.price}}</small>
+            </ion-col>
+            <ion-col text-right>
+              <small>{{content.quantity}}</small>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+			
+	</ion-item>
+
+  <b>Summary</b>
+  <ion-grid>
+    <ion-row>
+      <ion-col width-75>
+        Order Total
+      </ion-col>
+      <ion-col text-right>
+        <b>₹ {{total_amount}}</b>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col width-75>
+        Shipping
+      </ion-col>
+      <ion-col text-right>
+        <b>₹ 45</b>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col width-75 text-right>
+        Total: 
+      </ion-col>
+      <ion-col text-right>
+        <b>₹ {{total_amount}} + 45</b>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <b>Delivery Address</b>
+
 </ion-content>
+<ion-toolbar position="bottom" tomato class="buy">
+  <button full clear (click)="continueShopping()">
+      <ion-icon name="home"></ion-icon> Continue Shopping
+  </button>
+</ion-toolbar>
