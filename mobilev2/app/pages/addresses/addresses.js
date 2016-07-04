@@ -27,7 +27,7 @@ export class AddressesPage {
 
     this.sqlite = sqlite;
 
-    var itemAvailable = true;
+    this.itemAvailable = true;
 
     this.cart = params.get('cart');
 

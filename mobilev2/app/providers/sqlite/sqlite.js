@@ -33,36 +33,93 @@ export class SQLite {
 
   updateUser(data) {
 
+      let storage = this.storage;
+
       let drop_user = 'DROP TABLE IF EXISTS user_details';
-      this.storage.query(drop_user);
+      storage.query(drop_user).then(function(res_drop) {
 
-      let create_user = 'CREATE TABLE IF NOT EXISTS user_details (id INTEGER PRIMARY KEY, strName VARCHAR(50) NOT NULL, strImageName VARCHAR(100), strEmail VARCHAR(100) NOT NULL)';
-      this.storage.query(create_user);
+            let create_user = 'CREATE TABLE IF NOT EXISTS user_details ('+ 
+                                'id INTEGER PRIMARY KEY, '+
+                                'strName VARCHAR(50) NOT NULL, '+
+                                'strImageName VARCHAR(100), '+
+                                'strGender VARCHAR(10), '+
+                                'dblPhone double, '+
+                                'dtBirth date, '+
+                                'strEmail VARCHAR(100) NOT NULL)';
+            storage.query(create_user).then(function(res_create) {
 
-      let sql = "insert into user_details(id, strName, strImageName, strEmail) values (?, ?, ?, ?)";
-      return this.storage.query(sql, [data.id, data.strFirstName+' '+data.strLastName, data.strImageName, data.strEmail]);
+                let sql = "insert into user_details(id, strName, strImageName, strGender, dblPhone, dtBirth, strEmail) "+
+                                            "values (?, ?, ?, ?, ?, ?, ?)";
+                storage.query(sql, [
+                    data.id, 
+                    data.strFirstName+' '+data.strLastName, 
+                    data.strImageName, 
+                    data.strGender,
+                    data.dblPhone,
+                    data.dtBirth, 
+                    data.strEmail
+                ]);
+
+            }, function (err_create) {
+                console.error(err_create);
+            });
+
+      }, function (err_drop) {
+        console.error(err_drop);
+      });
   }
 
   updateDeliveryAddresses(data) {
+
+      let storage = this.storage;
+
       let drop_address = 'DROP TABLE IF EXISTS delivery_addresses';
-      this.storage.query(drop_address);
+      storage.query(drop_address).then(function(res_drop) {
 
-      let create_address = 'CREATE TABLE IF NOT EXISTS delivery_addresses ('+
-                                'id int(11) NOT NULL, '+
-                                'strLabel varchar(15) NOT NULL,'+
-                                'strFirstName varchar(50) NOT NULL,'+
-                                'strLastName varchar(50) NOT NULL,'+
-                                'strAddressLine1 varchar(255) DEFAULT NULL,'+
-                                'strAddressLine2 varchar(50) NOT NULL,'+
-                                'idArea int(11) NOT NULL,'+
-                                'strArea int(11) NOT NULL,'+
-                                'strCity varchar(255) DEFAULT NULL,'+
-                                'strState varchar(255) DEFAULT NULL,'+
-                                'intPincode int(6) NOT NULL)';
-      this.storage.query(create_address);
+          console.log('Address table dropped');
+                
+            let create_address = 'CREATE TABLE IF NOT EXISTS delivery_addresses ('+
+                                    'id int(11) NOT NULL, '+
+                                    'strLabel varchar(15) NOT NULL,'+
+                                    'strFirstName varchar(50) NOT NULL,'+
+                                    'strLastName varchar(50) NOT NULL,'+
+                                    'strAddressLine1 varchar(255) DEFAULT NULL,'+
+                                    'strAddressLine2 varchar(50) NOT NULL,'+
+                                    'idArea int(11) NOT NULL,'+
+                                    'strArea int(11) NOT NULL,'+
+                                    'strCity varchar(255) DEFAULT NULL,'+
+                                    'strState varchar(255) DEFAULT NULL,'+
+                                    'intPincode int(6) NOT NULL)';
+            storage.query(create_address).then(function(res_create) {
 
-      data.forEach(function(row) {
-        this.addDeliveryAddress(row, 0);
+                console.log('Address table created');
+                
+                data.forEach(function(row) {
+
+                    let sql = 'insert into delivery_addresses(id, strLabel, strFirstName, strLastName, strAddressLine1, strAddressLine2, idArea, strArea, strCity, strState, intPincode)'+
+                                                        ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+                    return storage.query(sql, [
+                            row.id, 
+                            row.label,
+                            row.fname,
+                            row.lname, 
+                            row.address1, 
+                            row.address2,
+                            row.area,
+                            row.area_name,
+                            row.city,
+                            row.state,
+                            row.pincode
+                    ]);
+                });
+
+            }, function (err_create) {
+                console.error(err_create);
+            });
+
+      }, function (err_drop) {
+        console.error(err_drop);
       });
   }
 
@@ -83,7 +140,11 @@ export class SQLite {
                 data.city,
                 data.state,
                 data.pincode
-          ]);
+          ]).then(function(res) {
+                console.log("Data inserted");
+          }, function (err) {
+                console.error(err);
+          });
       } else {
 
           let sql = 'update delivery_addresses set ' + 
@@ -99,9 +160,7 @@ export class SQLite {
                         'intPincode = ? ' + 
                         'where id = ?';
 
-          console.log(data);                        
-
-          return this.storage.query(sql, [
+          this.storage.query(sql, [
                 data.label,
                 data.fname,
                 data.lname, 
@@ -112,7 +171,7 @@ export class SQLite {
                 data.city,
                 data.state,
                 data.pincode,
-                data.id
+                address_id
           ]);
 
       }
@@ -219,6 +278,11 @@ export class SQLite {
 
   getCategories() {
       let sql = "select * from categories order by idParent";
+      return this.storage.query(sql);
+  }
+
+  getAreas() {
+      let sql = "select * from areas";
       return this.storage.query(sql);
   }
 

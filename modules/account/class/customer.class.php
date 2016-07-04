@@ -231,8 +231,9 @@ class customer extends account
 		return $this->updateByArray($this->_table, $data, $where);
 	}
 
-	/** This function check Login as well as duplication of Mobile or Email id at the time of registation
+	/** This function check Login as well as duplication of Mobile or Email id at the time of registration
 	 * @param string $username : email as checking
+     * @param string $password : Password of the customer for login
 	 * @return it returns single result otherwise 404
 	 */
 	function checkCustomerLogin($username, $password = '')
@@ -242,7 +243,7 @@ class customer extends account
 			$mainAdd .= " AND main.strPassword = '" . $password . "'";
 		}
 
-		$sql = "select main.id, strEmail, strFirstName, strLastName, strImageName, enmActivated, strEmail
+		$sql = "select main.*
 				from " . $this->_customer_table . " as main
 				where 1" . $mainAdd;
 		return $this->getResult($sql);

@@ -65,26 +65,26 @@ export class AddressPage {
         this.loading.hide();
         if(data.status == 'true') {
             this.contents = data.data;
-
-            if(this.address_id != 0) {
-                sqlite.getDeliveryAddressByID(this.address_id).then((result) => {
-                    current_address = result.res.rows.item(0);
-                    this.address_label = current_address.strLabel;
-                    this.address_fname = current_address.strFirstName;
-                    this.address_lname = current_address.strLastName;
-                    this.address_line1 = current_address.strAddressLine1;
-                    this.address_line2 = current_address.strAddressLine2;
-                    this.area = current_address.idArea;
-                    this.area_name = current_address.strArea;
-                    this.area_city = current_address.strCity;
-                    this.area_state = current_address.strState;
-                    this.area_pincode = current_address.intPincode;
-
-                    this.heading = 'Edit '+this.address_label;
-                });
-            }
         }
     });
+
+    if(this.address_id != 0) {
+        sqlite.getDeliveryAddressByID(this.address_id).then((result) => {
+            current_address = result.res.rows.item(0);
+            this.address_label = current_address.strLabel;
+            this.address_fname = current_address.strFirstName;
+            this.address_lname = current_address.strLastName;
+            this.address_line1 = current_address.strAddressLine1;
+            this.address_line2 = current_address.strAddressLine2;
+            this.area = current_address.idArea;
+            this.area_name = current_address.strArea;
+            this.area_city = current_address.strCity;
+            this.area_state = current_address.strState;
+            this.area_pincode = current_address.intPincode;
+
+            this.heading = 'Edit '+this.address_label;
+        });
+    }
     
   }
 
