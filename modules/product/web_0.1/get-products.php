@@ -16,6 +16,15 @@
 
     if(isset($post_data->key) && $post_data->key == KEY) {
 
+        $category = $product_obj->getCategoryByID($post_data->category);
+
+        if($category == 404) {
+            $data['status'] = 'False'; //False
+            $data['msg'] = 'No category available';
+
+            die(json_encode($data));
+        }
+
         $query_string = '1';
         if(isset($post_data->category) && is_numeric($post_data->category)) {
             $query_string .= " and p.idCategory = ".$post_data->category;
@@ -71,6 +80,7 @@
 
             $data['status'] = 'True'; //True
             $data['msg'] = 'Products have been successfully loaded';
+            $data['category'] = $category;
             $data['data'] = $output;
         }
     } else {
@@ -79,6 +89,4 @@
 
     }
 
-    //Always Return JSON string to handle it in devices.
-    header("Content-type: application/json");
     echo json_encode($data);

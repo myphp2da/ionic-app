@@ -29,6 +29,10 @@
             $data['msg'] = 'ERROR! something went wrong. Please try again...';
         } else {
 
+            $seq = $pro;
+
+            $order_number = date('Y').str_pad($seq, 6, '0', STR_PAD_LEFT);
+
             $update_array = array(
                 'address' => $post_data->cart->idAddress,
                 'slot' => $post_data->cart->strSlot,

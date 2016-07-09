@@ -1,4 +1,4 @@
-<a href="javascript:void(0);" id="dataLoad" class="ajaxButton loadMore firstLoad" data-url="product/load/all" data-container="#teamActivity" data-action="add" data-lib="dataTable"
+<a href="javascript:void(0);" id="dataLoad" class="ajaxButton loadMore firstLoad" data-url="product/load/orders" data-container="#teamActivity" data-action="add" data-lib="dataTable"
    style="display:none;"></a>
 <?php
 

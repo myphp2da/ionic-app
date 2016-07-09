@@ -215,6 +215,15 @@ class product extends db_class {
 		return $data['total_rows'];
 	}
 
+    /** Get category details for provided category ID
+     * @param int $category_id : ID of the category ID
+     * @return array | bool : Returns array of category details on success, otherwise returns false
+     */
+    public function getCategoryByID($category_id){
+        $sql = "select * from ".$this->_category_table." where id = ".$category_id;
+        return $this->getResult($sql);
+    }
+
 	/** getting Product related to particular productid
 	 * @param  $where : $where is pass particular productid
 	 * @return int|array : return 404 if no data available for the query,
