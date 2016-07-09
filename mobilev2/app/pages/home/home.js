@@ -27,7 +27,7 @@ export class HomePage {
         pagination: '.swiper-pagination',
         paginationClickable: true,
         slidesPerView: 2,
-        spaceBetween: 50
+        spaceBetween: 0
       }
       
       this.loading = app.getComponent('loading');

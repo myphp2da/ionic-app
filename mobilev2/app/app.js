@@ -121,7 +121,7 @@ export class MyApp {
             if(result) {
                 this.sqlite.getKey('UserId').then((result) => {
                     if(result) {
-                        this.rootPage = AccountPage;
+                        this.rootPage = HomePage;
                     } else {
                         this.rootPage = MainPage;
                     }

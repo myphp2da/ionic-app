@@ -55,6 +55,7 @@ export class LoginPage {
                     buttons: ['Ok']
                 });
                 this.nav.present(alert);
+
             } else {
                 this.sqlite.updateUser(data.data.user_details);
 

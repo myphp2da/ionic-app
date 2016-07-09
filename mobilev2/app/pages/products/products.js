@@ -98,7 +98,7 @@ export class ProductsPage {
     }
 
     gotoSearch() {
-        this.nav.setRoot(SearchPage);
+        this.nav.push(SearchPage);
     }
     
     itemTapped(event, content) {

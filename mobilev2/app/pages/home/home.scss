@@ -20,3 +20,22 @@ a.button {
 ion-slides {
   height: inherit;
 }
+
+ion-slide {
+  background: none;
+}
+
+.swiper-slide {
+  font-size: 12px;
+}
+
+ion-title img {
+  width: 75px;
+  position: absolute;
+  left: -20px;
+  top: -20px;
+}
+
+.home h2 {
+  padding: 0 10px;
+}
