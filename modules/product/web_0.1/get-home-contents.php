@@ -110,13 +110,13 @@
                     if($category['idParent'] == 0) {
                         $category_array[] = $data_array;
                     } else {
-                        $sub_categories[$category['idParent']] = $data_array;
+                        $sub_categories[$category['idParent']][] = $data_array;
                     }
                 }
 
                 foreach($category_array as $category) {
                     if(isset($sub_categories[$category['id']])) {
-                        $category['sub_categories'][] = $sub_categories[$category['id']];
+                        $category['sub_categories'] = $sub_categories[$category['id']];
 
                         $output['categories'][] = $category;
                     }
