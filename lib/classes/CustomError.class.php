@@ -65,12 +65,15 @@
                     $emailer_obj = new emailer();
 
                     $edata = array(
-                        'email'        => DEV_EMAIL,
+                        'email'        => SUPPORT_EMAIL,
                         'fullname'     => 'Developer(s)',
                         'errors_count' => $error_count,
                         'subject'      => MAIL_NAME . ' : ' . $error_count . ' error(s) found'
                     );
-                    $emailer_obj->sendMail('system-errors', $edata);
+
+                    if($emailer_obj->sendMail('system-errors', $edata)) {
+                        $this->clearLogFile();
+                    }
                 }
             }
         }

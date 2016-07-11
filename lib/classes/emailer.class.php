@@ -13,15 +13,6 @@
 			}
 			
 			// Set basic parameters to send email
-			/*$this->IsSMTP();
-			$this->Host = MAIL_HOST;
-			$this->SMTPDebug = 0;
-			$this->SMTPAuth = true;
-			$this->Host = MAIL_HOST;
-			$this->Port = MAIL_PORT;
-			$this->Username = MAIL_FROM;
-			$this->Password = MAIL_PASSWORD;
-			$this->Debugoutput = 'html';*/
 			$this->mail->IsSMTP();
 			$this->mail->Host = MAIL_HOST;
 			$this->mail->SMTPDebug = 0;
@@ -31,23 +22,18 @@
 			$this->mail->Username = MAIL_FROM;
 			$this->mail->Password = MAIL_PASSWORD;
 			$this->mail->Debugoutput = 'html';
-			//echo "<pre>";print_r($this);exit;
-			// Update email specific parameters
-			$this->mail->SetFrom(MAIL_FROM, MAIL_NAME);
-			/*pr($data);exit;
-echo $data['to'];exit;*/
-			/*if(isset($data['to']) && !empty($data['to'])) {
-				$to_array = explode(",", $data['to']);
-				foreach($to_array as $to_email) {
-					$this->mail->AddAddress($to_email);
-				}
-			}*/
+
+            if(defined(MAIL_SECURE)) {
+                $this->mail->SMTPSecure = MAIL_SECURE;
+            }
+
+            $this->mail->SetFrom(MAIL_FROM, MAIL_NAME);
+
 			if(isset($data['email']) && !empty($data['email'])) {
 				$to_array = explode(",", $data['email']);
 
 				foreach($to_array as $to_email) {
 					$this->mail->AddAddress($to_email);
-					//$this->AddAddress($to_email);
 				}
 			}
 			
