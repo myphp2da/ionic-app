@@ -48,8 +48,15 @@ export class SQLite {
                                 'strEmail VARCHAR(100) NOT NULL)';
             storage.query(create_user).then(function(res_create) {
 
-      let sql = "insert into user_details(id, strName, strImageName, strEmail) values (?, ?, ?, ?)";
-      return this.storage.query(sql, [data.id, data.strFirstName+' '+data.strLastName, data.strImageName, data.strEmail]);
+                let sql = "insert into user_details(id, strName, strImageName, strEmail) values (?, ?, ?, ?)";
+                storage.query(sql, [data.id, data.strFirstName+' '+data.strLastName, data.strImageName, data.strEmail]);
+
+            }, function (err_create) {
+                console.error(err_create);
+            });
+      }, function (err_drop) {
+        console.error(err_drop);
+      });
   }
 
   updateDeliveryAddresses(data) {

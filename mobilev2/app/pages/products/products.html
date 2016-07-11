@@ -45,7 +45,7 @@
         </ion-buttons>
         
     </ion-item>
-    <div *ngIf="!hasProducts">No product available in {{category.name}}</div>
+    <div *ngIf="!hasProducts" text-center>No product available in {{category.name}}</div>
 </ion-content>
 <button fab fab-bottom fab-right (click)="viewCart()">
     <ion-icon name="basket"></ion-icon>

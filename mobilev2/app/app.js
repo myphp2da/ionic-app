@@ -1,5 +1,5 @@
 import {App, Platform, Storage, SqlStorage, IonicApp, MenuController} from 'ionic-angular';
-import {StatusBar, Device} from 'ionic-native';
+import {StatusBar, Device, Push} from 'ionic-native';
 import {MainPage} from './pages/main/main';
 import {HomePage} from './pages/home/home';
 import {IntroPage} from './pages/intro/intro';
@@ -135,6 +135,35 @@ export class MyApp {
 
     initializeApp() {
         this.platform.ready().then(() => {
+            
+            var push = Push.init({
+                android: {
+                    senderID: "596197136028"
+                },
+                ios: {
+                    alert: "true",
+                    badge: true,
+                    sound: 'false'
+                },
+                windows: {}
+            });
+
+            push.on('registration', (data) => {
+                console.log(data.registrationId);
+            });
+
+            push.on('notification', (data) => {
+                console.log(data.message);
+                console.log(data.title);
+                console.log(data.count);
+                console.log(data.sound);
+                console.log(data.image);
+                console.log(data.additionalData);
+            });
+
+            push.on('error', (e) => {
+                console.log(e.message);
+            });
             
         });
     }

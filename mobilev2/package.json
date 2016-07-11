@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@ionic/cloud-angular": "0.0.15",
     "angular2": "2.0.0-beta.15",
     "es6-shim": "^0.35.0",
     "ionic-angular": "2.0.0-beta.6",
@@ -27,7 +28,14 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
-    "cordova-sqlite-storage"
+    "cordova-sqlite-storage",
+    {
+      "variables": {
+        "SENDER_ID": "596197136028"
+      },
+      "locator": "phonegap-plugin-push",
+      "id": "phonegap-plugin-push"
+    }
   ],
   "cordovaPlatforms": []
 }

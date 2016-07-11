@@ -25,6 +25,11 @@
 @import "../pages/products/products.scss";
 @import "../pages/order-details/order-details.scss";
 
+ion-content {
+    background: url(images/splash.png) no-repeat center center fixed;
+    background-size: cover;
+}
+
 
 .subitem {
     padding-left: 0;
@@ -41,6 +46,7 @@
 .item {
     padding-left: 0;
 }
+
 ion-input::after {
     left: 0;
 }
@@ -50,9 +56,6 @@ ion-slide img {
 }
 
 .menu-left{
-    background:url('http://tutorialsplane.com/wp-content/uploads/2016/02/1511516_1035103706511033_695479665952545706_n.jpg') no-repeat center center fixed; 
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
     background-size: cover;
 }
 
