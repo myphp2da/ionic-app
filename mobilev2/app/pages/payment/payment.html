@@ -33,11 +33,11 @@
 
 <ion-content padding class="payment">
 
-  <ion-item>
-    <h2>Select payment option for order</h2>
-  </ion-item>
+  <div text-center>
+    <h5>Select payment option for order</h5>
+  </div>
 
-  <ion-list radio-group>
+  <ion-list radio-group [(ngModel)]="payment_option">
     <ion-item *ngFor="#payment of options">
       <ion-label>{{payment.label}}</ion-label>
       <ion-radio value="{{payment.type}}" (click)="setPayment(payment.type)"></ion-radio>

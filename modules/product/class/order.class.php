@@ -13,6 +13,15 @@ class order extends product {
 
     protected $_customer_table = 'mst_customers';
 
+    /** Get latest seq of orders
+     * @return int : Returns latest sequence of orders
+     */
+    public function getOrderSeq() {
+        $sql = "select max(intSeq) as max_seq from ".$this->_cart_table." where tinStatus = '2'";
+        $data = $this->getResult($sql);
+        return $data['max_seq'];
+    }
+
     /** Get orders by status provided
      * @param int $status : Status of the order
      * @return array | int : Returns array of orders for provided status,
@@ -36,7 +45,9 @@ class order extends product {
             'intAddress' => $cart_data['address'],
             'strSlot' => $cart_data['slot'],
             'strPayment' => $cart_data['payment'],
-            'tinStatus' => $cart_data['status']
+            'tinStatus' => $cart_data['status'],
+            'intSeq' => $cart_data['seq'],
+            'dblOrderNo' => $cart_data['order_no']
         );
         return $this->updateByArray($this->_cart_table, $cart_array, "id = ".$cart_data['cart']);
     }

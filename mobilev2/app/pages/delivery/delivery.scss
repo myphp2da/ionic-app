@@ -1,3 +1,22 @@
 .delivery {
 
 }
+
+.radio {
+    padding: 15px;
+}
+
+.address-label, .radio {
+    float: left;
+}
+
+.address-label {
+    width: 80%;
+    position: relative;
+}
+
+.right-top {
+    position: absolute;
+    right: 0;
+    top: 0;
+}

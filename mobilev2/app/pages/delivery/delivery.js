@@ -1,4 +1,4 @@
-import {IonicApp, Page, NavParams, NavController} from 'ionic-angular';
+import {IonicApp, Page, Alert, NavParams, NavController} from 'ionic-angular';
 import {Services} from '../../providers/services/services';
 import {SQLite} from '../../providers/sqlite/sqlite';
 import {AddressPage} from '../address/address';
@@ -27,24 +27,29 @@ export class DeliveryPage {
 
     this.sqlite = sqlite;
 
-    var itemAvailable = false;
+    this.contents = [];
+
+    this.delivery = 0;
+
+    this.itemAvailable = false;
 
     this.cart = params.get('cart');
 
     this.sqlite.getKey('UserId').then((value) => {
-          
-        this.user = value;
-          
-        console.log('User: '+value);
+        this.user = value;        
+    });
 
-        service.loadAddresses(value).subscribe(data => {
-            console.log(data.status);
-            this.loading.hide();
-            if(data.status == 'true') {
-                this.contents = data.data;
-                itemAvailable = true;
+    this.sqlite.getDeliveryAddresses('').then((result) => {
+        this.loading.hide();
+        if(result) {
+            if(result.res.rows.length > 0) {
+                for(var i = 0; i < result.res.rows.length; i++) {
+                  var row = result.res.rows.item(i);
+                  this.contents.push(row);
+                }
             }
-        });
+            this.itemAvailable = true;
+        }
     });
   }
 
@@ -53,7 +58,16 @@ export class DeliveryPage {
   }
 
   gotoSlots() {
-    this.nav.push(SlotPage, {'cart': this.cart});
+    if(this.delivery == 0) {
+      var alert = Alert.create({
+          title: 'ERROR!',
+          message: 'Please select delivery address',
+          buttons: ['Ok']
+      });
+      this.nav.present(alert);
+    } else {
+      this.nav.push(SlotPage, {'cart': this.cart});
+    }
   }
 
   setDelivery(address) {

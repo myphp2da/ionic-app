@@ -32,6 +32,10 @@
     </ion-row>
   </ion-grid>
 
+  <div text-center>
+    <h5>Select delivery address</h5>
+  </div>
+
   <ion-buttons end>
       <button class="button-small" outline (click)="gotoAddressForm(0)">
         <ion-icon name="add"></ion-icon> 
@@ -40,24 +44,22 @@
   </ion-buttons>
 
   <ion-list radio-group [(ngModel)]="delivery">
-    <ion-card *ngFor="#address of contents" padding>
-      <ion-label>
-        <h2>{{address.label}}</h2>
-        <ion-buttons end>
-          <button class="button-small" outline (click)="gotoAddressForm(address.id)"> 
-          Edit
-        </button>
-        </ion-buttons>
-        <p>{{address.name}}</p>
-        <p>{{address.address1}}</p>
-        <p>{{address.address2}}</p>
-        <p>{{address.area}}, {{address.city}}</p>
-        <p>{{address.state}} - {{address.pincode}}</p>
-        <ion-radio value="{{address.id}}" (click)="setDelivery(address.id)"></ion-radio>
+    <ion-card *ngFor="#content of contents">
+      <ion-radio class="radio" value="{{content.id}}" (click)="setDelivery(content.id)"></ion-radio>
+      <ion-label class="address-label">
+          <button small outline class="right-top" (click)="gotoAddressForm(content.id)"> 
+            Edit
+          </button>
+          <h2>{{content.strLabel}}</h2>
+          <p>{{content.strName}}</p>
+          <p>{{content.strAddressLine1}}</p>
+          <p>{{content.strAddressLine2}}</p>
+          <p>{{content.strArea}}, {{content.strCity}}</p>
+          <p>{{content.strState}} - {{content.intPincode}}</p>
       </ion-label>
     </ion-card>
   </ion-list>
-  <div *ngIf="!itemAvailable">No address added by you yet.</div>
+  <div *ngIf="!itemAvailable" text-center>No address added by you yet.</div>
 </ion-content>
 <ion-toolbar position="bottom" padding tomato>
 		<ion-buttons end>

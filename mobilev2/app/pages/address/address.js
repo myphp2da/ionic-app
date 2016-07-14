@@ -122,7 +122,7 @@ export class AddressPage {
                   });
                   this.nav.present(alert);
               } else {
-                  this.nav.push(AddressesPage);
+                  this.nav.pop();
                   this.sqlite.addDeliveryAddress(value, this.address_id);
               }
           });

@@ -102,6 +102,8 @@ export class MyApp {
   logoutApp() {
       this.menu.close();
       this.sqlite.removeKey('UserId');
+      this.sqlite.removeKey('Cart');
+      this.sqlite.clearStorage();
       let nav = this.app.getComponent('nav');
       nav.setRoot(MainPage);
   }

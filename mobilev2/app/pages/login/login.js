@@ -61,6 +61,8 @@ export class LoginPage {
 
                 if(data.data.addresses) {
                     this.sqlite.updateDeliveryAddresses(data.data.addresses);
+                } else {
+                    this.sqlite.newDeliveryAddress();
                 }
 
                 this.sqlite.setKey('UserId', data.data.user_details.id);

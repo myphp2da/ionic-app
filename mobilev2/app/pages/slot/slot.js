@@ -1,4 +1,4 @@
-import {Page, NavController, NavParams} from 'ionic-angular';
+import {IonicApp, Page, Alert, NavController, NavParams} from 'ionic-angular';
 import {PaymentPage} from '../payment/payment';
 import {SQLite} from '../../providers/sqlite/sqlite';
 
@@ -13,21 +13,38 @@ import {SQLite} from '../../providers/sqlite/sqlite';
 })
 export class SlotPage {
   static get parameters() {
-    return [[NavController], [SQLite], [NavParams]];
+    return [[IonicApp], [NavController], [SQLite], [NavParams]];
   }
 
-  constructor(nav, sqlite, params) {
+  constructor(app, nav, sqlite, params) {
+
+    this.loading = app.getComponent('loading');  
+    this.loading.show();
+
     this.nav = nav;
 
     this.sqlite = sqlite;
 
+    this.slot = 0;
+
     this.cart = params.get('cart');
 
-    this.slots = [
-      { time: '12:00', range: '7:00 AM to 12:00 Noon'},
-      { time: '17:00', range: '12:00 Noon to 5:00 PM'},
-      { time: '21:00', range: '5:00 PM to 9:00 PM'},
-    ];
+    console.log(this.cart);
+
+    this.slots = [];
+
+    this.sqlite.getSlots().then((result) => {
+        this.loading.hide();
+        if(result) {
+            if(result.res.rows.length > 0) {
+                for(var i = 0; i < result.res.rows.length; i++) {
+                  var row = result.res.rows.item(i);
+                  this.slots.push(row);
+                }
+            }
+            this.itemAvailable = true;
+        }
+    });
 
     var current_date = new Date();
 
@@ -41,7 +58,16 @@ export class SlotPage {
   }
 
   gotoPayment() {
-    this.nav.push(PaymentPage, {'cart': this.cart});
+    if(this.slot == 0) {
+      var alert = Alert.create({
+          title: 'ERROR!',
+          message: 'Please select time slot for delivery',
+          buttons: ['Ok']
+      });
+      this.nav.present(alert);
+    } else {
+      this.nav.push(PaymentPage, {'cart': this.cart});
+    }
   }
 
   setSlot(date, range) {

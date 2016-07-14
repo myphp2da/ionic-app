@@ -11,20 +11,18 @@
 <ion-content class="delivery">
     <ion-card *ngFor="#address of contents" padding>
       <h2>{{address.strLabel}}</h2>
-        <ion-buttons end>
-          <button class="button-small" outline (click)="gotoAddressForm(address.id)"> 
-          Edit
-        </button>
-        </ion-buttons>
         <p>{{address.strName}}</p>
         <p>{{address.strAddressLine1}}</p>
         <p>{{address.strAddressLine2}}</p>
         <p>{{address.strArea}}, {{address.strCity}}</p>
         <p>{{address.strState}} - {{address.intPincode}}</p>
+        <button class="button-small" outline (click)="gotoAddressForm(address.id)"> 
+          Edit
+        </button>
     </ion-card>
-  <div *ngIf="!itemAvailable">No delivery address added by you yet.</div>
+  <div *ngIf="!itemAvailable" text-center>No delivery address added by you yet.</div>
 </ion-content>
-<ion-toolbar position="bottom" tomato>
+<ion-toolbar position="bottom" tomato class="buy">
 		<button full clear (click)="gotoAddressForm(0)">
 				<ion-icon name="add"></ion-icon> Add Delivery Address
 		</button>

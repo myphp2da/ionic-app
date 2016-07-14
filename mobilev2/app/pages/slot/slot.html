@@ -31,18 +31,18 @@
     </ion-row>
   </ion-grid>
 
-<ion-content class="slot" padding>
+<ion-content class="slot">
 
-  <ion-item>
-    <h2>Select Time Slot for Delivery</h2>
-  </ion-item>
+  <div text-center>
+    <h4>Select Time Slot for Delivery</h4>
+  </div>
 
-  <ion-list radio-group>
+  <ion-list radio-group [(ngModel)]="slot">
     <div *ngFor="#item of items">
-    <p>{{item.date | date:'longDate'}}</p>
+    <span class="heading">{{item.date | date:'longDate'}}</span>
     <ion-item *ngFor="#slot of item.slots">
-      <ion-label>{{slot.range}}</ion-label>
-      <ion-radio value="{{item.date}} - {{slot.range}}" (click)="setSlot(item.date, slot.range)"></ion-radio>
+      <ion-label>{{slot.strSlot}}</ion-label>
+      <ion-radio value="{{item.date}} - {{slot.strSlot}}" (click)="setSlot(item.date, slot.strSlot)"></ion-radio>
     </ion-item>
     </div>
   </ion-list>

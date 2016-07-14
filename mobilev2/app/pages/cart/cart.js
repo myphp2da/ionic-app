@@ -21,25 +21,27 @@ export class CartPage {
   constructor(app, service, nav, sqlite) {
       
       this.loading = app.getComponent('loading');
-      
       this.loading.show();
       
       this.nav = nav;
 
-      this.hasProducts = true;
+      this.hasProducts = false;
       
       this.total_amount = 0;
+      this.pay_amount = 0;
       
       this.service = service;
 
       this.sqlite = sqlite;
+
+      this.cart = 0;
       
-      this.sqlite.getKey('Cart').then((value) => {
+      sqlite.getKey('Cart').then((value) => {
 
           if(value) {
-          
-            this.cart = value;
 
+            this.cart = value;
+          
             service.loadCart(value).subscribe(data => {
                 this.loading.hide();
                 if(data.status == 'false') {
@@ -48,15 +50,22 @@ export class CartPage {
                         message: data.msg,
                         buttons: ['Ok']
                     });
-                    this.nav.present(alert);
-                    this.hasProducts = false;
+                    this.nav.present(alert);                    
                 } else {
                     this.contents = data.data;
                     this.total_amount = data.total_amount;
+                    this.pay_amount = this.total_amount + 45;
+                    this.hasProducts = true;
+
+                    sqlite.updateCartDetails({
+                        'id': this.cart,
+                        'total_amount': this.total_amount,
+                        'delivery': 45,
+                        'products': this.contents.length
+                    });
                 }
             });
           } else {
-              this.cart = 0;
               this.loading.hide();
               this.hasProducts = false;
           }
@@ -114,6 +123,9 @@ export class CartPage {
         total_amount += item.quantity * item.price;
       });
       this.total_amount = Math.round(total_amount*100)/100;
+      this.pay_amount = this.total_amount + 45;
+
+      this.sqlite.updateCart('decAmount', this.total_amount, this.cart);
   }
   
   checkoutCart() {

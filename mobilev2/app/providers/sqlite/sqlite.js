@@ -29,6 +29,12 @@ export class SQLite {
   clearStorage() {
     let drop_user = 'DROP TABLE IF EXISTS user_details';
     this.storage.query(drop_user);
+
+    let drop_address = 'DROP TABLE IF EXISTS delivery_addresses';
+    this.storage.query(drop_address);
+
+    let drop_cart = 'DROP TABLE IF EXISTS cart';
+    this.storage.query(drop_cart);
   }
 
   updateUser(data) {
@@ -59,6 +65,34 @@ export class SQLite {
       });
   }
 
+  newDeliveryAddress() {
+
+      let storage = this.storage;
+
+      let drop_address = 'DROP TABLE IF EXISTS delivery_addresses';
+      storage.query(drop_address).then(function(res_drop) {
+
+          console.log('Address table dropped');
+                
+            let create_address = 'CREATE TABLE IF NOT EXISTS delivery_addresses ('+
+                                    'id INTEGER PRIMARY KEY, '+
+                                    'strLabel varchar(15) NOT NULL,'+
+                                    'strFirstName varchar(50) NOT NULL,'+
+                                    'strLastName varchar(50) NOT NULL,'+
+                                    'strAddressLine1 varchar(255) DEFAULT NULL,'+
+                                    'strAddressLine2 varchar(50) NOT NULL,'+
+                                    'idArea int(11) NOT NULL,'+
+                                    'strArea int(11) NOT NULL,'+
+                                    'strCity varchar(255) DEFAULT NULL,'+
+                                    'strState varchar(255) DEFAULT NULL,'+
+                                    'intPincode int(6) NOT NULL)';
+            return storage.query(create_address);
+
+      }, function (err_drop) {
+        console.error(err_drop);
+      });
+  }
+
   updateDeliveryAddresses(data) {
 
       let storage = this.storage;
@@ -69,7 +103,7 @@ export class SQLite {
           console.log('Address table dropped');
                 
             let create_address = 'CREATE TABLE IF NOT EXISTS delivery_addresses ('+
-                                    'id int(11) NOT NULL, '+
+                                    'id INTEGER PRIMARY KEY, '+
                                     'strLabel varchar(15) NOT NULL,'+
                                     'strFirstName varchar(50) NOT NULL,'+
                                     'strLastName varchar(50) NOT NULL,'+
@@ -83,13 +117,11 @@ export class SQLite {
             storage.query(create_address).then(function(res_create) {
 
                 console.log('Address table created');
-                
+            
                 data.forEach(function(row) {
-
                     let sql = 'insert into delivery_addresses(id, strLabel, strFirstName, strLastName, strAddressLine1, strAddressLine2, idArea, strArea, strCity, strState, intPincode)'+
-                                                        ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-
-                    return storage.query(sql, [
+                                            ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                    storage.query(sql, [
                             row.id, 
                             row.label,
                             row.fname,
@@ -101,7 +133,11 @@ export class SQLite {
                             row.city,
                             row.state,
                             row.pincode
-                    ]);
+                    ]).then(function(res) {
+                            console.log("Data inserted");
+                    }, function (err) {
+                            console.error(err);
+                    });
                 });
 
             }, function (err_create) {
@@ -109,15 +145,17 @@ export class SQLite {
             });
 
       }, function (err_drop) {
-        console.error(err_drop);
+            console.error(err_drop);
       });
   }
 
   addDeliveryAddress(data, address_id) {
 
+      console.log(data);
+
       if(address_id == 0) {
           let sql = 'insert into delivery_addresses(id, strLabel, strFirstName, strLastName, strAddressLine1, strAddressLine2, idArea, strArea, strCity, strState, intPincode)'+
-                                            'values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                                            ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
           return this.storage.query(sql, [
                 data.id, 
                 data.label,
@@ -162,7 +200,11 @@ export class SQLite {
                 data.state,
                 data.pincode,
                 address_id
-          ]);
+          ]).then(function(res) {
+                console.log("Data inserted");
+          }, function (err) {
+                console.error(err);
+          });
 
       }
   }
@@ -232,15 +274,40 @@ export class SQLite {
       }, this);
   }
 
-  newCart(data) {
+  newCart(cart_id) {
+
+      var storage = this.storage;
+
     let drop_cart = 'DROP TABLE IF EXISTS cart';
-    this.storage.query(drop_cart);
+    storage.query(drop_cart).then(function(res_drop) {
+        
+        console.log('Cart dropped');
 
-    let create_cart = 'CREATE TABLE IF NOT EXISTS cart(id INTEGER PRIMARY KEY, idAddress INTEGER NULL, strSlot VARCHAR(50) NULL, strPayment VARCHAR(5) NULL, tinStatus TINYINT(1) DEFAULT "0")';
-    this.storage.query(create_cart);
+        let create_cart = 'CREATE TABLE IF NOT EXISTS cart('+
+                            'id INTEGER PRIMARY KEY, '+
+                            'decAmount DECIMAL(10,2) DEFAULT 0, '+
+                            'decDelivery DECIMAL(5,2) DEFAULT 0, '+
+                            'intTotalProducts INTEGER DEFAULT 0, '+
+                            'idAddress INTEGER NULL, '+
+                            'strSlot VARCHAR(50) NULL, '+
+                            'strPayment VARCHAR(5) NULL, '+
+                            'tinStatus TINYINT(1) DEFAULT "0")';
 
-    let sql = "insert into cart(id) values (?)";
-    return this.storage.query(sql, [data.cart]);
+        storage.query(create_cart).then(function(res_create) {
+
+            console.log('Cart created');
+
+            let sql = "insert into cart(id) values (?)";
+            console.log(sql);
+            storage.query(sql, [cart_id]);
+
+        }, function (err_create) {
+            console.error(err_create);
+        });
+
+    }, function (err_drop) {
+        console.error(err_drop);
+    });
   }
 
   updateCart(field, value, id) {
@@ -261,6 +328,17 @@ export class SQLite {
       return this.storage.remove(key);
   }
 
+  updateCartDetails(cart) {
+      let sql = "update cart set "+
+                    "decAmount = ?, "+
+                    "decDelivery = ?, "+
+                    "intTotalProducts = ?"+
+                    " where id = ?";
+      console.log(sql);
+      console.log(cart);
+      return this.storage.query(sql, [cart.total_amount, cart.delivery, cart.products, cart.id]);
+  }
+
   getCart(id) {
       let sql = "select * from cart where id = ?";
       return this.storage.query(sql, [id]);
@@ -273,6 +351,11 @@ export class SQLite {
 
   getAreas() {
       let sql = "select * from areas";
+      return this.storage.query(sql);
+  }
+
+  getSlots() {
+      let sql = "select * from slots";
       return this.storage.query(sql);
   }
 

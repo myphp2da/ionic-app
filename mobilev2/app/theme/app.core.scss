@@ -26,7 +26,7 @@
 @import "../pages/order-details/order-details.scss";
 
 ion-content {
-    background: url(images/splash.png) no-repeat center center fixed;
+    background: url(../../images/splash.png) no-repeat center center fixed;
     background-size: cover;
 }
 
@@ -101,4 +101,19 @@ form .item-inner {
 
 a.button {
   color: #000;
+}
+
+.no-content {
+    text-align: center;
+    margin-top: 40%;
+    font-weight: bold;
+}
+
+.no-content ion-icon {
+    font-size: 100px;
+    color: #D40000;
+}
+
+.no-content p {
+    color: #D40000;
 }

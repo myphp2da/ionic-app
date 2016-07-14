@@ -33,14 +33,46 @@
 			
 	</ion-item>
 
-	<div *ngIf="!hasProducts" class="empty-cart">The cart is empty</div>
+	<ion-item *ngIf="hasProducts">
+		<h3>Payment Summary</h3>
+		<ion-grid>
+			<ion-row>
+			<ion-col width-75>
+				Order Total
+			</ion-col>
+			<ion-col text-right>
+				<b>₹ {{total_amount}}</b>
+			</ion-col>
+			</ion-row>
+			<ion-row>
+			<ion-col width-75>
+				Shipping
+			</ion-col>
+			<ion-col text-right>
+				<b>₹ 45</b>
+			</ion-col>
+			</ion-row>
+			<ion-row>
+			<ion-col width-75 text-right>
+				Total Payment: 
+			</ion-col>
+			<ion-col text-right>
+				<b>₹ {{pay_amount}}</b>
+			</ion-col>
+			</ion-row>
+		</ion-grid>
+	</ion-item>
+
+	<div *ngIf="!hasProducts" class="no-content">
+		<p><ion-icon name="basket"></ion-icon></p>
+		<p>Your cart is empty</p>
+	</div>
 </ion-content>
 
 <ion-toolbar *ngIf="hasProducts" position="bottom" padding tomato>
-		<ion-title>Total Amount: <strong (ngModel)="total_amount">₹ {{total_amount}}</strong></ion-title>
-		<ion-buttons end>
-			<button outline (click)="checkoutCart()" item-right>
-				Checkout
-			</button>
-		</ion-buttons>
+	<ion-buttons end>
+		<button outline (click)="checkoutCart()" item-right>
+			Checkout
+		</button>
+	</ion-buttons>
 </ion-toolbar>

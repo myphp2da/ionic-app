@@ -129,7 +129,7 @@ export class ProductsPage {
                 } else {
 
                     if(this.cart == 0) {
-                        this.sqlite.newCart(data);
+                        this.sqlite.newCart(data.cart);
                     }
 
                     this.cart = data.cart;

@@ -35,12 +35,15 @@
     <ion-slides [options]="extraOptions" id="slider">
         <ion-slide *ngFor="#product of products">
             <ion-card text-wrap>
-                <img src="{{product.photo}}" width="100%">
+                <ion-item class="thumb">
+                    <img src="{{product.photo}}" width="100%">
+                </ion-item>    
                 <p (click)="productTapped($event, product)">{{product.title}}</p>
             </ion-card>
         </ion-slide>
     </ion-slides>
     <div class="swiper-pagination"></div>
+    <p></p>
 </ion-content>
 <button fab fab-bottom fab-right (click)="viewCart()">
     <ion-icon name="basket"></ion-icon>
