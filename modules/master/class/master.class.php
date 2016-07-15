@@ -111,13 +111,6 @@ class master extends db_class
             $modified['strImageName'] = $data['imgname'];
         }
 		
-		/*if(isset($data['action']) && $data['action'] == 'add') {
-			$modified['dtiCreated'] = TODAY_DATETIME;
-			$modified['idCreatedBy'] = $_SESSION[PF.'USERID'];
-			$modified['idModifiedBy'] = $_SESSION[PF.'USERID'];
-			$modified['dtiModified'] = TODAY_DATETIME;		
-		}*/
-		
 		return $modified;
 	}
 	/** getting All master

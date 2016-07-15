@@ -13,6 +13,8 @@ class order extends product {
 
     protected $_customer_table = 'mst_customers';
 
+    protected $_products_table = 'mst_products';
+
     /** Get latest seq of orders
      * @return int : Returns latest sequence of orders
      */
@@ -28,10 +30,14 @@ class order extends product {
      *                      otherwise returns 404
      */
     public function getOrdersByStatus($status) {
-        $sql = "select c.*
+        $sql = "select c.*, p.*
                 from ".$this->_cart_table." as c
-                inner join ".$this->_customer_table." as cst
-                    on c.idCustomer = cst.id";
+                inner join ".$this->_cart_products_table." as cp
+                    on cp.idCart = c.id
+                inner join ".$this->_products_table." as p
+                    on p.id = cp.idProduct
+                where c.tinStatus = '2'
+                group by c.id";
         return $this->getResults($sql);
     }
 

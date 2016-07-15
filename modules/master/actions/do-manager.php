@@ -65,8 +65,8 @@
 						$data['imgname'] = $imgurl;
 					}
 
-					$rsData = $master_obj->insertData($data, $type);
-					if($rsData){
+					$type_id = $master_obj->insertData($data, $type);
+					if($type_id){
 						$_SESSION[PF.'MSG']  = "<strong>".$_POST[$input_name]."</strong> has been successfully added";
 					}else {
 						$_SESSION[PF.'MSG']  = "Error while inserting data";
@@ -84,6 +84,8 @@
 				$where_cond = $db_name_field." = '$type_name' and tinStatus != '2' and id != ".$_POST['ID'];
 				$result = $master_obj->getMasterCount($where_cond, $type);
 
+				$type_id = $_POST['ID'];
+
 				if($result!=0){
 					$_SESSION[PF.'MSG'] = "This ".$type_name." ".$type." is already taken!";
 					_locate(SITE_URL."master/edit?t="._b64($type)."&id=".$_POST['ID']);
@@ -97,9 +99,9 @@
 
 					$rsData = $master_obj->updateData($data, $type);
 					if ($rsData) {
-					$_SESSION[PF . 'MSG'] = "<strong>" . $_POST[$input_name] . "</strong> has been successfully update";
+						$_SESSION[PF . 'MSG'] = "<strong>" . $_POST[$input_name] . "</strong> has been successfully update";
 					} /*else {
-					$_SESSION[PF . 'MSG'] = "Error while update data";
+						$_SESSION[PF . 'MSG'] = "Error while update data";
 					}*/
 				}
 			}
@@ -117,10 +119,22 @@
 					$_SESSION[PF.'MSG']  = "All categories have been successfully submitted";
 				}
 			}
+
+			_class('DbDate');
+			$dbDateObj = new DbDate();
+
+			$dbDateObj->setAccount('account', $_SESSION[PF.'USERID']);
+
+			$dateArray = array(
+				'type' => $_POST['type'],
+				'id' => $type_id,
+				'date_type' => ($data['action'] == 'add') ? 'created' : 'modified',
+				'remarks' => $_SESSION[PF . 'MSG']
+			);
+
+			$dbDateObj->logDate($dateArray);
 			
-			$type = ($type == 'category') ? 'categorie' : $type;
 			_locate($module_url."/list?t=".$_POST['type']);
 			
 		}
 	}
-?>
