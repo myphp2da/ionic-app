@@ -11,7 +11,7 @@
          * Type of dates array
          */
         protected $_date_types = array(
-            'created', 'modified', 'deleted', 'registered', 'activated'
+            'created', 'modified', 'deleted', 'registered', 'activated', 'ordered'
         );
 
         protected $_account_types = array(
