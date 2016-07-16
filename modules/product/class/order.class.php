@@ -15,6 +15,8 @@ class order extends product {
 
     protected $_products_table = 'mst_products';
 
+    protected $_log_date_table = 'rel_date_logs';
+
     /** Get latest seq of orders
      * @return int : Returns latest sequence of orders
      */
@@ -30,12 +32,15 @@ class order extends product {
      *                      otherwise returns 404
      */
     public function getOrdersByStatus($status) {
-        $sql = "select c.*, p.*
+        $sql = "select c.id, p.strProduct, p.strImageName,
+                      c.intTotalProducts, c.decAmount, c.decDelivery, c.tinStatus, c.strOrderNo, ld.dtiDate
                 from ".$this->_cart_table." as c
                 inner join ".$this->_cart_products_table." as cp
                     on cp.idCart = c.id
                 inner join ".$this->_products_table." as p
                     on p.id = cp.idProduct
+                inner join ".$this->_log_date_table." as ld
+                    on ld.idType = c.id and ld.strType = 'cart' and ld.strDateType = 'ordered'
                 where c.tinStatus = '2'
                 group by c.id";
         return $this->getResults($sql);

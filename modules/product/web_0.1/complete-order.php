@@ -50,8 +50,22 @@
             );
             $update_cart = $order_obj->completeOrder($update_array);
 
+            _class('DbDate');
+            $dbDateObj = new DbDate();
+
+            $dbDateObj->setAccount('customer', $post_data->user);
+
+            $dateArray = array(
+                'type' => 'cart',
+                'id' => $post_data->cart->id,
+                'date_type' => 'ordered',
+                'remarks' => 'Your order has been successfully placed'
+            );
+
+            $dbDateObj->logDate($dateArray);
+
             $data['status'] = 'true'; //True
-            $data['msg'] = 'Order has been successfully completed';
+            $data['msg'] = 'Order has been successfully placed';
         }
     } else {
         $data['status'] = 'false'; //False

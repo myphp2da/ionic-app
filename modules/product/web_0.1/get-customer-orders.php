@@ -40,54 +40,32 @@
 
         $product_url = UPLOAD_URL.'product/thumbs/';
 
-        $orders = $order_obj->getProducts($query_string);
+        $orders = $order_obj->getOrdersByStatus(2);
 
         if($orders == '404'){
             $data['status'] = 'False'; //False
             $data['msg'] = 'No order available';
         } else {
 
-            $available_products  = array();
-            foreach($products as $product) {
-                $available_products[] = $product['id'];
-            }
-
-            $quantity_array = array();
-            if(sizeof($available_products) > 0) {
-                $product_quantities = $product_obj->getProductQuantities($available_products);
-
-                if($product_quantities != 404) {
-                    foreach($product_quantities as $pq) {
-                        $product_id = $pq['idProduct'];
-                        $quantity_array[$product_id][] = array(
-                            'id' => $pq['idQuantity'],
-                            'label' => $pq['strQuantity'],
-                            'remarks' => $pq['strRemarks'],
-                            'price' => $pq['decPrice']
-                        );
-                    }
-                }
-            }
-            
             $output = array();
-            foreach($products as $product) {
+            foreach($orders as $order) {
 
-                $product_array = array(
-                    'id' => $product['id'],
-                    'title' => $product['strProduct'],
-                    'photo' => !empty($product['strImageName']) ? $product_url.$product['strImageName'] : '',
-                    'category' => $product['category_name']
+                $order_array = array(
+                    'id' => $order['id'],
+                    'title' => $order['strProduct'],
+                    'photo' => !empty($order['strImageName']) ? $order_url.$order['strImageName'] : '',
+                    'total_products' => $order['intTotalProducts'],
+                    'amount' => $order['dblAmount'],
+                    'delivery' => $order['intDelivery'],
+                    'order_no' => $order['strOrderNo'],
+                    'order_date' => $order['dtiOrderDate']
                 );
 
-                if(isset($quantity_array[$product['id']])) {
-                    $product_array['quantities'] = $quantity_array[$product['id']];
-                }
-
-                $output[] = $product_array;
+                $output[] = $order_array;
             }
 
             $data['status'] = 'True'; //True
-            $data['msg'] = 'Products have been successfully loaded';
+            $data['msg'] = 'Orders have been successfully loaded';
             $data['category'] = $category;
             $data['data'] = $output;
         }
