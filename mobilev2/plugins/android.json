@@ -30,6 +30,10 @@
         },
         "cordova-plugin-network-information": {
             "PACKAGE_NAME": "com.inheritlab.mvf"
+        },
+        "phonegap-plugin-push": {
+            "SENDER_ID": "596197136028",
+            "PACKAGE_NAME": "com.inheritlab.mvf"
         }
     },
     "dependent_plugins": {}

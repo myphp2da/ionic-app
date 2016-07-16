@@ -129,6 +129,8 @@ var MyApp = exports.MyApp = (_dec = (0, _ionicAngular.App)({
         value: function logoutApp() {
             this.menu.close();
             this.sqlite.removeKey('UserId');
+            this.sqlite.removeKey('Cart');
+            this.sqlite.clearStorage();
             var nav = this.app.getComponent('nav');
             nav.setRoot(_main.MainPage);
         }
@@ -151,7 +153,7 @@ var MyApp = exports.MyApp = (_dec = (0, _ionicAngular.App)({
                 if (result) {
                     _this2.sqlite.getKey('UserId').then(function (result) {
                         if (result) {
-                            _this2.rootPage = _account.AccountPage;
+                            _this2.rootPage = _home.HomePage;
                         } else {
                             _this2.rootPage = _main.MainPage;
                         }
@@ -165,7 +167,37 @@ var MyApp = exports.MyApp = (_dec = (0, _ionicAngular.App)({
     }, {
         key: 'initializeApp',
         value: function initializeApp() {
-            this.platform.ready().then(function () {});
+            this.platform.ready().then(function () {
+
+                var push = _ionicNative.Push.init({
+                    android: {
+                        senderID: "596197136028"
+                    },
+                    ios: {
+                        alert: "true",
+                        badge: true,
+                        sound: 'false'
+                    },
+                    windows: {}
+                });
+
+                push.on('registration', function (data) {
+                    console.log(data.registrationId);
+                });
+
+                push.on('notification', function (data) {
+                    console.log(data.message);
+                    console.log(data.title);
+                    console.log(data.count);
+                    console.log(data.sound);
+                    console.log(data.image);
+                    console.log(data.additionalData);
+                });
+
+                push.on('error', function (e) {
+                    console.log(e.message);
+                });
+            });
         }
 
         // this function will come handy in template
@@ -411,26 +443,26 @@ var AddressPage = exports.AddressPage = (_dec = (0, _ionicAngular.Page)({
             _this.loading.hide();
             if (data.status == 'true') {
                 _this.contents = data.data;
-
-                if (_this.address_id != 0) {
-                    sqlite.getDeliveryAddressByID(_this.address_id).then(function (result) {
-                        current_address = result.res.rows.item(0);
-                        _this.address_label = current_address.strLabel;
-                        _this.address_fname = current_address.strFirstName;
-                        _this.address_lname = current_address.strLastName;
-                        _this.address_line1 = current_address.strAddressLine1;
-                        _this.address_line2 = current_address.strAddressLine2;
-                        _this.area = current_address.idArea;
-                        _this.area_name = current_address.strArea;
-                        _this.area_city = current_address.strCity;
-                        _this.area_state = current_address.strState;
-                        _this.area_pincode = current_address.intPincode;
-
-                        _this.heading = 'Edit ' + _this.address_label;
-                    });
-                }
             }
         });
+
+        if (this.address_id != 0) {
+            sqlite.getDeliveryAddressByID(this.address_id).then(function (result) {
+                current_address = result.res.rows.item(0);
+                _this.address_label = current_address.strLabel;
+                _this.address_fname = current_address.strFirstName;
+                _this.address_lname = current_address.strLastName;
+                _this.address_line1 = current_address.strAddressLine1;
+                _this.address_line2 = current_address.strAddressLine2;
+                _this.area = current_address.idArea;
+                _this.area_name = current_address.strArea;
+                _this.area_city = current_address.strCity;
+                _this.area_state = current_address.strState;
+                _this.area_pincode = current_address.intPincode;
+
+                _this.heading = 'Edit ' + _this.address_label;
+            });
+        }
     }
 
     _createClass(AddressPage, [{
@@ -471,7 +503,7 @@ var AddressPage = exports.AddressPage = (_dec = (0, _ionicAngular.Page)({
                         });
                         _this2.nav.present(alert);
                     } else {
-                        _this2.nav.push(_addresses.AddressesPage);
+                        _this2.nav.pop();
                         _this2.sqlite.addDeliveryAddress(value, _this2.address_id);
                     }
                 });
@@ -534,7 +566,7 @@ var AddressesPage = exports.AddressesPage = (_dec = (0, _ionicAngular.Page)({
 
     this.sqlite = sqlite;
 
-    var itemAvailable = true;
+    this.itemAvailable = true;
 
     this.cart = params.get('cart');
 
@@ -614,20 +646,22 @@ var CartPage = exports.CartPage = (_dec = (0, _ionicAngular.Page)({
         _classCallCheck(this, CartPage);
 
         this.loading = app.getComponent('loading');
-
         this.loading.show();
 
         this.nav = nav;
 
-        this.hasProducts = true;
+        this.hasProducts = false;
 
         this.total_amount = 0;
+        this.pay_amount = 0;
 
         this.service = service;
 
         this.sqlite = sqlite;
 
-        this.sqlite.getKey('Cart').then(function (value) {
+        this.cart = 0;
+
+        sqlite.getKey('Cart').then(function (value) {
 
             if (value) {
 
@@ -642,14 +676,21 @@ var CartPage = exports.CartPage = (_dec = (0, _ionicAngular.Page)({
                             buttons: ['Ok']
                         });
                         _this.nav.present(alert);
-                        _this.hasProducts = false;
                     } else {
                         _this.contents = data.data;
                         _this.total_amount = data.total_amount;
+                        _this.pay_amount = _this.total_amount + 45;
+                        _this.hasProducts = true;
+
+                        sqlite.updateCartDetails({
+                            'id': _this.cart,
+                            'total_amount': _this.total_amount,
+                            'delivery': 45,
+                            'products': _this.contents.length
+                        });
                     }
                 });
             } else {
-                _this.cart = 0;
                 _this.loading.hide();
                 _this.hasProducts = false;
             }
@@ -713,6 +754,9 @@ var CartPage = exports.CartPage = (_dec = (0, _ionicAngular.Page)({
                 total_amount += item.quantity * item.price;
             });
             this.total_amount = Math.round(total_amount * 100) / 100;
+            this.pay_amount = this.total_amount + 45;
+
+            this.sqlite.updateCart('decAmount', this.total_amount, this.cart);
         }
     }, {
         key: 'checkoutCart',
@@ -872,24 +916,29 @@ var DeliveryPage = exports.DeliveryPage = (_dec = (0, _ionicAngular.Page)({
 
     this.sqlite = sqlite;
 
-    var itemAvailable = false;
+    this.contents = [];
+
+    this.delivery = 0;
+
+    this.itemAvailable = false;
 
     this.cart = params.get('cart');
 
     this.sqlite.getKey('UserId').then(function (value) {
-
       _this.user = value;
+    });
 
-      console.log('User: ' + value);
-
-      service.loadAddresses(value).subscribe(function (data) {
-        console.log(data.status);
-        _this.loading.hide();
-        if (data.status == 'true') {
-          _this.contents = data.data;
-          itemAvailable = true;
+    this.sqlite.getDeliveryAddresses('').then(function (result) {
+      _this.loading.hide();
+      if (result) {
+        if (result.res.rows.length > 0) {
+          for (var i = 0; i < result.res.rows.length; i++) {
+            var row = result.res.rows.item(i);
+            _this.contents.push(row);
+          }
         }
-      });
+        _this.itemAvailable = true;
+      }
     });
   }
 
@@ -901,7 +950,16 @@ var DeliveryPage = exports.DeliveryPage = (_dec = (0, _ionicAngular.Page)({
   }, {
     key: 'gotoSlots',
     value: function gotoSlots() {
-      this.nav.push(_slot.SlotPage, { 'cart': this.cart });
+      if (this.delivery == 0) {
+        var alert = _ionicAngular.Alert.create({
+          title: 'ERROR!',
+          message: 'Please select delivery address',
+          buttons: ['Ok']
+        });
+        this.nav.present(alert);
+      } else {
+        this.nav.push(_slot.SlotPage, { 'cart': this.cart });
+      }
     }
   }, {
     key: 'setDelivery',
@@ -1085,7 +1143,7 @@ var HomePage = exports.HomePage = (_dec = (0, _ionicAngular.Page)({
             pagination: '.swiper-pagination',
             paginationClickable: true,
             slidesPerView: 2,
-            spaceBetween: 50
+            spaceBetween: 0
         };
 
         this.loading = app.getComponent('loading');
@@ -1289,6 +1347,8 @@ var LoginPage = exports.LoginPage = (_dec = (0, _ionicAngular.Page)({
 
                     if (data.data.addresses) {
                         _this.sqlite.updateDeliveryAddresses(data.data.addresses);
+                    } else {
+                        _this.sqlite.newDeliveryAddress();
                     }
 
                     _this.sqlite.setKey('UserId', data.data.user_details.id);
@@ -1455,6 +1515,8 @@ var PaymentPage = exports.PaymentPage = (_dec = (0, _ionicAngular.Page)({
 
     this.service = service;
 
+    this.payment_option = 0;
+
     this.cart = params.get('cart');
 
     this.user = 0;
@@ -1472,24 +1534,35 @@ var PaymentPage = exports.PaymentPage = (_dec = (0, _ionicAngular.Page)({
     value: function confirmOrder() {
       var _this2 = this;
 
-      this.sqlite.updateCart('tinStatus', 1, this.cart);
-
-      this.sqlite.getCart(this.cart).then(function (result) {
-        var cart_details = result.res.rows.item(0);
-        _this2.service.completeOrder(_this2.user, cart_details).subscribe(function (response) {
-          console.log(response.status);
-          if (response.status == 'false') {
-            var alert = Alert.create({
-              title: 'ERROR!',
-              message: response.msg,
-              buttons: ['Ok']
-            });
-            _this2.nav.present(alert);
-          } else {
-            _this2.nav.setRoot(_confirm.ConfirmPage, cart_details);
-          }
+      console.log(this.payment_option);
+      if (this.payment_option == 0) {
+        var alert = _ionicAngular.Alert.create({
+          title: 'ERROR!',
+          message: 'Please select payment option to complete the order',
+          buttons: ['Ok']
         });
-      });
+        this.nav.present(alert);
+      } else {
+
+        this.sqlite.updateCart('tinStatus', 1, this.cart);
+
+        this.sqlite.getCart(this.cart).then(function (result) {
+          var cart_details = result.res.rows.item(0);
+          _this2.service.completeOrder(_this2.user, cart_details).subscribe(function (response) {
+            console.log(response.status);
+            if (response.status == 'false') {
+              var alert = _ionicAngular.Alert.create({
+                title: 'ERROR!',
+                message: response.msg,
+                buttons: ['Ok']
+              });
+              _this2.nav.present(alert);
+            } else {
+              _this2.nav.setRoot(_confirm.ConfirmPage, cart_details);
+            }
+          });
+        });
+      }
     }
   }, {
     key: 'setPayment',
@@ -1629,7 +1702,7 @@ var ProductsPage = exports.ProductsPage = (_dec = (0, _ionicAngular.Page)({
     }, {
         key: 'gotoSearch',
         value: function gotoSearch() {
-            this.nav.setRoot(_search.SearchPage);
+            this.nav.push(_search.SearchPage);
         }
     }, {
         key: 'itemTapped',
@@ -1662,7 +1735,7 @@ var ProductsPage = exports.ProductsPage = (_dec = (0, _ionicAngular.Page)({
                     } else {
 
                         if (_this2.cart == 0) {
-                            _this2.sqlite.newCart(data);
+                            _this2.sqlite.newCart(data.cart);
                         }
 
                         _this2.cart = data.cart;
@@ -1847,20 +1920,42 @@ var SlotPage = exports.SlotPage = (_dec = (0, _ionicAngular.Page)({
   _createClass(SlotPage, null, [{
     key: 'parameters',
     get: function get() {
-      return [[_ionicAngular.NavController], [_sqlite.SQLite], [_ionicAngular.NavParams]];
+      return [[_ionicAngular.IonicApp], [_ionicAngular.NavController], [_sqlite.SQLite], [_ionicAngular.NavParams]];
     }
   }]);
 
-  function SlotPage(nav, sqlite, params) {
+  function SlotPage(app, nav, sqlite, params) {
+    var _this = this;
+
     _classCallCheck(this, SlotPage);
+
+    this.loading = app.getComponent('loading');
+    this.loading.show();
 
     this.nav = nav;
 
     this.sqlite = sqlite;
 
+    this.slot = 0;
+
     this.cart = params.get('cart');
 
-    this.slots = [{ time: '12:00', range: '7:00 AM to 12:00 Noon' }, { time: '17:00', range: '12:00 Noon to 5:00 PM' }, { time: '21:00', range: '5:00 PM to 9:00 PM' }];
+    console.log(this.cart);
+
+    this.slots = [];
+
+    this.sqlite.getSlots().then(function (result) {
+      _this.loading.hide();
+      if (result) {
+        if (result.res.rows.length > 0) {
+          for (var i = 0; i < result.res.rows.length; i++) {
+            var row = result.res.rows.item(i);
+            _this.slots.push(row);
+          }
+        }
+        _this.itemAvailable = true;
+      }
+    });
 
     var current_date = new Date();
 
@@ -1876,7 +1971,16 @@ var SlotPage = exports.SlotPage = (_dec = (0, _ionicAngular.Page)({
   _createClass(SlotPage, [{
     key: 'gotoPayment',
     value: function gotoPayment() {
-      this.nav.push(_payment.PaymentPage, { 'cart': this.cart });
+      if (this.slot == 0) {
+        var alert = _ionicAngular.Alert.create({
+          title: 'ERROR!',
+          message: 'Please select time slot for delivery',
+          buttons: ['Ok']
+        });
+        this.nav.present(alert);
+      } else {
+        this.nav.push(_payment.PaymentPage, { 'cart': this.cart });
+      }
     }
   }, {
     key: 'setSlot',
@@ -2130,47 +2234,104 @@ var SQLite = exports.SQLite = (_dec = (0, _core.Injectable)(), _dec(_class = fun
         value: function clearStorage() {
             var drop_user = 'DROP TABLE IF EXISTS user_details';
             this.storage.query(drop_user);
+
+            var drop_address = 'DROP TABLE IF EXISTS delivery_addresses';
+            this.storage.query(drop_address);
+
+            var drop_cart = 'DROP TABLE IF EXISTS cart';
+            this.storage.query(drop_cart);
         }
     }, {
         key: 'updateUser',
         value: function updateUser(data) {
 
+            var storage = this.storage;
+
             var drop_user = 'DROP TABLE IF EXISTS user_details';
-            this.storage.query(drop_user);
+            storage.query(drop_user).then(function (res_drop) {
 
-            var create_user = 'CREATE TABLE IF NOT EXISTS user_details (id INTEGER PRIMARY KEY, strName VARCHAR(50) NOT NULL, strImageName VARCHAR(100), strEmail VARCHAR(100) NOT NULL)';
-            this.storage.query(create_user);
+                var create_user = 'CREATE TABLE IF NOT EXISTS user_details (' + 'id INTEGER PRIMARY KEY, ' + 'strName VARCHAR(50) NOT NULL, ' + 'strImageName VARCHAR(100), ' + 'strGender VARCHAR(10), ' + 'dblPhone double, ' + 'dtBirth date, ' + 'strEmail VARCHAR(100) NOT NULL)';
+                storage.query(create_user).then(function (res_create) {
 
-            var sql = "insert into user_details(id, strName, strImageName, strEmail) values (?, ?, ?, ?)";
-            return this.storage.query(sql, [data.id, data.strFirstName + ' ' + data.strLastName, data.strImageName, data.strEmail]);
+                    var sql = "insert into user_details(id, strName, strImageName, strEmail) values (?, ?, ?, ?)";
+                    storage.query(sql, [data.id, data.strFirstName + ' ' + data.strLastName, data.strImageName, data.strEmail]);
+                }, function (err_create) {
+                    console.error(err_create);
+                });
+            }, function (err_drop) {
+                console.error(err_drop);
+            });
+        }
+    }, {
+        key: 'newDeliveryAddress',
+        value: function newDeliveryAddress() {
+
+            var storage = this.storage;
+
+            var drop_address = 'DROP TABLE IF EXISTS delivery_addresses';
+            storage.query(drop_address).then(function (res_drop) {
+
+                console.log('Address table dropped');
+
+                var create_address = 'CREATE TABLE IF NOT EXISTS delivery_addresses (' + 'id INTEGER PRIMARY KEY, ' + 'strLabel varchar(15) NOT NULL,' + 'strFirstName varchar(50) NOT NULL,' + 'strLastName varchar(50) NOT NULL,' + 'strAddressLine1 varchar(255) DEFAULT NULL,' + 'strAddressLine2 varchar(50) NOT NULL,' + 'idArea int(11) NOT NULL,' + 'strArea int(11) NOT NULL,' + 'strCity varchar(255) DEFAULT NULL,' + 'strState varchar(255) DEFAULT NULL,' + 'intPincode int(6) NOT NULL)';
+                return storage.query(create_address);
+            }, function (err_drop) {
+                console.error(err_drop);
+            });
         }
     }, {
         key: 'updateDeliveryAddresses',
         value: function updateDeliveryAddresses(data) {
+
+            var storage = this.storage;
+
             var drop_address = 'DROP TABLE IF EXISTS delivery_addresses';
-            this.storage.query(drop_address);
+            storage.query(drop_address).then(function (res_drop) {
 
-            var create_address = 'CREATE TABLE IF NOT EXISTS delivery_addresses (' + 'id int(11) NOT NULL, ' + 'strLabel varchar(15) NOT NULL,' + 'strFirstName varchar(50) NOT NULL,' + 'strLastName varchar(50) NOT NULL,' + 'strAddressLine1 varchar(255) DEFAULT NULL,' + 'strAddressLine2 varchar(50) NOT NULL,' + 'idArea int(11) NOT NULL,' + 'strArea int(11) NOT NULL,' + 'strCity varchar(255) DEFAULT NULL,' + 'strState varchar(255) DEFAULT NULL,' + 'intPincode int(6) NOT NULL)';
-            this.storage.query(create_address);
+                console.log('Address table dropped');
 
-            data.forEach(function (row) {
-                this.addDeliveryAddress(row, 0);
+                var create_address = 'CREATE TABLE IF NOT EXISTS delivery_addresses (' + 'id INTEGER PRIMARY KEY, ' + 'strLabel varchar(15) NOT NULL,' + 'strFirstName varchar(50) NOT NULL,' + 'strLastName varchar(50) NOT NULL,' + 'strAddressLine1 varchar(255) DEFAULT NULL,' + 'strAddressLine2 varchar(50) NOT NULL,' + 'idArea int(11) NOT NULL,' + 'strArea int(11) NOT NULL,' + 'strCity varchar(255) DEFAULT NULL,' + 'strState varchar(255) DEFAULT NULL,' + 'intPincode int(6) NOT NULL)';
+                storage.query(create_address).then(function (res_create) {
+
+                    console.log('Address table created');
+
+                    data.forEach(function (row) {
+                        var sql = 'insert into delivery_addresses(id, strLabel, strFirstName, strLastName, strAddressLine1, strAddressLine2, idArea, strArea, strCity, strState, intPincode)' + ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                        storage.query(sql, [row.id, row.label, row.fname, row.lname, row.address1, row.address2, row.area, row.area_name, row.city, row.state, row.pincode]).then(function (res) {
+                            console.log("Data inserted");
+                        }, function (err) {
+                            console.error(err);
+                        });
+                    });
+                }, function (err_create) {
+                    console.error(err_create);
+                });
+            }, function (err_drop) {
+                console.error(err_drop);
             });
         }
     }, {
         key: 'addDeliveryAddress',
         value: function addDeliveryAddress(data, address_id) {
 
+            console.log(data);
+
             if (address_id == 0) {
-                var sql = 'insert into delivery_addresses(id, strLabel, strFirstName, strLastName, strAddressLine1, strAddressLine2, idArea, strArea, strCity, strState, intPincode)' + 'values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-                return this.storage.query(sql, [data.id, data.label, data.fname, data.lname, data.address1, data.address2, data.area, data.area_name, data.city, data.state, data.pincode]);
+                var sql = 'insert into delivery_addresses(id, strLabel, strFirstName, strLastName, strAddressLine1, strAddressLine2, idArea, strArea, strCity, strState, intPincode)' + ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                return this.storage.query(sql, [data.id, data.label, data.fname, data.lname, data.address1, data.address2, data.area, data.area_name, data.city, data.state, data.pincode]).then(function (res) {
+                    console.log("Data inserted");
+                }, function (err) {
+                    console.error(err);
+                });
             } else {
 
                 var _sql = 'update delivery_addresses set ' + 'strLabel = ?,' + 'strFirstName = ?,' + 'strLastName = ?,' + 'strAddressLine1 = ?,' + 'strAddressLine2 = ?,' + 'idArea = ?,' + 'strArea = ?,' + 'strCity = ?,' + 'strState = ?,' + 'intPincode = ? ' + 'where id = ?';
 
-                console.log(data);
-
-                return this.storage.query(_sql, [data.label, data.fname, data.lname, data.address1, data.address2, data.area, data.area_name, data.city, data.state, data.pincode, data.id]);
+                this.storage.query(_sql, [data.label, data.fname, data.lname, data.address1, data.address2, data.area, data.area_name, data.city, data.state, data.pincode, address_id]).then(function (res) {
+                    console.log("Data inserted");
+                }, function (err) {
+                    console.error(err);
+                });
             }
         }
     }, {
@@ -2244,15 +2405,30 @@ var SQLite = exports.SQLite = (_dec = (0, _core.Injectable)(), _dec(_class = fun
         }
     }, {
         key: 'newCart',
-        value: function newCart(data) {
+        value: function newCart(cart_id) {
+
+            var storage = this.storage;
+
             var drop_cart = 'DROP TABLE IF EXISTS cart';
-            this.storage.query(drop_cart);
+            storage.query(drop_cart).then(function (res_drop) {
 
-            var create_cart = 'CREATE TABLE IF NOT EXISTS cart(id INTEGER PRIMARY KEY, idAddress INTEGER NULL, strSlot VARCHAR(50) NULL, strPayment VARCHAR(5) NULL, tinStatus TINYINT(1) DEFAULT "0")';
-            this.storage.query(create_cart);
+                console.log('Cart dropped');
 
-            var sql = "insert into cart(id) values (?)";
-            return this.storage.query(sql, [data.cart]);
+                var create_cart = 'CREATE TABLE IF NOT EXISTS cart(' + 'id INTEGER PRIMARY KEY, ' + 'decAmount DECIMAL(10,2) DEFAULT 0, ' + 'decDelivery DECIMAL(5,2) DEFAULT 0, ' + 'intTotalProducts INTEGER DEFAULT 0, ' + 'idAddress INTEGER NULL, ' + 'strSlot VARCHAR(50) NULL, ' + 'strPayment VARCHAR(5) NULL, ' + 'tinStatus TINYINT(1) DEFAULT "0")';
+
+                storage.query(create_cart).then(function (res_create) {
+
+                    console.log('Cart created');
+
+                    var sql = "insert into cart(id) values (?)";
+                    console.log(sql);
+                    storage.query(sql, [cart_id]);
+                }, function (err_create) {
+                    console.error(err_create);
+                });
+            }, function (err_drop) {
+                console.error(err_drop);
+            });
         }
     }, {
         key: 'updateCart',
@@ -2277,6 +2453,14 @@ var SQLite = exports.SQLite = (_dec = (0, _core.Injectable)(), _dec(_class = fun
             return this.storage.remove(key);
         }
     }, {
+        key: 'updateCartDetails',
+        value: function updateCartDetails(cart) {
+            var sql = "update cart set " + "decAmount = ?, " + "decDelivery = ?, " + "intTotalProducts = ?" + " where id = ?";
+            console.log(sql);
+            console.log(cart);
+            return this.storage.query(sql, [cart.total_amount, cart.delivery, cart.products, cart.id]);
+        }
+    }, {
         key: 'getCart',
         value: function getCart(id) {
             var sql = "select * from cart where id = ?";
@@ -2286,6 +2470,18 @@ var SQLite = exports.SQLite = (_dec = (0, _core.Injectable)(), _dec(_class = fun
         key: 'getCategories',
         value: function getCategories() {
             var sql = "select * from categories order by idParent";
+            return this.storage.query(sql);
+        }
+    }, {
+        key: 'getAreas',
+        value: function getAreas() {
+            var sql = "select * from areas";
+            return this.storage.query(sql);
+        }
+    }, {
+        key: 'getSlots',
+        value: function getSlots() {
+            var sql = "select * from slots";
             return this.storage.query(sql);
         }
     }, {
