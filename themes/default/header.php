@@ -8,14 +8,16 @@
                     <a href="<?php _e(SITE_URL);?>account/dashboard"<?php if(strstr(_env('request_uri'), 'dashboard')) {?> class="active"<?php } ?>><i class="fa fa-desktop"></i> Dashboard</a>
                 </li>
 
-                <?php /*if($account_obj->checkModule('page')) { */?><!--
-                <li class="dropdown<?php /*if(strstr(_env('request_uri'), _b64('navigation')) || strstr(_env('request_uri'), 'page')) {*/?> active<?php /*} */?>"><a href="<?php /*_e(SITE_URL);*/?>page/list" data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle <?php /*if(strstr(_env('request_uri'), 'page')) {*/?> active<?php /*} */?>"><i class="fa fa-file-text-o"></i> Pages</a>
+                <li><a href="<?php _e(SITE_URL);?>account/customers"<?php if(strstr(_env('request_uri'), 'customer')) {?> class="active"<?php } ?>><i class="fa fa-desktop"></i> Customers</a></li>
+
+                <?php if($account_obj->checkModule('page')) { ?>
+                <li class="dropdown<?php if(strstr(_env('request_uri'), _b64('navigation')) || strstr(_env('request_uri'), 'page')) {?> active<?php } ?>"><a href="<?php _e(SITE_URL);?>page/list" data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle <?php if(strstr(_env('request_uri'), 'page')) {?> active<?php } ?>"><i class="fa fa-file-text-o"></i> Pages</a>
                     <ul class="dropdown-menu">
-                        <li<?php /*if(strstr(_env('request_uri'), 'page/')) {*/?> class="active"<?php /*} */?>><a href="<?php /*_e(SITE_URL);*/?>page/list">All Pages</a></li>
-                        <li<?php /*if(strstr(_env('request_uri'), _b64('navigation'))) {*/?> class="active"<?php /*} */?>><a href="<?php /*_e(SITE_URL);*/?>master/list?t=<?php /*_e(_b64('navigation'));*/?>">Navigations</a></li>
+                        <li<?php if(strstr(_env('request_uri'), 'page/')) {?> class="active"<?php } ?>><a href="<?php _e(SITE_URL);?>page/list">All Pages</a></li>
+                        <li<?php if(strstr(_env('request_uri'), _b64('navigation'))) {?> class="active"<?php } ?>><a href="<?php _e(SITE_URL);?>master/list?t=<?php _e(_b64('navigation'));?>">Navigations</a></li>
                     </ul>
                 </li>
-                --><?php /*}*/ ?>
+                <?php } ?>
 
                 <?php if($account_obj->checkModule('product')) { ?>
                     <li class="dropdown<?php if(strstr(_env('request_uri'), 'product')) {?> active<?php } ?>"><a href="<?php _e(SITE_URL);?>product/list" data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle <?php if(strstr(_env('request_uri'), 'product')) {?> active<?php } ?>"><i class="fa fa-file-text-o"></i> Products</a>
