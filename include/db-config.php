@@ -15,10 +15,10 @@
 	}
 	
 	if(ENV == 2) { // Testing
-		define('DB_SERVER','localhost');
-		define('DB_USERNAME','root');
-		define('DB_PASSWORD','YYMUS8dc86ZsCrxJ');
-		define('DB_SCHEMA','gca');
+		define('DB_SERVER','####');
+		define('DB_USERNAME','####');
+		define('DB_PASSWORD','####');
+		define('DB_SCHEMA','####');
 		
 		ini_set('error_reporting', E_ALL);
 		error_reporting(E_ALL);
@@ -29,10 +29,10 @@
 	}
 
     if(ENV == 3) { // Demo Testing
-        define('DB_SERVER','mysql.appdemo.co.in');
-        define('DB_USERNAME','myvegs');
-        define('DB_PASSWORD','DBaccess4MVF');
-        define('DB_SCHEMA','myvegsnfruitsdb');
+        define('DB_SERVER','####');
+        define('DB_USERNAME','####');
+        define('DB_PASSWORD','####');
+        define('DB_SCHEMA','####');
 
         ini_set('error_reporting', E_ALL);
         error_reporting(E_ALL);
